@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 /**
  * Common interface for all grant types must extend this interface.
  * 
- * @since 4.0
+ * @since 1.0
  */
 // TODO MULE-11412 Remove MuleContextAware
 public abstract class AbstractGrantType implements HttpAuthentication, MuleContextAware, Lifecycle {

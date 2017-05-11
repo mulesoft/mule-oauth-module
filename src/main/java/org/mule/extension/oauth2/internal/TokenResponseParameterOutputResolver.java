@@ -22,7 +22,7 @@ import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
  * which will return {@link AnyType} as the elements stored in the {@link ResourceOwnerOAuthContext#tokenResponseParameters} are
  * {@link Object}.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class TokenResponseParameterOutputResolver implements OutputTypeResolver<String> {
 

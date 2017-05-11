@@ -16,7 +16,7 @@ import java.util.Optional;
 /**
  * Errors that can happen during an OAuth dance.
  *
- * @since 4.0
+ * @since 1.0
  */
 public enum OAuthErrors implements ErrorTypeDefinition<OAuthErrors> {
 

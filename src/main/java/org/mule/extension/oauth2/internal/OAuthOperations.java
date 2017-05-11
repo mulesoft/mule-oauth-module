@@ -16,7 +16,7 @@ import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 /**
  * Provides management capabilities for the configured {@code tokenManager}.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class OAuthOperations {
 

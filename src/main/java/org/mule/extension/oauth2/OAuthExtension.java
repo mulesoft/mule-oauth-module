@@ -24,7 +24,7 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 /**
  * An extension to hook oauth2 to http extension connectors.
  *
- * @since 4.0
+ * @since 1.0
  */
 @Extension(name = "OAuth")
 @Import(type = HttpAuthentication.class, from = "HTTP")
