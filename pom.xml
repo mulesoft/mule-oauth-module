@@ -15,7 +15,7 @@
 
     <properties>
         <httpConnectorVersion>1.0.0-SNAPSHOT</httpConnectorVersion>
-        <socketsConnectorVersion>4.0.0-SNAPSHOT</socketsConnectorVersion>
+        <socketsConnectorVersion>1.0.0-SNAPSHOT</socketsConnectorVersion>
         <commonsCodecVersion>1.9</commonsCodecVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
     </properties>
@@ -76,8 +76,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-sockets</artifactId>
+            <groupId>org.mule.connectors</groupId>
+            <artifactId>mule-sockets-connector</artifactId>
             <version>${socketsConnectorVersion}</version>
             <classifier>mule-plugin</classifier>
         </dependency>
