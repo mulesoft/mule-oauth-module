@@ -10,6 +10,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.runtime.api.lock.LockFactory;
@@ -19,7 +20,6 @@ import org.mule.tck.size.SmallTest;
 
 import org.junit.Test;
 import org.mockito.Answers;
-import org.mockito.Mockito;
 
 @SmallTest
 public class ConfigOAuthContextTestCase extends AbstractMuleTestCase {
@@ -31,7 +31,7 @@ public class ConfigOAuthContextTestCase extends AbstractMuleTestCase {
 
   @Test
   public void nonExistentUserIdReturnNewConfig() throws Exception {
-    Mockito.when(mockObjectStore.contains(anyString())).thenReturn(false);
+    when(mockObjectStore.contains(anyString())).thenReturn(false);
     assertThat(new ConfigOAuthContext(mockLockFactory, mockObjectStore, TEST_CONFIG_NAME).getContextForResourceOwner(USER_ID),
                notNullValue());
   }
