@@ -16,21 +16,23 @@ import static java.lang.String.format;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
-import static org.mule.service.http.api.HttpConstants.Protocols.HTTPS;
+import static org.mule.service.http.api.HttpConstants.Protocol.HTTPS;
 import static org.mule.service.http.api.HttpHeaders.Names.AUTHORIZATION;
 import static org.mule.service.http.api.HttpHeaders.Names.WWW_AUTHENTICATE;
-import com.google.common.collect.ImmutableMap;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.Parameterized;
 import org.mule.runtime.core.util.store.SimpleMemoryObjectStore;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.oauth2.AbstractOAuthAuthorizationTestCase;
 import org.mule.test.runner.RunnerDelegateTo;
 
+import com.google.common.collect.ImmutableMap;
+
 import java.util.Arrays;
 import java.util.Collection;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runners.Parameterized;
 
 @RunnerDelegateTo(Parameterized.class)
 public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizationTestCase {

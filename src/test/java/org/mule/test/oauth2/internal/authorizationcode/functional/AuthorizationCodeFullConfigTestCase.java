@@ -19,7 +19,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mule.service.http.api.HttpConstants.HttpStatus.OK;
 import static org.mule.service.http.api.HttpConstants.Method.GET;
-import static org.mule.service.http.api.HttpConstants.Protocols.HTTPS;
+import static org.mule.service.http.api.HttpConstants.Protocol.HTTPS;
 import static org.mule.service.http.api.HttpHeaders.Names.CONTENT_TYPE;
 import static org.mule.service.http.api.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static org.mule.service.http.api.utils.HttpEncoderDecoderUtils.encodeQueryString;
