@@ -8,7 +8,7 @@ package org.mule.extension.oauth2.internal.clientcredentials;
 
 import static java.lang.Thread.currentThread;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
-import static org.mule.service.http.api.HttpHeaders.Names.AUTHORIZATION;
+import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 
 import org.mule.extension.http.api.HttpResponseAttributes;
 import org.mule.extension.oauth2.internal.AbstractGrantType;
@@ -20,10 +20,10 @@ import org.mule.runtime.core.util.store.SimpleObjectStoreToMapAdapter;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.runtime.operation.Result;
+import org.mule.runtime.http.api.domain.message.request.HttpRequestBuilder;
 import org.mule.runtime.oauth.api.ClientCredentialsOAuthDancer;
 import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthClientCredentialsDancerBuilder;
-import org.mule.service.http.api.domain.message.request.HttpRequestBuilder;
 
 import java.util.concurrent.ExecutionException;
 

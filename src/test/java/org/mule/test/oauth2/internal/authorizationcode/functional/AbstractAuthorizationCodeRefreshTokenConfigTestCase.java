@@ -18,12 +18,12 @@ import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mule.service.http.api.HttpHeaders.Names.AUTHORIZATION;
-import static org.mule.services.oauth.internal.OAuthConstants.CLIENT_ID_PARAMETER;
-import static org.mule.services.oauth.internal.OAuthConstants.CLIENT_SECRET_PARAMETER;
-import static org.mule.services.oauth.internal.OAuthConstants.GRANT_TYPE_PARAMETER;
-import static org.mule.services.oauth.internal.OAuthConstants.GRANT_TYPE_REFRESH_TOKEN;
-import static org.mule.services.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAMETER;
+import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
+import static org.mule.service.oauth.internal.OAuthConstants.CLIENT_ID_PARAMETER;
+import static org.mule.service.oauth.internal.OAuthConstants.CLIENT_SECRET_PARAMETER;
+import static org.mule.service.oauth.internal.OAuthConstants.GRANT_TYPE_PARAMETER;
+import static org.mule.service.oauth.internal.OAuthConstants.GRANT_TYPE_REFRESH_TOKEN;
+import static org.mule.service.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAMETER;
 
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;

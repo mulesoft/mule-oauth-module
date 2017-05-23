@@ -15,10 +15,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.lang.String.format;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mule.runtime.http.api.HttpConstants.Protocol.HTTPS;
+import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
+import static org.mule.runtime.http.api.HttpHeaders.Names.WWW_AUTHENTICATE;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
-import static org.mule.service.http.api.HttpConstants.Protocol.HTTPS;
-import static org.mule.service.http.api.HttpHeaders.Names.AUTHORIZATION;
-import static org.mule.service.http.api.HttpHeaders.Names.WWW_AUTHENTICATE;
+
 import org.mule.runtime.core.util.store.SimpleMemoryObjectStore;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;
