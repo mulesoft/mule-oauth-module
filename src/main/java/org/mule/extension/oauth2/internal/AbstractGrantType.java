@@ -14,7 +14,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.startIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
-import static org.mule.runtime.core.util.SystemUtils.getDefaultEncoding;
+import static org.mule.runtime.core.api.util.SystemUtils.getDefaultEncoding;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.SECURITY_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extension.http.api.request.authentication.HttpAuthentication;
