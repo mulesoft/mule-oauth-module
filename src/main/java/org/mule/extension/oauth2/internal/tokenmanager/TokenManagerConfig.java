@@ -6,8 +6,6 @@
  */
 package org.mule.extension.oauth2.internal.tokenmanager;
 
-import static java.lang.String.format;
-
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -21,7 +19,6 @@ import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.param.ConfigName;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -98,24 +95,6 @@ public class TokenManagerConfig implements Initialisable, MuleContextAware {
 
   public ConfigOAuthContext getConfigOAuthContext() {
     return configOAuthContext;
-  }
-
-  /**
-   * Provides support for the oauthContext MEL function for this configuration
-   *
-   * @param params function parameters without the config name parameter
-   * @return the result of the function call
-   */
-  public ResourceOwnerOAuthContext processOauthContextFunctionACall(Object... params) {
-    if (params.length > 1) {
-      throw new IllegalArgumentException(format("oauthContext for config type %s does not accepts more than two arguments",
-                                                "authorization-code"));
-    }
-    String resourceOwnerId = ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
-    if (params.length == 1) {
-      resourceOwnerId = (String) params[0];
-    }
-    return getConfigOAuthContext().getContextForResourceOwner(resourceOwnerId);
   }
 
   @Override

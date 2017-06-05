@@ -196,7 +196,8 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
   }
 
   protected void verifyTokenManagerAccessToken() throws Exception {
-    verifyTokenManagerAccessToken(DEFAULT_RESOURCE_OWNER_ID, ACCESS_TOKEN);
+    assertThat(flowRunner("retrieveAccessTokenWithoutOwnerIdFlow").run().getMessage().getPayload().getValue(),
+               is(ACCESS_TOKEN));
   }
 
   protected void verifyTokenManagerAccessToken(String resourceOwnerId, String accessToken) throws Exception {
@@ -215,7 +216,8 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
   }
 
   protected void verifyTokenManagerState() throws Exception {
-    verifyTokenManagerState(DEFAULT_RESOURCE_OWNER_ID, state.getValue());
+    assertThat(flowRunner("retrieveStateWithoutOwnerIdFlow").run().getMessage().getPayload().getValue(),
+               is(state.getValue()));
   }
 
   protected void verifyTokenManagerState(String resourceOwnerId, String state) throws Exception {

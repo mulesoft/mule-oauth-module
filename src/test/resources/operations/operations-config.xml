@@ -11,6 +11,10 @@
         <oauth:retrieve-access-token tokenManager="tokenManagerConfig" resourceOwnerId="#[variables.resourceOwnerId]"/>
     </flow>
 
+    <flow name="retrieveAccessTokenWithoutOwnerIdFlow">
+        <oauth:retrieve-access-token tokenManager="tokenManagerConfig"/>
+    </flow>
+
     <flow name="retrieveRefreshTokenFlow">
         <oauth:retrieve-refresh-token tokenManager="tokenManagerConfig" resourceOwnerId="#[variables.resourceOwnerId]"/>
     </flow>
@@ -21,6 +25,10 @@
 
     <flow name="retrieveStateFlow">
         <oauth:retrieve-state tokenManager="tokenManagerConfig" resourceOwnerId="#[variables.resourceOwnerId]"/>
+    </flow>
+
+    <flow name="retrieveStateWithoutOwnerIdFlow">
+        <oauth:retrieve-state tokenManager="tokenManagerConfig"/>
     </flow>
 
     <flow name="retrieveCustomTokenResponseParamFlow">
