@@ -8,7 +8,7 @@ package org.mule.test.oauth2.internal.authorizationcode.functional;
 
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.http.client.fluent.Request.Get;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
