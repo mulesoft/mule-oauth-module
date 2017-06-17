@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -o nounset
+
 updatePropertiesVersion() {
   VERSION_TO_PROPERTY="$1"
   POM_PROPERTY_PATH="$2"
@@ -27,15 +29,15 @@ updateParentVersion() {
   perl -0777 -i -pe "s/(<parent>.*<version)(.*)(\/version>.*<\/parent>)/\${1}>$VERSION_TO<\${3}/s" "$POM_PROPERTY_PATH"
 }
 
-VERSION_TO=$1
-VERSION_TO_MULE=$2
+VERSION_TO_CONNECTORS=$1
+VERSION_TO_DEPS=$2
 
 # Properties with releaseVersion in the root pom.xml
-propertiesDeps=("httpConnectorVersion"
-                "socketsConnectorVersion")
+propertiesDeps=("muleHttpConnectorVersion"
+                "muleSocketsConnectorVersion")
 
-updatePropertiesVersion "$VERSION_TO" pom.xml propertiesDeps[@]
+updatePropertiesVersion "$VERSION_TO_CONNECTORS" pom.xml propertiesDeps[@]
 
-updateParentVersion "$VERSION_TO_MULE" pom.xml
+updateParentVersion "$VERSION_TO_DEPS" pom.xml
 
 

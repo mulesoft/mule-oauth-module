@@ -14,8 +14,9 @@
     <version>0.8.0-SNAPSHOT</version>
 
     <properties>
-        <httpConnectorVersion>0.8.0-SNAPSHOT</httpConnectorVersion>
-        <socketsConnectorVersion>0.8.0-SNAPSHOT</socketsConnectorVersion>
+        <muleHttpConnectorVersion>0.8.0-SNAPSHOT</muleHttpConnectorVersion>
+        <muleSocketsConnectorVersion>0.8.0-SNAPSHOT</muleSocketsConnectorVersion>
+
         <commonsCodecVersion>1.9</commonsCodecVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
     </properties>
@@ -66,14 +67,14 @@
         <dependency>
             <groupId>org.mule.connectors</groupId>
             <artifactId>mule-http-connector</artifactId>
-            <version>${httpConnectorVersion}</version>
+            <version>${muleHttpConnectorVersion}</version>
             <classifier>mule-plugin</classifier>
         </dependency>
 
         <dependency>
             <groupId>org.mule.connectors</groupId>
             <artifactId>mule-sockets-connector</artifactId>
-            <version>${socketsConnectorVersion}</version>
+            <version>${muleSocketsConnectorVersion}</version>
             <classifier>mule-plugin</classifier>
         </dependency>
 
