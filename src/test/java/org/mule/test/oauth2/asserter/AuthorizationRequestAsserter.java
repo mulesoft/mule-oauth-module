@@ -13,14 +13,14 @@ import static org.mule.runtime.http.api.utils.HttpEncoderDecoderUtils.decodeQuer
 import static org.mule.runtime.http.api.utils.HttpEncoderDecoderUtils.extractQueryParams;
 import static org.mule.service.oauth.internal.OAuthConstants.CODE_PARAMETER;
 
-import org.mule.runtime.http.api.domain.ParameterMap;
+import org.mule.runtime.api.util.MultiMap;
 
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 
 public class AuthorizationRequestAsserter {
 
   private final LoggedRequest loggedRequest;
-  private final ParameterMap queryParameters;
+  private final MultiMap<String, String> queryParameters;
 
   public static AuthorizationRequestAsserter create(LoggedRequest loggedRequest) {
     return new AuthorizationRequestAsserter(loggedRequest);
