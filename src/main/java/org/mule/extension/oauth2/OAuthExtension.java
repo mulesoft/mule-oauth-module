@@ -27,7 +27,7 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
  * @since 1.0
  */
 @Extension(name = "OAuth")
-@Import(type = HttpAuthentication.class, from = "HTTP")
+@Import(type = HttpAuthentication.class)
 @Operations(OAuthOperations.class)
 @SubTypeMapping(baseType = HttpAuthentication.class,
     subTypes = {DefaultAuthorizationCodeGrantType.class, ClientCredentialsGrantType.class})
