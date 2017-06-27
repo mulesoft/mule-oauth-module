@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-core-modules-parent</artifactId>
-        <version>1.0.0-BETA-SNAPSHOT</version>
+        <version>1.0.0-BETA.1-SNAPSHOT</version>
     </parent>
 
     <groupId>org.mule.modules</groupId>
