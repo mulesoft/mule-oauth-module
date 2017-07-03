@@ -13,7 +13,7 @@ import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.context.MuleContextAware;
 import org.mule.runtime.core.api.registry.RegistrationException;
 import org.mule.runtime.core.api.store.ListableObjectStore;
-import org.mule.runtime.core.util.store.MuleObjectStoreManager;
+import org.mule.runtime.core.internal.util.store.MuleObjectStoreManager;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.param.ConfigName;
