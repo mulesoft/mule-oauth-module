@@ -12,7 +12,7 @@
 
     <oauth:token-manager-config name="tokenManagerConfig" objectStore="customObjectStore"/>
 
-    <spring:bean name="customObjectStore" class="org.mule.runtime.core.util.store.SimpleMemoryObjectStore"/>
+    <spring:bean name="customObjectStore" class="org.mule.runtime.core.api.store.SimpleMemoryObjectStore"/>
 
     <http:request-config name="requestConfig">
         <http:request-connection>

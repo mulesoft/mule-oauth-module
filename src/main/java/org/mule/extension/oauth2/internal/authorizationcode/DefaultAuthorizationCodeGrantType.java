@@ -18,7 +18,7 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.registry.RegistrationException;
-import org.mule.runtime.core.util.store.SimpleObjectStoreToMapAdapter;
+import org.mule.runtime.core.api.store.SimpleObjectStoreToMapAdapter;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
