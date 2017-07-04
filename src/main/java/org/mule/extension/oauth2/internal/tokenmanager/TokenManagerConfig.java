@@ -13,7 +13,6 @@ import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.context.MuleContextAware;
 import org.mule.runtime.core.api.registry.RegistrationException;
 import org.mule.runtime.core.api.store.ListableObjectStore;
-import org.mule.runtime.core.internal.util.store.MuleObjectStoreManager;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.param.ConfigName;
@@ -74,8 +73,7 @@ public class TokenManagerConfig implements Initialisable, MuleContextAware {
     }
     if (objectStore == null) {
       objectStore =
-          (ListableObjectStore<DefaultResourceOwnerOAuthContext>) ((MuleObjectStoreManager) muleContext.getObjectStoreManager())
-              .getUserObjectStore("token-manager-store-" + this.name, true);
+          muleContext.getObjectStoreManager().getUserObjectStore("token-manager-store-" + this.name, true);
     }
     configOAuthContext = new ConfigOAuthContext(muleContext.getLockFactory(), objectStore, name);
     initialised = true;
