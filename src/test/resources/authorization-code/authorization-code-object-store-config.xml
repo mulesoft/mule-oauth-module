@@ -2,17 +2,17 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth"
+      xmlns:spring="http://www.mulesoft.org/schema/mule/spring"
       xmlns:http="http://www.mulesoft.org/schema/mule/http"
-      xmlns:spring="http://www.springframework.org/schema/beans"
       xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+       http://www.mulesoft.org/schema/mule/spring http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd
        http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd">
 
-    <oauth:token-manager-config name="tokenManagerConfig" objectStore="customObjectStore"/>
+    <spring:config name="springConfig" files="authorization-code/custom-object-store-bean.xml"/>
 
-    <spring:bean name="customObjectStore" class="org.mule.runtime.core.api.store.SimpleMemoryObjectStore"/>
+    <oauth:token-manager-config name="tokenManagerConfig" objectStore="customObjectStore"/>
 
     <http:request-config name="requestConfig">
         <http:request-connection>
