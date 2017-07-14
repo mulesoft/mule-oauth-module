@@ -9,7 +9,6 @@ package org.mule.extension.oauth2.internal;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
 import org.mule.runtime.api.el.BindingContext;
 import org.mule.runtime.api.el.MuleExpressionLanguage;
-import org.mule.runtime.api.message.Attributes;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.runtime.operation.Result;
@@ -23,7 +22,7 @@ public class DeferredExpressionResolver {
     this.evaluator = evaluator;
   }
 
-  public <T> T resolveExpression(Literal<T> literal, Result<Object, ? extends Attributes> result) {
+  public <T> T resolveExpression(Literal<T> literal, Result<Object, ? extends Object> result) {
     if (literal == null) {
       return null;
     }
