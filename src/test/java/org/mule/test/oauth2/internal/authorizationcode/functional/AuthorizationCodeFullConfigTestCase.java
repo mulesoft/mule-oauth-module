@@ -111,7 +111,7 @@ public class AuthorizationCodeFullConfigTestCase extends AbstractOAuthAuthorizat
   public void localAuthorizationUrlRedirectsToOAuthAuthorizationUrl() throws Exception {
     wireMockRule.stubFor(get(urlMatching(AUTHORIZE_PATH + ".*")).willReturn(aResponse().withStatus(OK.getStatusCode())));
 
-    HttpRequest request = HttpRequest.builder().setUri(localAuthorizationUrl.getValue()).setMethod(GET).build();
+    HttpRequest request = HttpRequest.builder().uri(localAuthorizationUrl.getValue()).method(GET).build();
     httpClient.send(request, RECEIVE_TIMEOUT, true, null);
 
     final List<LoggedRequest> requests = findAll(getRequestedFor(urlMatching(AUTHORIZE_PATH + ".*")));
@@ -142,7 +142,7 @@ public class AuthorizationCodeFullConfigTestCase extends AbstractOAuthAuthorizat
         .put(CODE_PARAMETER, AUTHENTICATION_CODE).put(STATE_PARAMETER, state.getValue()).build();
 
     HttpRequest request = HttpRequest.builder()
-        .setUri(localCallbackUrl.getValue() + "?" + encodeQueryString(redirectUrlQueryParams)).setMethod(GET).build();
+        .uri(localCallbackUrl.getValue() + "?" + encodeQueryString(redirectUrlQueryParams)).method(GET).build();
     httpClient.send(request, RECEIVE_TIMEOUT, false, null);
 
     verifyRequestDoneToTokenUrlForAuthorizationCode();
