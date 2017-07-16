@@ -25,7 +25,7 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import org.junit.Rule;
 import org.junit.Test;
-import ru.yandex.qatools.allure.annotations.Description;
+import io.qameta.allure.Description;
 
 public class AuthorizationCodeAuthorizationCustomTokenExprTestCase extends AbstractAuthorizationCodeBasicTestCase {
 
