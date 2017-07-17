@@ -8,6 +8,7 @@ package org.mule.test.oauth2.internal.authorizationcode.functional;
 
 import static org.mule.service.oauth.internal.OAuthConstants.CODE_PARAMETER;
 
+import io.qameta.allure.Issue;
 import org.apache.http.client.fluent.Request;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -20,6 +21,7 @@ public class AuthorizationCodeMinimalConfigTestCase extends AbstractAuthorizatio
   }
 
   @Ignore("MULE-6926: flaky test")
+  @Issue("MULE-6926")
   @Test
   public void hitRedirectUrlAndGetToken() throws Exception {
     configureWireMockToExpectTokenPathRequestForAuthorizationCodeGrantType();

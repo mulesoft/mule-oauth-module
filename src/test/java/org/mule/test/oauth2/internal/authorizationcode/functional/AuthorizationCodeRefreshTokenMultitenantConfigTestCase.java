@@ -8,6 +8,7 @@ package org.mule.test.oauth2.internal.authorizationcode.functional;
 
 import static org.mule.runtime.http.api.HttpConstants.HttpStatus.INTERNAL_SERVER_ERROR;
 
+import io.qameta.allure.Issue;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
@@ -18,6 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @Ignore("MULE-11439: Different values in a connection don't trigger a new connect() for cached providers")
+@Issue("MULE-11439")
 public class AuthorizationCodeRefreshTokenMultitenantConfigTestCase extends AbstractAuthorizationCodeRefreshTokenConfigTestCase {
 
   public static final String MULTITENANT_OAUTH_CONFIG = "tokenManagerConfig";
