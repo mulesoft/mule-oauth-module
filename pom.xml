@@ -14,8 +14,8 @@
     <version>0.8.0</version>
 
     <properties>
-        <muleHttpConnectorVersion>0.8.0-BETA.4</muleHttpConnectorVersion>
-        <muleSocketsConnectorVersion>0.8.0-BETA.4</muleSocketsConnectorVersion>
+        <muleHttpConnectorVersion>0.8.0</muleHttpConnectorVersion>
+        <muleSocketsConnectorVersion>0.8.0</muleSocketsConnectorVersion>
 
         <commonsCodecVersion>1.9</commonsCodecVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
