@@ -14,9 +14,10 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <properties>
-        <httpConnectorVersion>1.0.0-SNAPSHOT</httpConnectorVersion>
-        <socketsConnectorVersion>1.0.0-SNAPSHOT</socketsConnectorVersion>
-        <springModuleVersion>1.0.0-SNAPSHOT</springModuleVersion>
+        <muleHttpConnectorVersion>1.0.0-SNAPSHOT</muleHttpConnectorVersion>
+        <muleSocketsConnectorVersion>1.0.0-SNAPSHOT</muleSocketsConnectorVersion>
+        <muleSpringModuleVersion>1.0.0-SNAPSHOT</muleSpringModuleVersion>
+
         <commonsCodecVersion>1.9</commonsCodecVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
     </properties>
@@ -67,14 +68,14 @@
         <dependency>
             <groupId>org.mule.connectors</groupId>
             <artifactId>mule-http-connector</artifactId>
-            <version>${httpConnectorVersion}</version>
+            <version>${muleHttpConnectorVersion}</version>
             <classifier>mule-plugin</classifier>
         </dependency>
 
         <dependency>
             <groupId>org.mule.connectors</groupId>
             <artifactId>mule-sockets-connector</artifactId>
-            <version>${socketsConnectorVersion}</version>
+            <version>${muleSocketsConnectorVersion}</version>
             <classifier>mule-plugin</classifier>
         </dependency>
 
@@ -88,7 +89,7 @@
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-spring-module</artifactId>
-            <version>${springModuleVersion}</version>
+            <version>${muleSpringModuleVersion}</version>
             <classifier>mule-plugin</classifier>
             <scope>test</scope>
         </dependency>
