@@ -7,7 +7,7 @@
 package org.mule.extension.oauth2.internal.authorizationcode.state;
 
 import org.mule.runtime.api.lock.LockFactory;
-import org.mule.runtime.core.api.store.ListableObjectStore;
+import org.mule.runtime.api.store.ObjectStore;
 import org.mule.runtime.core.api.store.ObjectStoreToMapAdapter;
 import org.mule.runtime.core.api.store.SimpleObjectStoreToMapAdapter;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
@@ -23,7 +23,7 @@ public class ConfigOAuthContext {
   private final String configName;
   private final ObjectStoreToMapAdapter<DefaultResourceOwnerOAuthContext> oauthContextStore;
 
-  public ConfigOAuthContext(final LockFactory lockFactory, ListableObjectStore<DefaultResourceOwnerOAuthContext> objectStore,
+  public ConfigOAuthContext(final LockFactory lockFactory, ObjectStore<DefaultResourceOwnerOAuthContext> objectStore,
                             final String configName) {
     this.lockFactory = lockFactory;
     this.oauthContextStore = new SimpleObjectStoreToMapAdapter(objectStore);

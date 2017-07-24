@@ -9,10 +9,11 @@ package org.mule.extension.oauth2.internal.tokenmanager;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.api.store.ObjectStoreSettings;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.context.MuleContextAware;
 import org.mule.runtime.core.api.registry.RegistrationException;
-import org.mule.runtime.core.api.store.ListableObjectStore;
+import org.mule.runtime.api.store.ObjectStore;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
 import org.mule.runtime.extension.api.annotation.param.ConfigName;
@@ -46,7 +47,7 @@ public class TokenManagerConfig implements Initialisable, MuleContextAware {
   // TODO MULE-11424 Move to OAuthExtension
   @Parameter
   @Optional
-  private ListableObjectStore<DefaultResourceOwnerOAuthContext> objectStore;
+  private ObjectStore<DefaultResourceOwnerOAuthContext> objectStore;
 
   private MuleContext muleContext;
 
@@ -54,11 +55,11 @@ public class TokenManagerConfig implements Initialisable, MuleContextAware {
 
   private boolean initialised;
 
-  public ListableObjectStore<DefaultResourceOwnerOAuthContext> getObjectStore() {
+  public ObjectStore<DefaultResourceOwnerOAuthContext> getObjectStore() {
     return objectStore;
   }
 
-  public void setObjectStore(ListableObjectStore<DefaultResourceOwnerOAuthContext> objectStore) {
+  public void setObjectStore(ObjectStore<DefaultResourceOwnerOAuthContext> objectStore) {
     this.objectStore = objectStore;
   }
 
@@ -73,7 +74,8 @@ public class TokenManagerConfig implements Initialisable, MuleContextAware {
     }
     if (objectStore == null) {
       objectStore =
-          muleContext.getObjectStoreManager().getUserObjectStore("token-manager-store-" + this.name, true);
+          muleContext.getObjectStoreManager().createObjectStore("token-manager-store-" + name,
+                                                                ObjectStoreSettings.builder().persistent(true).build());
     }
     configOAuthContext = new ConfigOAuthContext(muleContext.getLockFactory(), objectStore, name);
     initialised = true;
