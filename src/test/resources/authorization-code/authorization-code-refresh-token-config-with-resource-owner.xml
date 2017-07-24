@@ -19,7 +19,7 @@
                         localCallbackUrl="${local.callback.url}"
                         externalCallbackUrl="${local.callback.url}"
                         localAuthorizationUrlResourceOwnerId="#[attributes.queryParams.userId]"
-                        resourceOwnerId="#[variables['userId']]"
+                        resourceOwnerId="#[vars['userId']]"
                         tokenManager="multitenantOauthConfig"
                         localAuthorizationUrl="${local.authorization.url}"
                         authorizationUrl="${authorization.url}"
