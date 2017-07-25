@@ -16,9 +16,10 @@ import org.mule.runtime.core.api.registry.RegistrationException;
 import org.mule.runtime.api.store.ObjectStore;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.dsl.xml.XmlHints;
-import org.mule.runtime.extension.api.annotation.param.ConfigName;
+import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.reference.ObjectStoreReference;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,7 +39,7 @@ public class TokenManagerConfig implements Initialisable, MuleContextAware {
    * Identifier for the token manager configuration.
    */
   // TODO MULE-11424 Move to OAuthExtension
-  @ConfigName
+  @RefName
   private String name;
 
   /**
@@ -47,6 +48,7 @@ public class TokenManagerConfig implements Initialisable, MuleContextAware {
   // TODO MULE-11424 Move to OAuthExtension
   @Parameter
   @Optional
+  @ObjectStoreReference
   private ObjectStore<DefaultResourceOwnerOAuthContext> objectStore;
 
   private MuleContext muleContext;
