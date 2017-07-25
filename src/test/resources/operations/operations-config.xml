@@ -8,7 +8,7 @@
 
     <!-- TODO MULE-12009: once fixed, all this flows should be removed -->
     <flow name="retrieveAccessTokenFlow">
-        <oauth:retrieve-access-token tokenManager="tokenManagerConfig" resourceOwnerId="#[variables.resourceOwnerId]"/>
+        <oauth:retrieve-access-token tokenManager="tokenManagerConfig" resourceOwnerId="#[vars.resourceOwnerId]"/>
     </flow>
 
     <flow name="retrieveAccessTokenWithoutOwnerIdFlow">
@@ -16,15 +16,15 @@
     </flow>
 
     <flow name="retrieveRefreshTokenFlow">
-        <oauth:retrieve-refresh-token tokenManager="tokenManagerConfig" resourceOwnerId="#[variables.resourceOwnerId]"/>
+        <oauth:retrieve-refresh-token tokenManager="tokenManagerConfig" resourceOwnerId="#[vars.resourceOwnerId]"/>
     </flow>
 
     <flow name="retrieveExpiresInFlow">
-        <oauth:retrieve-expires-in tokenManager="tokenManagerConfig" resourceOwnerId="#[variables.resourceOwnerId]"/>
+        <oauth:retrieve-expires-in tokenManager="tokenManagerConfig" resourceOwnerId="#[vars.resourceOwnerId]"/>
     </flow>
 
     <flow name="retrieveStateFlow">
-        <oauth:retrieve-state tokenManager="tokenManagerConfig" resourceOwnerId="#[variables.resourceOwnerId]"/>
+        <oauth:retrieve-state tokenManager="tokenManagerConfig" resourceOwnerId="#[vars.resourceOwnerId]"/>
     </flow>
 
     <flow name="retrieveStateWithoutOwnerIdFlow">
@@ -32,7 +32,7 @@
     </flow>
 
     <flow name="retrieveCustomTokenResponseParamFlow">
-        <oauth:retrieve-custom-token-response-param tokenManager="tokenManagerConfig" key="#[variables.key]"/>
+        <oauth:retrieve-custom-token-response-param tokenManager="tokenManagerConfig" key="#[vars.key]"/>
     </flow>
 
 </mule>
