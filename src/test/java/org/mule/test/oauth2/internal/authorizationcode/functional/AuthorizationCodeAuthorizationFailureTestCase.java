@@ -25,9 +25,9 @@ import static org.mule.service.oauth.internal.OAuthConstants.STATE_PARAMETER;
 import static org.mule.tck.MuleTestUtils.testWithSystemProperty;
 
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
-import org.mule.functional.api.component.FlowAssert;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.DynamicPort;
+import org.mule.tck.processor.FlowAssert;
 
 import java.io.IOException;
 
