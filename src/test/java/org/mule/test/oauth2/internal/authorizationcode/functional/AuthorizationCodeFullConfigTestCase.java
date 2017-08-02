@@ -158,11 +158,11 @@ public class AuthorizationCodeFullConfigTestCase extends AbstractOAuthAuthorizat
   private TlsContextFactory createClientTlsContextFactory() {
     try {
       return TlsContextFactory.builder()
-          .setTrustStorePath("ssltest-cacerts.jks")
-          .setTrustStorePassword("changeit")
-          .setKeyStorePath("ssltest-keystore.jks")
-          .setKeyStorePassword("changeit")
-          .setKeyPassword("changeit")
+          .trustStorePath("ssltest-cacerts.jks")
+          .trustStorePassword("changeit")
+          .keyStorePath("ssltest-keystore.jks")
+          .keyStorePassword("changeit")
+          .keyPassword("changeit")
           .build();
     } catch (CreateException e) {
       throw new MuleRuntimeException(e);
