@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-core-modules-parent</artifactId>
-        <version>1.0.0-BETA.x-SNAPSHOT</version>
+        <version>1.0.0-BETA.5</version>
     </parent>
 
     <groupId>org.mule.modules</groupId>
@@ -14,8 +14,8 @@
     <version>0.8.2</version>
 
     <properties>
-        <muleHttpConnectorVersion>0.8.2-SNAPSHOT</muleHttpConnectorVersion>
-        <muleSocketsConnectorVersion>0.8.2-SNAPSHOT</muleSocketsConnectorVersion>
+        <muleHttpConnectorVersion>0.8.2</muleHttpConnectorVersion>
+        <muleSocketsConnectorVersion>0.8.2</muleSocketsConnectorVersion>
 
         <commonsCodecVersion>1.9</commonsCodecVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
