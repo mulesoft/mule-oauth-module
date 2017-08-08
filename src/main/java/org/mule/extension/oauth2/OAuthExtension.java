@@ -6,7 +6,7 @@
  */
 package org.mule.extension.oauth2;
 
-import org.mule.extension.http.api.request.authentication.HttpAuthentication;
+import org.mule.extension.http.api.request.authentication.HttpRequestAuthentication;
 import org.mule.extension.oauth2.api.exception.OAuthErrors;
 import org.mule.extension.oauth2.internal.OAuthOperations;
 import org.mule.extension.oauth2.internal.authorizationcode.DefaultAuthorizationCodeGrantType;
@@ -27,9 +27,9 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
  * @since 1.0
  */
 @Extension(name = "OAuth")
-@Import(type = HttpAuthentication.class)
+@Import(type = HttpRequestAuthentication.class)
 @Operations(OAuthOperations.class)
-@SubTypeMapping(baseType = HttpAuthentication.class,
+@SubTypeMapping(baseType = HttpRequestAuthentication.class,
     subTypes = {DefaultAuthorizationCodeGrantType.class, ClientCredentialsGrantType.class})
 @ErrorTypes(OAuthErrors.class)
 @Xml(prefix = "oauth")

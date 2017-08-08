@@ -17,7 +17,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import static org.mule.runtime.core.api.util.SystemUtils.getDefaultEncoding;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.SECURITY_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
-import org.mule.extension.http.api.request.authentication.HttpAuthentication;
+import org.mule.extension.http.api.request.authentication.HttpRequestAuthentication;
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -44,7 +44,7 @@ import org.slf4j.Logger;
  * @since 1.0
  */
 // TODO MULE-11412 Remove MuleContextAware
-public abstract class AbstractGrantType implements HttpAuthentication, MuleContextAware, Lifecycle {
+public abstract class AbstractGrantType implements HttpRequestAuthentication, MuleContextAware, Lifecycle {
 
   private static final Logger LOGGER = getLogger(AbstractGrantType.class);
 
