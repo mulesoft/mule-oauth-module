@@ -15,7 +15,7 @@ import org.mule.runtime.core.api.context.MuleContextAware;
 import org.mule.runtime.core.api.registry.RegistrationException;
 import org.mule.runtime.api.store.ObjectStore;
 import org.mule.runtime.extension.api.annotation.Alias;
-import org.mule.runtime.extension.api.annotation.dsl.xml.TypeXmlHints;
+import org.mule.runtime.extension.api.annotation.dsl.xml.TypeDsl;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * It can be referenced to access the state inside a flow for custom processing of oauth dance content.
  */
 @Alias("token-manager-config")
-@TypeXmlHints(allowTopLevelDefinition = true)
+@TypeDsl(allowTopLevelDefinition = true)
 public class TokenManagerConfig implements Initialisable, MuleContextAware {
 
   public static AtomicInteger defaultTokenManagerConfigIndex = new AtomicInteger(0);
