@@ -27,7 +27,7 @@ import static org.mule.service.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAM
 
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
-import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.InternalEvent;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.oauth2.AbstractOAuthAuthorizationTestCase;
@@ -71,7 +71,7 @@ public abstract class AbstractAuthorizationCodeRefreshTokenConfigTestCase extend
       throws Exception {
     configureResourceResponsesForRefreshToken(oauthConfigName, userId, failureStatusCode);
 
-    final Event result = flowRunner(flowName).withPayload("message").withVariable("userId", userId).run();
+    final InternalEvent result = flowRunner(flowName).withPayload("message").withVariable("userId", userId).run();
     assertThat(result.getMessage().getPayload().getValue(), is(RESOURCE_RESULT));
 
     wireMockRule.verify(postRequestedFor(urlEqualTo(TOKEN_PATH))
