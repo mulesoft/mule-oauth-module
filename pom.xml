@@ -11,7 +11,7 @@
     <artifactId>mule-oauth-module</artifactId>
     <name>OAuth Module</name>
     <packaging>mule-extension</packaging>
-    <version>0.9.0-rc.cyborg-SNAPSHOT</version>
+    <version>0.9.0-rc.cyborg</version>
 
     <properties>
         <muleHttpConnectorVersion>0.9.0-rc.cyborg-SNAPSHOT</muleHttpConnectorVersion>
