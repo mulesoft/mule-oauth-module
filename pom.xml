@@ -11,7 +11,7 @@
     <artifactId>mule-oauth-module</artifactId>
     <name>OAuth Module</name>
     <packaging>mule-extension</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.9.0-rc.darkseid-SNAPSHOT</version>
 
     <properties>
         <muleHttpConnectorVersion>1.0.0-SNAPSHOT</muleHttpConnectorVersion>
