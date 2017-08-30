@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-core-modules-parent</artifactId>
-        <version>1.0.0-rc.darkseid-SNAPSHOT</version>
+        <version>1.0.0-rc.darkseid</version>
     </parent>
 
     <groupId>org.mule.modules</groupId>
@@ -14,9 +14,9 @@
     <version>0.9.0-rc.darkseid</version>
 
     <properties>
-        <muleHttpConnectorVersion>0.9.0-rc.darkseid-SNAPSHOT</muleHttpConnectorVersion>
-        <muleSocketsConnectorVersion>0.9.0-rc.darkseid-SNAPSHOT</muleSocketsConnectorVersion>
-        <muleSpringModuleVersion>0.9.0-rc.darkseid-SNAPSHOT</muleSpringModuleVersion>
+        <muleHttpConnectorVersion>0.9.0-rc.darkseid</muleHttpConnectorVersion>
+        <muleSocketsConnectorVersion>0.9.0-rc.darkseid</muleSocketsConnectorVersion>
+        <muleSpringModuleVersion>0.9.0-rc.darkseid</muleSpringModuleVersion>
 
         <commonsCodecVersion>1.9</commonsCodecVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
