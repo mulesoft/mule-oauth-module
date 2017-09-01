@@ -86,9 +86,10 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- TODO MULE-12379 When OAuth uses the ObjectStoreConnector, it will no longer require spring -->
         <dependency>
             <groupId>org.mule.modules</groupId>
-            <artifactId>mule-spring-module</artifactId>
+            <artifactId>mule-spring-test-plugin</artifactId>
             <version>${muleSpringModuleVersion}</version>
             <classifier>mule-plugin</classifier>
             <scope>test</scope>
