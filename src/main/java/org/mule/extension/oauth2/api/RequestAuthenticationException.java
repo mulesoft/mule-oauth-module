@@ -6,7 +6,7 @@
  */
 package org.mule.extension.oauth2.api;
 
-import org.mule.runtime.core.api.DefaultMuleException;
+import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.i18n.I18nMessage;
 
 /**

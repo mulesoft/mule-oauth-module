@@ -8,8 +8,8 @@ package org.mule.extension.oauth2.internal.authorizationcode.state;
 
 import org.mule.runtime.api.lock.LockFactory;
 import org.mule.runtime.api.store.ObjectStore;
-import org.mule.runtime.core.api.store.ObjectStoreToMapAdapter;
-import org.mule.runtime.core.api.store.SimpleObjectStoreToMapAdapter;
+import org.mule.runtime.api.store.ObjectStoreToMapAdapter;
+import org.mule.extension.oauth2.internal.store.SimpleObjectStoreToMapAdapter;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
 
 import java.util.concurrent.locks.Lock;
