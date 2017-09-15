@@ -4,7 +4,7 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
 
-    <bean name="customObjectStore" class="org.mule.runtime.core.api.store.SimpleMemoryObjectStore"/>
+    <bean name="customObjectStore" class="org.mule.runtime.api.store.SimpleMemoryObjectStore"/>
 
 </beans>
 
