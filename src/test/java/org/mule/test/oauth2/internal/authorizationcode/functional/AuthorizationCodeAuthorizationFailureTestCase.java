@@ -13,6 +13,8 @@ import static org.apache.http.client.fluent.Request.Get;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig.defaultTokenManagerConfigIndex;
+import static org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig.getTokenManagerConfigByName;
 import static org.mule.runtime.http.api.HttpConstants.HttpStatus.BAD_REQUEST;
 import static org.mule.runtime.http.api.HttpConstants.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.mule.runtime.http.api.utils.HttpEncoderDecoderUtils.appendQueryParam;
@@ -29,12 +31,12 @@ import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.tck.processor.FlowAssert;
 
-import java.io.IOException;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Response;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.io.IOException;
 
 public class AuthorizationCodeAuthorizationFailureTestCase extends AbstractAuthorizationCodeBasicTestCase {
 
@@ -116,7 +118,8 @@ public class AuthorizationCodeAuthorizationFailureTestCase extends AbstractAutho
     configureWireMockToExpectTokenPathRequestForAuthorizationCodeGrantType(ACCESS_TOKEN, null);
     Get(getRedirectUrlWithOnCompleteUrlAndCodeQueryParams()).connectTimeout(REQUEST_TIMEOUT).socketTimeout(REQUEST_TIMEOUT)
         .execute();
-    final TokenManagerConfig tokenManagerConfig = muleContext.getRegistry().lookupObject(TokenManagerConfig.class);
+    final TokenManagerConfig tokenManagerConfig =
+        getTokenManagerConfigByName("default-token-manager-config-" + (defaultTokenManagerConfigIndex.get() - 1));
     final ResourceOwnerOAuthContext oauthContext =
         tokenManagerConfig.getConfigOAuthContext().getContextForResourceOwner(DEFAULT_RESOURCE_OWNER_ID);
 
@@ -131,7 +134,8 @@ public class AuthorizationCodeAuthorizationFailureTestCase extends AbstractAutho
     Get(getRedirectUrlWithOnCompleteUrlAndCodeQueryParams()).connectTimeout(REQUEST_TIMEOUT).socketTimeout(REQUEST_TIMEOUT)
         .execute();
 
-    final TokenManagerConfig tokenManagerConfig = muleContext.getRegistry().lookupObject(TokenManagerConfig.class);
+    final TokenManagerConfig tokenManagerConfig =
+        getTokenManagerConfigByName("default-token-manager-config-" + (defaultTokenManagerConfigIndex.get() - 1));
     ResourceOwnerOAuthContext oauthContext =
         tokenManagerConfig.getConfigOAuthContext().getContextForResourceOwner(DEFAULT_RESOURCE_OWNER_ID);
 

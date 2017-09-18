@@ -20,20 +20,23 @@ import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 import static org.mule.runtime.http.api.HttpHeaders.Names.WWW_AUTHENTICATE;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 
+import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.store.SimpleMemoryObjectStore;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.oauth2.AbstractOAuthAuthorizationTestCase;
 import org.mule.test.runner.RunnerDelegateTo;
 
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runners.Parameterized;
+
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.Parameterized;
+import javax.inject.Inject;
 
 @RunnerDelegateTo(Parameterized.class)
 public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizationTestCase {
@@ -51,6 +54,14 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
   public SystemProperty customTokenResponseParameter2Name = new SystemProperty("custom.param.extractor2", "token-resp-param2");
 
   private String[] configFiles;
+
+  @Inject
+  private Registry registry;
+
+  @Override
+  protected boolean doTestClassInjection() {
+    return true;
+  }
 
   @Override
   protected String[] getConfigFiles() {
@@ -83,7 +94,7 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
   public void authenticationIsDoneOnStartupUsingScope() throws Exception {
     verifyRequestDoneToTokenUrlForClientCredentials(scopes.getValue());
 
-    SimpleMemoryObjectStore objectStore = muleContext.getRegistry().get("customObjectStore");
+    SimpleMemoryObjectStore objectStore = registry.<SimpleMemoryObjectStore>lookupByName("customObjectStore").get();
     assertThat(objectStore.allKeys().isEmpty(), is(false));
     ResourceOwnerOAuthContext resourceOwnerOAuthContext =
         (ResourceOwnerOAuthContext) objectStore.retrieve(DEFAULT_RESOURCE_OWNER_ID);

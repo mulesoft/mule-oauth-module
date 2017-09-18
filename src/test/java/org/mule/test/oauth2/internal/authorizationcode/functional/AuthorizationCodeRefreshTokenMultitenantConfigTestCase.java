@@ -8,7 +8,6 @@ package org.mule.test.oauth2.internal.authorizationcode.functional;
 
 import static org.mule.runtime.http.api.HttpConstants.HttpStatus.INTERNAL_SERVER_ERROR;
 
-import io.qameta.allure.Issue;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
@@ -18,11 +17,13 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+import io.qameta.allure.Issue;
+
 @Ignore("MULE-11439: Different values in a connection don't trigger a new connect() for cached providers")
 @Issue("MULE-11439")
 public class AuthorizationCodeRefreshTokenMultitenantConfigTestCase extends AbstractAuthorizationCodeRefreshTokenConfigTestCase {
 
-  public static final String MULTITENANT_OAUTH_CONFIG = "tokenManagerConfig";
+  public static final String MULTITENANT_OAUTH_CONFIG = "multitenantOauthConfig";
 
   public static final String USER_ID_JOHN = "john";
   public static final String JOHN_ACCESS_TOKEN = "123456789";
@@ -40,8 +41,7 @@ public class AuthorizationCodeRefreshTokenMultitenantConfigTestCase extends Abst
 
   @Test
   public void afterFailureDoRefreshTokenWithCustomValueWithResourceOwnerId() throws Exception {
-    final TokenManagerConfig tokenManagerConfig = muleContext.getRegistry().get(MULTITENANT_OAUTH_CONFIG);
-    final ConfigOAuthContext configOAuthContext = tokenManagerConfig.getConfigOAuthContext();
+    final ConfigOAuthContext configOAuthContext = getTokenManagerConfig().getConfigOAuthContext();
 
     final DefaultResourceOwnerOAuthContext contextForResourceOwnerTony =
         configOAuthContext.getContextForResourceOwner(USER_ID_TONY);
@@ -60,5 +60,10 @@ public class AuthorizationCodeRefreshTokenMultitenantConfigTestCase extends Abst
     verifyTokenManagerState(USER_ID_JOHN, null);
     verifyTokenManagerAccessToken(USER_ID_TONY, TONY_ACCESS_TOKEN);
     verifyTokenManagerState(USER_ID_TONY, null);
+  }
+
+  @Override
+  protected TokenManagerConfig getTokenManagerConfig() {
+    return registry.<TokenManagerConfig>lookupByName(MULTITENANT_OAUTH_CONFIG).get();
   }
 }

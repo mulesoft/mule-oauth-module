@@ -9,6 +9,7 @@ package org.mule.test.oauth2.internal.authorizationcode.functional;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig.defaultTokenManagerConfigIndex;
+import static org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig.getTokenManagerConfigByName;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 import static org.mule.service.oauth.internal.OAuthConstants.CODE_PARAMETER;
 
@@ -36,7 +37,7 @@ public class AuthorizationCodeNoTokenManagerConfigTestCase extends AbstractAutho
     verifyRequestDoneToTokenUrlForAuthorizationCode();
 
     TokenManagerConfig tokenManagerConfig =
-        muleContext.getRegistry().get("default-token-manager-config-" + (defaultTokenManagerConfigIndex.get() - 1));
+        getTokenManagerConfigByName("default-token-manager-config-" + (defaultTokenManagerConfigIndex.get() - 1));
 
     final ResourceOwnerOAuthContext oauthContext =
         tokenManagerConfig.getConfigOAuthContext().getContextForResourceOwner(DEFAULT_RESOURCE_OWNER_ID);

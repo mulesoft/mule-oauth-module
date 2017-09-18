@@ -14,11 +14,10 @@ import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT
 import org.mule.extension.http.api.HttpResponseAttributes;
 import org.mule.extension.oauth2.internal.AbstractGrantType;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
+import org.mule.extension.oauth2.internal.store.SimpleObjectStoreToMapAdapter;
+import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
-import org.mule.runtime.api.exception.DefaultMuleException;
-import org.mule.runtime.core.api.registry.RegistrationException;
-import org.mule.extension.oauth2.internal.store.SimpleObjectStoreToMapAdapter;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -38,6 +37,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
 
 /**
  * Represents the config element for {@code oauth:authentication-code-config}.
@@ -130,6 +131,9 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
   @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID)
   private ParameterResolver<String> resourceOwnerId;
 
+  @Inject
+  private HttpService httpService;
+
   private AuthorizationCodeOAuthDancer dancer;
 
   public String getLocalCallbackConfig() {
@@ -156,16 +160,11 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
   public final void initialise() throws InitialisationException {
     initTokenManager();
 
-    try {
-      OAuthAuthorizationCodeDancerBuilder dancerBuilder =
-          configDancer(muleContext.getRegistry().lookupObject(OAuthService.class));
-      dancerBuilder.clientCredentials(getClientId(), getClientSecret());
+    OAuthAuthorizationCodeDancerBuilder dancerBuilder = configDancer(oAuthService);
+    dancerBuilder.clientCredentials(getClientId(), getClientSecret());
 
-      configureBaseDancer(dancerBuilder);
-      dancer = dancerBuilder.build();
-    } catch (RegistrationException e) {
-      throw new InitialisationException(e, this);
-    }
+    configureBaseDancer(dancerBuilder);
+    dancer = dancerBuilder.build();
     initialiseIfNeeded(getDancer());
   }
 
@@ -193,7 +192,6 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
           dancerBuilder = dancerBuilder.localCallback(new URL(localCallbackUrl));
         }
       } else if (localCallbackConfig != null) {
-        HttpService httpService = muleContext.getRegistry().lookupObject(HttpService.class);
         HttpServer server = httpService.getServerFactory().lookup(localCallbackConfig);
 
         dancerBuilder = dancerBuilder.localCallback(server, localCallbackConfigPath);
@@ -206,7 +204,7 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
           .authorizationUrl(authorizationUrl)
           .externalCallbackUrl(externalCallbackUrl);
       return dancerBuilder;
-    } catch (MalformedURLException | RegistrationException | ServerNotFoundException e) {
+    } catch (MalformedURLException | ServerNotFoundException e) {
       throw new InitialisationException(e, this);
     }
   }

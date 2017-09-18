@@ -11,19 +11,30 @@ import static org.junit.Assert.assertThat;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
+import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 
 import org.junit.Test;
 
+import javax.inject.Inject;
+
 public class ClientCredentialsNoTokenManagerConfigTestCase extends AbstractClientCredentialsBasicTestCase {
+
+  @Inject
+  private Registry registry;
+
+  @Override
+  protected boolean doTestClassInjection() {
+    return true;
+  }
 
   @Test
   public void authenticationIsDoneOnStartup() throws Exception {
     verifyRequestDoneToTokenUrlForClientCredentials();
 
-    final TokenManagerConfig tokenManagerConfig = muleContext.getRegistry().get("tokenManagerConfig");
-    final ResourceOwnerOAuthContext oauthContext = tokenManagerConfig.getConfigOAuthContext()
-        .getContextForResourceOwner(DEFAULT_RESOURCE_OWNER_ID);
+    final ResourceOwnerOAuthContext oauthContext =
+        registry.<TokenManagerConfig>lookupByName("tokenManagerConfig").get().getConfigOAuthContext()
+            .getContextForResourceOwner(DEFAULT_RESOURCE_OWNER_ID);
     assertThat(oauthContext.getAccessToken(), is(ACCESS_TOKEN));
   }
 

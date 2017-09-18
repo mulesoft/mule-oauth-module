@@ -10,9 +10,20 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.store.SimpleMemoryObjectStore;
 
+import javax.inject.Inject;
+
 public class AuthorizationCodeObjectStoreTestCase extends AuthorizationCodeMinimalConfigTestCase {
+
+  @Inject
+  private Registry registry;
+
+  @Override
+  protected boolean doTestClassInjection() {
+    return true;
+  }
 
   @Override
   protected String getConfigFile() {
@@ -23,8 +34,8 @@ public class AuthorizationCodeObjectStoreTestCase extends AuthorizationCodeMinim
   public void hitRedirectUrlAndGetToken() throws Exception {
     super.hitRedirectUrlAndGetToken();
 
-    SimpleMemoryObjectStore configObjectStore = muleContext.getRegistry().get("customObjectStore");
-    assertThat(configObjectStore.allKeys().size(), is(1));
-    assertThat(configObjectStore.retrieve("default"), notNullValue());
+    SimpleMemoryObjectStore objectStore = registry.<SimpleMemoryObjectStore>lookupByName("customObjectStore").get();
+    assertThat(objectStore.allKeys().size(), is(1));
+    assertThat(objectStore.retrieve("default"), notNullValue());
   }
 }
