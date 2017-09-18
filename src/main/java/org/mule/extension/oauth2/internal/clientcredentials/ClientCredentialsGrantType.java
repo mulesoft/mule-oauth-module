@@ -96,4 +96,8 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
   public ClientCredentialsOAuthDancer getDancer() {
     return dancer;
   }
+
+  public boolean isEncodeClientCredentialsInBody() {
+    return encodeClientCredentialsInBody;
+  }
 }

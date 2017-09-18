@@ -235,4 +235,11 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
     return tlsContextFactory;
   }
 
+  public TokenManagerConfig getTokenManager() {
+    return tokenManager;
+  }
+
+  public List<ParameterExtractor> getParameterExtractors() {
+    return parameterExtractors;
+  }
 }

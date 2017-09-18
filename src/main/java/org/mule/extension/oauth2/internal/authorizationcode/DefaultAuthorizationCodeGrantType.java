@@ -152,6 +152,30 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
     return tokenManager.getConfigOAuthContext();
   }
 
+  public Literal<String> getState() {
+    return state;
+  }
+
+  public Literal<String> getLocalAuthorizationUrlResourceOwnerId() {
+    return localAuthorizationUrlResourceOwnerId;
+  }
+
+  public String getLocalAuthorizationUrl() {
+    return localAuthorizationUrl;
+  }
+
+  public String getAuthorizationUrl() {
+    return authorizationUrl;
+  }
+
+  public Map<String, String> getCustomParameters() {
+    return customParameters;
+  }
+
+  public ParameterResolver<String> getResourceOwnerId() {
+    return resourceOwnerId;
+  }
+
   @Override
   public final void initialise() throws InitialisationException {
     initTokenManager();
