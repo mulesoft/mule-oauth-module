@@ -26,14 +26,14 @@ import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.oauth2.AbstractOAuthAuthorizationTestCase;
 import org.mule.test.runner.RunnerDelegateTo;
 
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runners.Parameterized;
+
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Arrays;
 import java.util.Collection;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.Parameterized;
 
 @RunnerDelegateTo(Parameterized.class)
 public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizationTestCase {
@@ -83,7 +83,7 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
   public void authenticationIsDoneOnStartupUsingScope() throws Exception {
     verifyRequestDoneToTokenUrlForClientCredentials(scopes.getValue());
 
-    SimpleMemoryObjectStore objectStore = muleContext.getRegistry().get("customObjectStore");
+    SimpleMemoryObjectStore objectStore = registry.<SimpleMemoryObjectStore>lookupByName("customObjectStore").get();
     assertThat(objectStore.allKeys().isEmpty(), is(false));
     ResourceOwnerOAuthContext resourceOwnerOAuthContext =
         (ResourceOwnerOAuthContext) objectStore.retrieve(DEFAULT_RESOURCE_OWNER_ID);

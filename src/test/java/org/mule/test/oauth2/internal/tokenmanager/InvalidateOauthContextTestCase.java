@@ -32,7 +32,7 @@ public class InvalidateOauthContextTestCase extends AbstractOAuthAuthorizationTe
 
   @Test
   public void invalidateTokenManagerGeneralOauthContext() throws Exception {
-    TokenManagerConfig tokenManagerConfig = muleContext.getRegistry().get("tokenManagerConfig");
+    TokenManagerConfig tokenManagerConfig = registry.<TokenManagerConfig>lookupByName("tokenManagerConfig").get();
     initialiseIfNeeded(tokenManagerConfig, muleContext);
     final ConfigOAuthContext configOAuthContext = tokenManagerConfig.getConfigOAuthContext();
     loadResourceOwnerWithAccessToken(configOAuthContext, DEFAULT_RESOURCE_OWNER_ID);
@@ -42,7 +42,7 @@ public class InvalidateOauthContextTestCase extends AbstractOAuthAuthorizationTe
 
   @Test
   public void invalidateTokenManagerGeneralOauthContextForResourceOwnerId() throws Exception {
-    TokenManagerConfig tokenManagerConfig = muleContext.getRegistry().get("tokenManagerConfig");
+    TokenManagerConfig tokenManagerConfig = registry.<TokenManagerConfig>lookupByName("tokenManagerConfig").get();
     initialiseIfNeeded(tokenManagerConfig, muleContext);
     final ConfigOAuthContext configOAuthContext = tokenManagerConfig.getConfigOAuthContext();
     loadResourceOwnerWithAccessToken(configOAuthContext, RESOURCE_OWNER_JOHN);

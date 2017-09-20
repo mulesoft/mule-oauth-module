@@ -21,9 +21,9 @@ public class ClientCredentialsNoTokenManagerConfigTestCase extends AbstractClien
   public void authenticationIsDoneOnStartup() throws Exception {
     verifyRequestDoneToTokenUrlForClientCredentials();
 
-    final TokenManagerConfig tokenManagerConfig = muleContext.getRegistry().get("tokenManagerConfig");
-    final ResourceOwnerOAuthContext oauthContext = tokenManagerConfig.getConfigOAuthContext()
-        .getContextForResourceOwner(DEFAULT_RESOURCE_OWNER_ID);
+    final ResourceOwnerOAuthContext oauthContext =
+        registry.<TokenManagerConfig>lookupByName("tokenManagerConfig").get().getConfigOAuthContext()
+            .getContextForResourceOwner(DEFAULT_RESOURCE_OWNER_ID);
     assertThat(oauthContext.getAccessToken(), is(ACCESS_TOKEN));
   }
 

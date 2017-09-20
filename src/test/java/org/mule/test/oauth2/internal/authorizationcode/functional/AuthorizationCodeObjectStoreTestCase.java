@@ -23,8 +23,8 @@ public class AuthorizationCodeObjectStoreTestCase extends AuthorizationCodeMinim
   public void hitRedirectUrlAndGetToken() throws Exception {
     super.hitRedirectUrlAndGetToken();
 
-    SimpleMemoryObjectStore configObjectStore = muleContext.getRegistry().get("customObjectStore");
-    assertThat(configObjectStore.allKeys().size(), is(1));
-    assertThat(configObjectStore.retrieve("default"), notNullValue());
+    SimpleMemoryObjectStore objectStore = registry.<SimpleMemoryObjectStore>lookupByName("customObjectStore").get();
+    assertThat(objectStore.allKeys().size(), is(1));
+    assertThat(objectStore.retrieve("default"), notNullValue());
   }
 }

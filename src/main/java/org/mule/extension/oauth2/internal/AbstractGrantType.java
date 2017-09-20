@@ -17,6 +17,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import static org.mule.runtime.core.api.util.SystemUtils.getDefaultEncoding;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.SECURITY_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extension.http.api.request.authentication.HttpRequestAuthentication;
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.api.exception.MuleException;
@@ -32,15 +33,18 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.runtime.parameter.Literal;
+import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthDancerBuilder;
-
-import java.util.List;
 
 import org.slf4j.Logger;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 /**
  * Common interface for all grant types must extend this interface.
- * 
+ *
  * @since 1.0
  */
 // TODO MULE-11412 Remove MuleContextAware
@@ -134,6 +138,9 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
   @DisplayName(TLS_CONFIGURATION)
   @Placement(tab = SECURITY_TAB)
   private TlsContextFactory tlsContextFactory;
+
+  @Inject
+  protected OAuthService oAuthService;
 
   protected void initTokenManager() throws InitialisationException {
     if (tokenManager == null) {

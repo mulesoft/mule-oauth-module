@@ -7,21 +7,23 @@
 package org.mule.extension.oauth2.internal.tokenmanager;
 
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
+import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.api.store.ObjectStore;
 import org.mule.runtime.api.store.ObjectStoreSettings;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.context.MuleContextAware;
-import org.mule.runtime.core.api.registry.RegistrationException;
-import org.mule.runtime.api.store.ObjectStore;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.dsl.xml.TypeDsl;
-import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.reference.ObjectStoreReference;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -31,9 +33,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Alias("token-manager-config")
 @TypeDsl(allowTopLevelDefinition = true)
-public class TokenManagerConfig implements Initialisable, MuleContextAware {
+public class TokenManagerConfig implements Initialisable, Disposable, MuleContextAware {
 
   public static AtomicInteger defaultTokenManagerConfigIndex = new AtomicInteger(0);
+
+  private static final Map<String, TokenManagerConfig> activeConfigs = new ConcurrentHashMap<>();
 
   /**
    * Identifier for the token manager configuration.
@@ -83,16 +87,25 @@ public class TokenManagerConfig implements Initialisable, MuleContextAware {
     initialised = true;
   }
 
+  @Override
+  public void dispose() {
+    activeConfigs.remove(name);
+  }
+
   public static TokenManagerConfig createDefault(final MuleContext context) throws InitialisationException {
     final TokenManagerConfig tokenManagerConfig = new TokenManagerConfig();
     final String tokenManagerConfigName = "default-token-manager-config-" + defaultTokenManagerConfigIndex.getAndIncrement();
     tokenManagerConfig.setName(tokenManagerConfigName);
-    try {
-      context.getRegistry().registerObject(tokenManagerConfigName, tokenManagerConfig);
-    } catch (RegistrationException e) {
-      throw new InitialisationException(e, tokenManagerConfig);
-    }
+    activeConfigs.put(tokenManagerConfigName, tokenManagerConfig);
     return tokenManagerConfig;
+  }
+
+  /**
+   * @param name the name of the {@link TokenManagerConfig} to get.
+   * @return the config with the given name
+   */
+  public static TokenManagerConfig getTokenManagerConfigByName(String name) {
+    return activeConfigs.get(name);
   }
 
   public ConfigOAuthContext getConfigOAuthContext() {

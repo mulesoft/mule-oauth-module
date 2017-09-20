@@ -104,13 +104,14 @@ public abstract class AbstractAuthorizationCodeRefreshTokenConfigTestCase extend
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
         .willReturn(aResponse().withStatus(failureStatusCode).withBody("")));
 
-    final ConfigOAuthContext configOAuthContext =
-        muleContext.getRegistry().<TokenManagerConfig>lookupObject(oauthConfigName).getConfigOAuthContext();
+    final ConfigOAuthContext configOAuthContext = getTokenManagerConfig().getConfigOAuthContext();
     final DefaultResourceOwnerOAuthContext resourceOwnerOauthContext = configOAuthContext.getContextForResourceOwner(userId);
     resourceOwnerOauthContext.setAccessToken(ACCESS_TOKEN);
     resourceOwnerOauthContext.setRefreshToken(REFRESH_TOKEN);
     configOAuthContext.updateResourceOwnerOAuthContext(resourceOwnerOauthContext);
   }
+
+  protected abstract TokenManagerConfig getTokenManagerConfig();
 
 }
 

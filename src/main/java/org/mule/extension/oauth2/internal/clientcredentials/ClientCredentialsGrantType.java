@@ -12,17 +12,15 @@ import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 
 import org.mule.extension.http.api.HttpResponseAttributes;
 import org.mule.extension.oauth2.internal.AbstractGrantType;
+import org.mule.extension.oauth2.internal.store.SimpleObjectStoreToMapAdapter;
+import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
-import org.mule.runtime.api.exception.DefaultMuleException;
-import org.mule.runtime.core.api.registry.RegistrationException;
-import org.mule.extension.oauth2.internal.store.SimpleObjectStoreToMapAdapter;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.http.api.domain.message.request.HttpRequestBuilder;
 import org.mule.runtime.oauth.api.ClientCredentialsOAuthDancer;
-import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthClientCredentialsDancerBuilder;
 
 import java.util.concurrent.ExecutionException;
@@ -46,21 +44,15 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
   public final void initialise() throws InitialisationException {
     initTokenManager();
 
-    try {
-      OAuthService oauthService = muleContext.getRegistry().lookupObject(OAuthService.class);
+    OAuthClientCredentialsDancerBuilder dancerBuilder =
+        oAuthService.clientCredentialsGrantTypeDancerBuilder(lockId -> muleContext.getLockFactory().createLock(lockId),
+                                                             new SimpleObjectStoreToMapAdapter(tokenManager.getObjectStore()),
+                                                             muleContext.getExpressionManager());
+    dancerBuilder.encodeClientCredentialsInBody(encodeClientCredentialsInBody);
+    dancerBuilder.clientCredentials(getClientId(), getClientSecret());
 
-      OAuthClientCredentialsDancerBuilder dancerBuilder =
-          oauthService.clientCredentialsGrantTypeDancerBuilder(lockId -> muleContext.getLockFactory().createLock(lockId),
-                                                               new SimpleObjectStoreToMapAdapter(tokenManager.getObjectStore()),
-                                                               muleContext.getExpressionManager());
-      dancerBuilder.encodeClientCredentialsInBody(encodeClientCredentialsInBody);
-      dancerBuilder.clientCredentials(getClientId(), getClientSecret());
-
-      configureBaseDancer(dancerBuilder);
-      dancer = dancerBuilder.build();
-    } catch (RegistrationException e) {
-      throw new InitialisationException(e, this);
-    }
+    configureBaseDancer(dancerBuilder);
+    dancer = dancerBuilder.build();
     initialiseIfNeeded(getDancer());
   }
 

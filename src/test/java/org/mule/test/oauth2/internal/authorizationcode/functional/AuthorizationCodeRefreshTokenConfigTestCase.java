@@ -9,7 +9,9 @@ package org.mule.test.oauth2.internal.authorizationcode.functional;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
+
 import org.mule.extension.http.api.request.validator.ResponseValidatorTypedException;
+import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
 import org.mule.functional.junit4.rules.ExpectedError;
 
 import org.junit.Rule;
@@ -44,4 +46,10 @@ public class AuthorizationCodeRefreshTokenConfigTestCase extends AbstractAuthori
     executeRefreshTokenUsingOldRefreshTokenOnTokenCallAndRevokedByUsers("testFlow", SINGLE_TENANT_OAUTH_CONFIG,
                                                                         DEFAULT_RESOURCE_OWNER_ID, 403, 400);
   }
+
+  @Override
+  protected TokenManagerConfig getTokenManagerConfig() {
+    return registry.<TokenManagerConfig>lookupByName(SINGLE_TENANT_OAUTH_CONFIG).get();
+  }
+
 }
