@@ -27,15 +27,12 @@ import static org.mule.service.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAM
 
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
-import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.core.api.event.BaseEvent;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.oauth2.AbstractOAuthAuthorizationTestCase;
 
 import org.junit.Rule;
-
-import javax.inject.Inject;
 
 public abstract class AbstractAuthorizationCodeRefreshTokenConfigTestCase extends AbstractOAuthAuthorizationTestCase {
 
@@ -65,17 +62,9 @@ public abstract class AbstractAuthorizationCodeRefreshTokenConfigTestCase extend
   @Rule
   public SystemProperty tokenPath = new SystemProperty("token.path", TOKEN_PATH);
 
-  @Inject
-  protected Registry registry;
-
   @Override
   protected String getConfigFile() {
     return "authorization-code/authorization-code-refresh-token-config.xml";
-  }
-
-  @Override
-  protected boolean doTestClassInjection() {
-    return true;
   }
 
   protected void executeRefreshToken(String flowName, String oauthConfigName, String userId, int failureStatusCode)

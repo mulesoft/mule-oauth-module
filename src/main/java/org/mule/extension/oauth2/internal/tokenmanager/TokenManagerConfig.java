@@ -101,7 +101,6 @@ public class TokenManagerConfig implements Initialisable, Disposable, MuleContex
   }
 
   /**
-   *
    * @param name the name of the {@link TokenManagerConfig} to get.
    * @return the config with the given name
    */

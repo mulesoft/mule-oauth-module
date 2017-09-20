@@ -14,27 +14,16 @@ import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT
 
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
-import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
 import org.mule.test.oauth2.AbstractOAuthAuthorizationTestCase;
 
 import org.junit.Test;
-
-import javax.inject.Inject;
 
 public class InvalidateOauthContextTestCase extends AbstractOAuthAuthorizationTestCase {
 
   public static final String ACCESS_TOKEN = "Access_token";
   public static final String RESOURCE_OWNER_JOHN = "john";
   public static final String RESOURCE_OWNER_TONY = "tony";
-
-  @Inject
-  private Registry registry;
-
-  @Override
-  protected boolean doTestClassInjection() {
-    return true;
-  }
 
   @Override
   protected String getConfigFile() {

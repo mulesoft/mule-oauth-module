@@ -10,20 +10,9 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.store.SimpleMemoryObjectStore;
 
-import javax.inject.Inject;
-
 public class AuthorizationCodeObjectStoreTestCase extends AuthorizationCodeMinimalConfigTestCase {
-
-  @Inject
-  private Registry registry;
-
-  @Override
-  protected boolean doTestClassInjection() {
-    return true;
-  }
 
   @Override
   protected String getConfigFile() {

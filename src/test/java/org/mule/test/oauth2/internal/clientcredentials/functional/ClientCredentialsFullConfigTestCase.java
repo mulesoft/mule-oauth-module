@@ -20,7 +20,6 @@ import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 import static org.mule.runtime.http.api.HttpHeaders.Names.WWW_AUTHENTICATE;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 
-import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.store.SimpleMemoryObjectStore;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;
@@ -35,8 +34,6 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Arrays;
 import java.util.Collection;
-
-import javax.inject.Inject;
 
 @RunnerDelegateTo(Parameterized.class)
 public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizationTestCase {
@@ -54,14 +51,6 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
   public SystemProperty customTokenResponseParameter2Name = new SystemProperty("custom.param.extractor2", "token-resp-param2");
 
   private String[] configFiles;
-
-  @Inject
-  private Registry registry;
-
-  @Override
-  protected boolean doTestClassInjection() {
-    return true;
-  }
 
   @Override
   protected String[] getConfigFiles() {
