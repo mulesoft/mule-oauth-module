@@ -7,9 +7,11 @@
 package org.mule.extension.oauth2.internal;
 
 import static java.util.Objects.requireNonNull;
+import static org.mule.runtime.extension.api.annotation.param.MediaType.TEXT_PLAIN;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
+import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 
@@ -39,6 +41,7 @@ public class OAuthOperations {
    * @param resourceOwnerId The resource owner id to invalidate. This attribute is only allowed for authorization code grant type.
    * @return access token of the oauth context retrieved by the token request.
    */
+  @MediaType(value = TEXT_PLAIN, strict = false)
   public String retrieveAccessToken(TokenManagerConfig tokenManager,
                                     @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
     validateResourceOwnerId(resourceOwnerId);
@@ -52,6 +55,7 @@ public class OAuthOperations {
    * @param resourceOwnerId The resource owner id to invalidate. This attribute is only allowed for authorization code grant type.
    * @return refresh token of the oauth context retrieved by the token request.
    */
+  @MediaType(value = TEXT_PLAIN, strict = false)
   public String retrieveRefreshToken(TokenManagerConfig tokenManager,
                                      @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
     return getContextForResourceOwner(tokenManager, resourceOwnerId).getRefreshToken();
@@ -64,6 +68,7 @@ public class OAuthOperations {
    * @param resourceOwnerId The resource owner id to invalidate. This attribute is only allowed for authorization code grant type.
    * @return the expiration of the oauth context retrieved by the token request.
    */
+  @MediaType(value = TEXT_PLAIN, strict = false)
   public String retrieveExpiresIn(TokenManagerConfig tokenManager,
                                   @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
     return getContextForResourceOwner(tokenManager, resourceOwnerId).getExpiresIn();
@@ -76,6 +81,7 @@ public class OAuthOperations {
    * @param resourceOwnerId The resource owner id to invalidate. This attribute is only allowed for authorization code grant type.
    * @return state of the oauth context retrieved by the token request.
    */
+  @MediaType(value = TEXT_PLAIN, strict = false)
   public String retrieveState(TokenManagerConfig tokenManager,
                               @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
     return getContextForResourceOwner(tokenManager, resourceOwnerId).getState();
