@@ -12,7 +12,7 @@ import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT
 
 import org.mule.extension.http.api.request.validator.ResponseValidatorTypedException;
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
-import org.mule.functional.junit4.rules.ExpectedError;
+import org.mule.functional.api.exception.ExpectedError;
 
 import org.junit.Rule;
 import org.junit.Test;
