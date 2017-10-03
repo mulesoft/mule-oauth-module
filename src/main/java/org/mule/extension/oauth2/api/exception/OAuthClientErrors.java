@@ -7,8 +7,8 @@
 package org.mule.extension.oauth2.api.exception;
 
 import static java.util.Optional.ofNullable;
-import static org.mule.runtime.extension.api.error.MuleErrors.SECURITY;
 
+import org.mule.extension.http.api.error.HttpError;
 import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
 
 import java.util.Optional;
@@ -18,17 +18,17 @@ import java.util.Optional;
  *
  * @since 1.0
  */
-public enum OAuthErrors implements ErrorTypeDefinition<OAuthErrors> {
+public enum OAuthClientErrors implements ErrorTypeDefinition<OAuthClientErrors> {
 
-  OAUTH_ERROR(SECURITY), TOKEN_NOT_FOUND(OAUTH_ERROR), TOKEN_URL_FAIL(OAUTH_ERROR);
+  OAUTH_CLIENT_SECURITY(HttpError.CLIENT_SECURITY), TOKEN_NOT_FOUND(OAUTH_CLIENT_SECURITY), TOKEN_URL_FAIL(OAUTH_CLIENT_SECURITY);
 
   private ErrorTypeDefinition<?> parentErrortype;
 
-  private OAuthErrors(ErrorTypeDefinition parentErrorType) {
+  private OAuthClientErrors(ErrorTypeDefinition parentErrorType) {
     this.parentErrortype = parentErrorType;
   }
 
-  private OAuthErrors() {}
+  private OAuthClientErrors() {}
 
   @Override
   public Optional<ErrorTypeDefinition<? extends Enum<?>>> getParent() {
