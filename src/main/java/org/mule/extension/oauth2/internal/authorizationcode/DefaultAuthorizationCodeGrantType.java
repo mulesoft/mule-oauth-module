@@ -186,10 +186,12 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
 
     try {
       if (localCallbackUrl != null) {
-        if (getTlsContextFactory() != null) {
-          dancerBuilder = dancerBuilder.localCallback(new URL(localCallbackUrl), getTlsContextFactory());
-        } else {
-          dancerBuilder = dancerBuilder.localCallback(new URL(localCallbackUrl));
+        if (!localCallbackUrl.startsWith("urn:")) {
+          if (getTlsContextFactory() != null) {
+            dancerBuilder = dancerBuilder.localCallback(new URL(localCallbackUrl), getTlsContextFactory());
+          } else {
+            dancerBuilder = dancerBuilder.localCallback(new URL(localCallbackUrl));
+          }
         }
       } else if (localCallbackConfig != null) {
         HttpServer server = httpService.getServerFactory().lookup(localCallbackConfig);
