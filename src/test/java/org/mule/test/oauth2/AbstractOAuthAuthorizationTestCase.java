@@ -42,13 +42,13 @@ import org.mule.runtime.api.metadata.MediaType;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.tck.junit4.rule.SystemProperty;
 
+import org.junit.Rule;
+
 import com.github.tomakehurst.wiremock.client.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableMap;
 
 import java.io.UnsupportedEncodingException;
-
-import org.junit.Rule;
 
 public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFunctionalTestCase {
 
@@ -85,12 +85,13 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
   public SystemProperty oauthServerPortNumber =
       new SystemProperty("oauth.server.port", String.valueOf(oauthServerPort.getNumber()));
   @Rule
-  public SystemProperty localCallbackPath =
-      new SystemProperty("local.callback.path", "/callback");
+  public SystemProperty localCallbackPath = new SystemProperty("local.callback.path", "/callback");
   @Rule
-  public SystemProperty localCallbackUrl =
-      new SystemProperty("local.callback.url",
-                         format("%s://localhost:%d%s", getProtocol(), localHostPort.getNumber(), localCallbackPath.getValue()));
+  public SystemProperty localCallbackUrl = new SystemProperty("local.callback.url", getRedirectUrl());
+
+  protected String getRedirectUrl() {
+    return format("%s://localhost:%d%s", getProtocol(), localHostPort.getNumber(), localCallbackPath.getValue());
+  }
 
   protected String getProtocol() {
     return "http";
