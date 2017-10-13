@@ -40,6 +40,9 @@ public abstract class AbstractAuthorizationCodeRefreshTokenConfigTestCase extend
   public static final String RESOURCE_RESULT = "resource result";
   public static final String REFRESHED_ACCESS_TOKEN = "rbBQLgJXBEYo83K4Fqs4guasdfsdfa";
 
+  public static final String TEST_HEADER_NAME = "test_name";
+  public static final String TEST_HEADER_VALUE = "test_value";
+
   @Rule
   public SystemProperty originalPayload = new SystemProperty("payload.original", TEST_PAYLOAD);
   @Rule
@@ -71,7 +74,8 @@ public abstract class AbstractAuthorizationCodeRefreshTokenConfigTestCase extend
       throws Exception {
     configureResourceResponsesForRefreshToken(oauthConfigName, userId, failureStatusCode);
 
-    final CoreEvent result = flowRunner(flowName).withPayload("message").withVariable("userId", userId).run();
+    final CoreEvent result = flowRunner(flowName).withPayload("message").withVariable("userId", userId)
+        .withVariable("headerName", TEST_HEADER_NAME).withVariable("headerValue", TEST_HEADER_VALUE).run();
     assertThat(result.getMessage().getPayload().getValue(), is(RESOURCE_RESULT));
 
     wireMockRule.verify(postRequestedFor(urlEqualTo(TOKEN_PATH))
@@ -81,6 +85,8 @@ public abstract class AbstractAuthorizationCodeRefreshTokenConfigTestCase extend
         .withRequestBody(containing(GRANT_TYPE_PARAMETER + "=" + encode(GRANT_TYPE_REFRESH_TOKEN, UTF_8.name()))));
 
     wireMockRule.verify(2, postRequestedFor(urlEqualTo(RESOURCE_PATH)).withRequestBody(equalTo(TEST_PAYLOAD)));
+    wireMockRule.verify(2,
+                        postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(TEST_HEADER_NAME, containing(TEST_HEADER_VALUE)));
   }
 
   protected void executeRefreshTokenUsingOldRefreshTokenOnTokenCallAndRevokedByUsers(String flowName, String oauthConfigName,
@@ -92,7 +98,8 @@ public abstract class AbstractAuthorizationCodeRefreshTokenConfigTestCase extend
     wireMockRule
         .stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(REFRESHED_ACCESS_TOKEN))
             .willReturn(aResponse().withStatus(tokenFailureStatusCode).withBody("")));
-    flowRunner(flowName).withPayload("message").withVariable("userId", userId).run();
+    flowRunner(flowName).withPayload("message").withVariable("userId", userId).withVariable("headerName", TEST_HEADER_NAME)
+        .withVariable("headerValue", TEST_HEADER_VALUE).run();
   }
 
   private void configureResourceResponsesForRefreshToken(String oauthConfigName, String userId, int failureStatusCode) {
