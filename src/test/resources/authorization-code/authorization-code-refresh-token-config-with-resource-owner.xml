@@ -32,6 +32,12 @@
 
     <flow name="testFlow">
         <set-payload value="${payload.original}"/>
-        <http:request path="/resource" method="POST" config-ref="requestConfig"/>
+        <http:request path="/resource" method="POST" config-ref="requestConfig">
+            <http:headers>
+                #[{
+                '$(vars.headerName)' : vars.headerValue
+                }]
+            </http:headers>
+        </http:request>
     </flow>
 </mule>
