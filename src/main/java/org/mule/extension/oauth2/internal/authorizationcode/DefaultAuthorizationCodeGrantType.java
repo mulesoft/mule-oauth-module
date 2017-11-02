@@ -21,6 +21,7 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.reference.ConfigReference;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.parameter.Literal;
 import org.mule.runtime.extension.api.runtime.parameter.ParameterResolver;
@@ -56,6 +57,7 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
    */
   @Parameter
   @Optional
+  @ConfigReference(namespace = "HTTP", name = "LISTENER_CONFIG")
   private String localCallbackConfig;
 
   /**
