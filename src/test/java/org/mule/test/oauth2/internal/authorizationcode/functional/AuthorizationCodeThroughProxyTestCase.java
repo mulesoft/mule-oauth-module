@@ -7,13 +7,33 @@
 
 package org.mule.test.oauth2.internal.authorizationcode.functional;
 
-import org.junit.Before;
+import static java.util.Arrays.asList;
 
+import org.mule.test.runner.RunnerDelegateTo;
+
+import java.util.Collection;
+
+import org.junit.Before;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.Parameterized.Parameter;
+
+@RunnerDelegateTo(Parameterized.class)
 public class AuthorizationCodeThroughProxyTestCase extends AbstractAuthorizationCodeFullConfigTestCase {
+
+  @Parameter
+  public String configFile;
 
   @Override
   protected String[] getConfigFiles() {
-    return new String[] {"authorization-code/authorization-code-through-proxy.xml", "operations/operations-config.xml"};
+    return new String[] {configFile, "operations/operations-config.xml"};
+  }
+
+  @Parameters
+  public static Collection<Object> data() {
+    String inlineProxyConfig = "authorization-code/authorization-code-through-proxy-inline.xml";
+    String globalProxyConfig = "authorization-code/authorization-code-through-proxy.xml";
+    return asList(new Object[] {inlineProxyConfig, globalProxyConfig});
   }
 
   @Before
