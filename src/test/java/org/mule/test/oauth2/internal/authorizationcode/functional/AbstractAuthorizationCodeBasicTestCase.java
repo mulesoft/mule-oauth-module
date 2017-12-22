@@ -65,7 +65,7 @@ public abstract class AbstractAuthorizationCodeBasicTestCase extends AbstractOAu
 
     Request.Get(localAuthorizationUrl.getValue()).connectTimeout(RECEIVE_TIMEOUT).socketTimeout(RECEIVE_TIMEOUT).execute();
 
-    final List<LoggedRequest> requests = findAll(getRequestedFor(urlMatching(AUTHORIZE_PATH + ".*")));
+    final List<LoggedRequest> requests = wireMockRule.findAll(getRequestedFor(urlMatching(AUTHORIZE_PATH + ".*")));
     assertThat(requests.size(), is(1));
 
     return requests.get(0);

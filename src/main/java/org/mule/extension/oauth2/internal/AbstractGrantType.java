@@ -19,6 +19,7 @@ import static org.mule.runtime.extension.api.annotation.param.display.Placement.
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extension.http.api.request.authentication.HttpRequestAuthentication;
+import org.mule.extension.http.api.request.proxy.HttpProxyConfig;
 import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -33,6 +34,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.runtime.parameter.Literal;
+import org.mule.runtime.http.api.client.proxy.ProxyConfig;
 import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthDancerBuilder;
 
@@ -139,6 +141,10 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
   @Placement(tab = SECURITY_TAB)
   private TlsContextFactory tlsContextFactory;
 
+  @Parameter
+  @Optional
+  private HttpProxyConfig proxyConfig;
+
   @Inject
   protected OAuthService oAuthService;
 
@@ -150,13 +156,11 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
   }
 
   protected OAuthDancerBuilder configureBaseDancer(OAuthDancerBuilder dancerBuilder) throws InitialisationException {
-    if (getTlsContextFactory() != null) {
+    TlsContextFactory contextFactory = getTlsContextFactory();
+    if (contextFactory != null) {
       initialiseIfNeeded(getTlsContextFactory());
-      dancerBuilder = dancerBuilder.tokenUrl(getTokenUrl(), getTlsContextFactory());
-    } else {
-      dancerBuilder = dancerBuilder.tokenUrl(getTokenUrl());
     }
-
+    dancerBuilder.tokenUrl(tokenUrl, contextFactory, proxyConfig);
     dancerBuilder.scopes(getScopes())
         .encoding(getDefaultEncoding(muleContext))
         .responseAccessTokenExpr(resolver.getExpression(getResponseAccessToken()))

@@ -68,7 +68,7 @@ public class AuthorizationCodeMultitenantTestCase extends AbstractOAuthAuthoriza
   @Test
   public void danceWithCustomResourceOwnerId() throws Exception {
     executeForUserWithAccessToken(USER_ID_JOHN, JOHN_ACCESS_TOKEN, NO_STATE);
-    WireMock.reset();
+    wireMockRule.resetRequests();
     executeForUserWithAccessToken(USER_ID_TONY, TONY_ACCESS_TOKEN, NO_STATE);
 
     verifyTokenManagerAccessToken(USER_ID_JOHN, JOHN_ACCESS_TOKEN);
@@ -80,7 +80,7 @@ public class AuthorizationCodeMultitenantTestCase extends AbstractOAuthAuthoriza
   @Test
   public void danceWithCustomResourceOwnerIdAndState() throws Exception {
     executeForUserWithAccessToken(USER_ID_JOHN, JOHN_ACCESS_TOKEN, JOHN_STATE);
-    WireMock.reset();
+    wireMockRule.resetRequests();
     executeForUserWithAccessToken(USER_ID_TONY, TONY_ACCESS_TOKEN, TONY_STATE);
 
     verifyTokenManagerAccessToken(USER_ID_JOHN, JOHN_ACCESS_TOKEN);
@@ -92,7 +92,7 @@ public class AuthorizationCodeMultitenantTestCase extends AbstractOAuthAuthoriza
   @Test
   public void refreshToken() throws Exception {
     executeForUserWithAccessToken(USER_ID_JOHN, JOHN_ACCESS_TOKEN, NO_STATE);
-    WireMock.reset();
+    wireMockRule.resetRequests();
     executeForUserWithAccessToken(USER_ID_TONY, TONY_ACCESS_TOKEN, NO_STATE);
 
     verifyTokenManagerAccessToken(USER_ID_JOHN, JOHN_ACCESS_TOKEN);
@@ -115,7 +115,7 @@ public class AuthorizationCodeMultitenantTestCase extends AbstractOAuthAuthoriza
     Get(localAuthorizationUrl.getValue() + "?" + encodeQueryString(localAuthorizationUrlParametersBuilder.build()))
         .connectTimeout(REQUEST_TIMEOUT).socketTimeout(REQUEST_TIMEOUT).execute();
 
-    AuthorizationRequestAsserter.create((findAll(getRequestedFor(urlMatching(AUTHORIZE_PATH + ".*"))).get(0)))
+    AuthorizationRequestAsserter.create((wireMockRule.findAll(getRequestedFor(urlMatching(AUTHORIZE_PATH + ".*"))).get(0)))
         .assertStateIs(expectedState);
 
     wireMockRule.stubFor(post(urlEqualTo(TOKEN_PATH)).willReturn(aResponse()

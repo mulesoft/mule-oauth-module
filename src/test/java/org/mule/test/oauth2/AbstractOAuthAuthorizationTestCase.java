@@ -11,6 +11,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
@@ -23,6 +24,7 @@ import static org.mule.runtime.http.api.HttpConstants.HttpStatus.INTERNAL_SERVER
 import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 import static org.mule.runtime.http.api.HttpHeaders.Names.CONTENT_TYPE;
 import static org.mule.runtime.http.api.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
+import static org.mule.runtime.http.api.HttpHeaders.Values.KEEP_ALIVE;
 import static org.mule.runtime.http.api.utils.HttpEncoderDecoderUtils.encodeString;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 import static org.mule.service.oauth.internal.OAuthConstants.ACCESS_TOKEN_PARAMETER;
@@ -60,10 +62,14 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
   public static final String REFRESH_TOKEN = "cry825cyCs2O0j7tRXXVS4AXNu7hsO5wbWjcBoFFcJePy5zZwuQEevIp6hsUaywp";
   public static final String EXPIRES_IN = "3897";
   public static final String AUTHORIZE_PATH = "/authorize";
+  private static final String PROXY_CONNECTION_HEADER = "Proxy-Connection";
   protected final DynamicPort oauthServerPort = new DynamicPort("port2");
   protected final DynamicPort oauthHttpsServerPort = new DynamicPort("port3");
   private String keyStorePath = currentThread().getContextClassLoader().getResource("ssltest-keystore.jks").getPath();
   private String keyStorePassword = "changeit";
+
+  @Rule
+  public DynamicPort proxyPort = new DynamicPort("proxyPort");
 
   @Rule
   public final DynamicPort localHostPort = new DynamicPort("localHostPort");
@@ -75,19 +81,29 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
 
   @Rule
   public SystemProperty clientId = new SystemProperty("client.id", "ndli93xdws2qoe6ms1d389vl6bxquv3e");
+
   @Rule
   public SystemProperty clientSecret = new SystemProperty("client.secret", "yL692Az1cNhfk1VhTzyx4jOjjMKBrO9T");
+
   @Rule
   public SystemProperty scopes = new SystemProperty("scopes", "expected scope");
+
   @Rule
   public SystemProperty state = new SystemProperty("state", "expected state");
+
   @Rule
   public SystemProperty oauthServerPortNumber =
       new SystemProperty("oauth.server.port", String.valueOf(oauthServerPort.getNumber()));
+
   @Rule
   public SystemProperty localCallbackPath = new SystemProperty("local.callback.path", "/callback");
+
   @Rule
   public SystemProperty localCallbackUrl = new SystemProperty("local.callback.url", getRedirectUrl());
+
+  @Rule
+  public WireMockRule proxyWireMockRule = new WireMockRule(wireMockConfig().port(proxyPort.getNumber()));
+
 
   protected String getRedirectUrl() {
     return format("%s://localhost:%d%s", getProtocol(), localHostPort.getNumber(), localCallbackPath.getValue());
@@ -95,6 +111,11 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
 
   protected String getProtocol() {
     return "http";
+  }
+
+  protected void configureProxyWireMock() {
+    proxyWireMockRule.stubFor(post(urlMatching(TOKEN_PATH))
+        .willReturn(aResponse().proxiedFrom(format("http://localhost:%s", oauthServerPort.getNumber()))));
   }
 
   protected void configureWireMockToExpectTokenPathRequestForAuthorizationCodeGrantType() {
@@ -161,12 +182,26 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
   }
 
   protected void verifyRequestDoneToTokenUrlForAuthorizationCode() throws UnsupportedEncodingException {
-    wireMockRule.verify(postRequestedFor(urlEqualTo(TOKEN_PATH))
+    verifyRequestDoneToTokenUrlForAuthorizationCode(false);
+  }
+
+  protected void verifyRequestDoneToTokenUrlForAuthorizationCode(boolean requestThroughProxy)
+      throws UnsupportedEncodingException {
+    final RequestPatternBuilder verification = postRequestedFor(urlEqualTo(TOKEN_PATH))
         .withRequestBody(containing(CLIENT_ID_PARAMETER + "=" + encode(clientId.getValue(), UTF_8.name())))
         .withRequestBody(containing(CODE_PARAMETER + "=" + encode(AUTHENTICATION_CODE, UTF_8.name())))
         .withRequestBody(containing(CLIENT_SECRET_PARAMETER + "=" + encode(clientSecret.getValue(), UTF_8.name())))
         .withRequestBody(containing(GRANT_TYPE_PARAMETER + "=" + encode(GRANT_TYPE_AUTHENTICATION_CODE, UTF_8.name())))
-        .withRequestBody(containing(REDIRECT_URI_PARAMETER + "=" + encode(localCallbackUrl.getValue(), UTF_8.name()))));
+        .withRequestBody(containing(REDIRECT_URI_PARAMETER + "=" + encode(localCallbackUrl.getValue(), UTF_8.name())));
+    if (requestThroughProxy) {
+      verification.withHeader(PROXY_CONNECTION_HEADER, containing(KEEP_ALIVE));
+      proxyWireMockRule.verify(postRequestedFor(urlEqualTo(TOKEN_PATH)));
+    }
+    wireMockRule.verify(verification);
+  }
+
+  protected void verifyRequestDoneToTokenUrlForClientCredentialsThroughProxy() throws UnsupportedEncodingException {
+    verifyRequestDoneToTokenUrlForClientCredentials(null, false, true);
   }
 
   protected void verifyRequestDoneToTokenUrlForClientCredentials() throws UnsupportedEncodingException {
@@ -179,6 +214,11 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
 
   protected void verifyRequestDoneToTokenUrlForClientCredentials(String scope, boolean encodeInBody)
       throws UnsupportedEncodingException {
+    verifyRequestDoneToTokenUrlForClientCredentials(scope, encodeInBody, false);
+  }
+
+  protected void verifyRequestDoneToTokenUrlForClientCredentials(String scope, boolean encodeInBody, boolean requestThroughProxy)
+      throws UnsupportedEncodingException {
     final RequestPatternBuilder verification =
         postRequestedFor(urlEqualTo(TOKEN_PATH))
             .withRequestBody(containing(GRANT_TYPE_PARAMETER + "=" + encode(GRANT_TYPE_CLIENT_CREDENTIALS, UTF_8.name())));
@@ -190,6 +230,12 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
       verification.withHeader(AUTHORIZATION, containing("Basic "
           + encodeBase64String(format("%s:%s", clientId.getValue(), clientSecret.getValue()).getBytes())));
     }
+
+    if (requestThroughProxy) {
+      verification.withHeader(PROXY_CONNECTION_HEADER, containing(KEEP_ALIVE));
+      proxyWireMockRule.verify(postRequestedFor(urlEqualTo(TOKEN_PATH)));
+    }
+
     if (scope != null) {
       verification.withRequestBody(containing(SCOPE_PARAMETER + "=" + encode(scope, UTF_8.name())));
     }
