@@ -143,6 +143,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
 
   @Parameter
   @Optional
+  @Expression(NOT_SUPPORTED)
   private HttpProxyConfig proxyConfig;
 
   @Inject
