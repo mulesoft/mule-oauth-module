@@ -7,7 +7,8 @@
 package org.mule.extension.oauth2.internal;
 
 import static org.mule.metadata.api.model.MetadataFormat.JAVA;
-import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
+
+import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.AnyType;
 import org.mule.metadata.api.model.MetadataType;

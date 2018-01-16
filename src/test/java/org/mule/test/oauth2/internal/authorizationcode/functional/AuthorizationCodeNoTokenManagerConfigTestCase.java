@@ -8,12 +8,12 @@ package org.mule.test.oauth2.internal.authorizationcode.functional;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig.defaultTokenManagerConfigIndex;
-import static org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig.getTokenManagerConfigByName;
+import static org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig.defaultTokenManagerConfigIndex;
+import static org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig.getTokenManagerConfigByName;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 import static org.mule.service.oauth.internal.OAuthConstants.CODE_PARAMETER;
 
-import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
+import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 
 import org.apache.http.client.fluent.Request;

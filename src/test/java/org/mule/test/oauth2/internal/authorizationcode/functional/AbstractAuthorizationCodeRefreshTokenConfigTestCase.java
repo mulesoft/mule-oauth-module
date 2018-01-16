@@ -25,8 +25,8 @@ import static org.mule.service.oauth.internal.OAuthConstants.GRANT_TYPE_PARAMETE
 import static org.mule.service.oauth.internal.OAuthConstants.GRANT_TYPE_REFRESH_TOKEN;
 import static org.mule.service.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAMETER;
 
+import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
-import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;

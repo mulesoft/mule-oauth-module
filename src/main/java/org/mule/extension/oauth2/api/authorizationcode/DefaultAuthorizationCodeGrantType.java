@@ -4,13 +4,15 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extension.oauth2.internal.authorizationcode;
+package org.mule.extension.oauth2.api.authorizationcode;
 
 import static java.lang.Thread.currentThread;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 
+import org.mule.api.annotation.NoExtend;
+import org.mule.api.annotation.NoInstantiate;
 import org.mule.extension.http.api.HttpResponseAttributes;
 import org.mule.extension.oauth2.internal.AbstractGrantType;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
@@ -49,6 +51,8 @@ import javax.inject.Inject;
  * authentication code and retrieve the access token
  */
 @Alias("authorization-code-grant-type")
+@NoExtend
+@NoInstantiate
 public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
 
   /**

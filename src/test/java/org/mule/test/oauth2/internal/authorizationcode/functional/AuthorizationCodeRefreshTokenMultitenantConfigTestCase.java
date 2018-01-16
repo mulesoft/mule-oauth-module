@@ -8,8 +8,8 @@ package org.mule.test.oauth2.internal.authorizationcode.functional;
 
 import static org.mule.runtime.http.api.HttpConstants.HttpStatus.INTERNAL_SERVER_ERROR;
 
+import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
-import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;
 
