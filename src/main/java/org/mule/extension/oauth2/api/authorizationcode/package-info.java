@@ -6,7 +6,8 @@
  */
 
 /**
- * This package contains classes needed by the SDK when dealing with this extension.
+ * Classes in this package are not meant to be part of the Java API for this module, but the DSL definitions generated from this
+ * are API. The way to enforce the API for the DSL is backwards compatible is by enforcing the compatibility of the Java API.
  * <p>
  * Classes here are not meant to be used directly by a user.
  */

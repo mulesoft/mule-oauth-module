@@ -6,7 +6,8 @@
  */
 
 /**
- * This package contains classes needed by the SDK when dealing with this extension.
+ * Classes in this package are not meant to be part of the Java API for this module, but the SDK exports them when dealing with
+ * this extension even though there are no way to generate instances of this types from expressions.
  * <p>
  * Classes here are not meant to be used directly by a user.
  */
