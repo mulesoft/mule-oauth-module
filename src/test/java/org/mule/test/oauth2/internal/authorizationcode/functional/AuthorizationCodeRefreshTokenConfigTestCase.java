@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 
 import org.mule.extension.http.api.request.validator.ResponseValidatorTypedException;
-import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
+import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.functional.api.exception.ExpectedError;
 
 import org.junit.Rule;

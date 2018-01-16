@@ -7,9 +7,12 @@
 package org.mule.extension.oauth2.internal;
 
 import static java.util.Objects.requireNonNull;
+import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.extension.api.annotation.param.MediaType.TEXT_PLAIN;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
-import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
+
+import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -24,11 +27,11 @@ public class OAuthOperations {
 
   /**
    * Clears the oauth context for a token manager and a resource owner id.
-   * 
+   *
    * @param tokenManager The token manager which holds the credentials to invalidate.
    * @param resourceOwnerId The resource owner id to invalidate. This attribute is only allowed for authorization code grant type.
    */
-  public void invalidateOauthContext(TokenManagerConfig tokenManager,
+  public void invalidateOauthContext(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
                                      @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
     validateResourceOwnerId(resourceOwnerId);
     tokenManager.getConfigOAuthContext().clearContextForResourceOwner(resourceOwnerId);
@@ -42,7 +45,7 @@ public class OAuthOperations {
    * @return access token of the oauth context retrieved by the token request.
    */
   @MediaType(value = TEXT_PLAIN, strict = false)
-  public String retrieveAccessToken(TokenManagerConfig tokenManager,
+  public String retrieveAccessToken(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
                                     @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
     validateResourceOwnerId(resourceOwnerId);
     return getContextForResourceOwner(tokenManager, resourceOwnerId).getAccessToken();
@@ -56,7 +59,7 @@ public class OAuthOperations {
    * @return refresh token of the oauth context retrieved by the token request.
    */
   @MediaType(value = TEXT_PLAIN, strict = false)
-  public String retrieveRefreshToken(TokenManagerConfig tokenManager,
+  public String retrieveRefreshToken(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
                                      @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
     return getContextForResourceOwner(tokenManager, resourceOwnerId).getRefreshToken();
   }
@@ -69,7 +72,7 @@ public class OAuthOperations {
    * @return the expiration of the oauth context retrieved by the token request.
    */
   @MediaType(value = TEXT_PLAIN, strict = false)
-  public String retrieveExpiresIn(TokenManagerConfig tokenManager,
+  public String retrieveExpiresIn(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
                                   @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
     return getContextForResourceOwner(tokenManager, resourceOwnerId).getExpiresIn();
   }
@@ -82,7 +85,7 @@ public class OAuthOperations {
    * @return state of the oauth context retrieved by the token request.
    */
   @MediaType(value = TEXT_PLAIN, strict = false)
-  public String retrieveState(TokenManagerConfig tokenManager,
+  public String retrieveState(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
                               @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
     return getContextForResourceOwner(tokenManager, resourceOwnerId).getState();
   }
@@ -97,7 +100,7 @@ public class OAuthOperations {
    * @see AbstractGrantType#parameterExtractors
    */
   @OutputResolver(output = TokenResponseParameterOutputResolver.class)
-  public Object retrieveCustomTokenResponseParam(TokenManagerConfig tokenManager,
+  public Object retrieveCustomTokenResponseParam(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
                                                  @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId,
                                                  String key) {
     return getContextForResourceOwner(tokenManager, resourceOwnerId).getTokenResponseParameters().get(key);

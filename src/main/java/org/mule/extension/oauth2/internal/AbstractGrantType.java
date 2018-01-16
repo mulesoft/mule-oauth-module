@@ -20,7 +20,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extension.http.api.request.authentication.HttpRequestAuthentication;
 import org.mule.extension.http.api.request.proxy.HttpProxyConfig;
-import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
+import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;

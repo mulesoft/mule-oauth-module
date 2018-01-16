@@ -39,10 +39,12 @@ import static org.mule.service.oauth.internal.OAuthConstants.REDIRECT_URI_PARAME
 import static org.mule.service.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAMETER;
 import static org.mule.service.oauth.internal.OAuthConstants.SCOPE_PARAMETER;
 
+import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.tck.junit4.rule.SystemProperty;
+import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import org.junit.Rule;
 
@@ -52,6 +54,7 @@ import com.google.common.collect.ImmutableMap;
 
 import java.io.UnsupportedEncodingException;
 
+@ArtifactClassLoaderRunnerConfig(exportPluginClasses = {ConfigOAuthContext.class})
 public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFunctionalTestCase {
 
   public static final int REQUEST_TIMEOUT = 5000;

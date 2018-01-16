@@ -8,13 +8,10 @@ package org.mule.extension.oauth2;
 
 import org.mule.extension.http.api.request.authentication.HttpRequestAuthentication;
 import org.mule.extension.http.api.request.proxy.HttpProxyConfig;
+import org.mule.extension.oauth2.api.authorizationcode.DefaultAuthorizationCodeGrantType;
+import org.mule.extension.oauth2.api.clientcredentials.ClientCredentialsGrantType;
 import org.mule.extension.oauth2.api.exception.OAuthClientErrors;
 import org.mule.extension.oauth2.internal.OAuthOperations;
-import org.mule.extension.oauth2.internal.authorizationcode.DefaultAuthorizationCodeGrantType;
-import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
-import org.mule.extension.oauth2.internal.clientcredentials.ClientCredentialsGrantType;
-import org.mule.extension.oauth2.internal.tokenmanager.TokenManagerConfig;
-import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.Extension;
 import org.mule.runtime.extension.api.annotation.Import;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -35,7 +32,6 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
     subTypes = {DefaultAuthorizationCodeGrantType.class, ClientCredentialsGrantType.class})
 @ErrorTypes(OAuthClientErrors.class)
 @Xml(prefix = "oauth")
-@Export(classes = {TokenManagerConfig.class, ConfigOAuthContext.class})
 public class OAuthExtension {
 
 }

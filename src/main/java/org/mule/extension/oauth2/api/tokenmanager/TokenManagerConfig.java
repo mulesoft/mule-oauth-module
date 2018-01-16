@@ -4,8 +4,10 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extension.oauth2.internal.tokenmanager;
+package org.mule.extension.oauth2.api.tokenmanager;
 
+import org.mule.api.annotation.NoExtend;
+import org.mule.api.annotation.NoInstantiate;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
@@ -33,6 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Alias("token-manager-config")
 @TypeDsl(allowTopLevelDefinition = true)
+@NoExtend
+@NoInstantiate
 public class TokenManagerConfig implements Initialisable, Disposable, MuleContextAware {
 
   public static AtomicInteger defaultTokenManagerConfigIndex = new AtomicInteger(0);
