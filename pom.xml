@@ -15,7 +15,7 @@
 
     <properties>
         <muleHttpConnectorVersion>1.1.1-SNAPSHOT</muleHttpConnectorVersion>
-        <muleSocketsConnectorVersion>1.1.0-SNAPSHOT</muleSocketsConnectorVersion>
+        <muleSocketsConnectorVersion>1.1.1-SNAPSHOT</muleSocketsConnectorVersion>
         <muleSpringModuleVersion>1.1.1-SNAPSHOT</muleSpringModuleVersion>
 
         <commonsCodecVersion>1.9</commonsCodecVersion>
