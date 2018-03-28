@@ -23,7 +23,6 @@ import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
-import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.context.MuleContextAware;
@@ -87,7 +86,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
    */
   @Parameter
   @Optional
-  @Expression(value = ExpressionSupport.NOT_SUPPORTED)
+  @Expression(value = NOT_SUPPORTED)
   protected TokenManagerConfig tokenManager;
 
   /**
