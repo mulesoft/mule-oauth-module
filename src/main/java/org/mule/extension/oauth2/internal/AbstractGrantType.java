@@ -17,13 +17,13 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import static org.mule.runtime.core.api.util.SystemUtils.getDefaultEncoding;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.SECURITY_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
-
 import org.mule.extension.http.api.request.authentication.HttpRequestAuthentication;
 import org.mule.extension.http.api.request.proxy.HttpProxyConfig;
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
+import org.mule.runtime.api.meta.ExpressionSupport;
 import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.context.MuleContextAware;
@@ -34,15 +34,14 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.runtime.parameter.Literal;
-import org.mule.runtime.http.api.client.proxy.ProxyConfig;
 import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthDancerBuilder;
-
-import org.slf4j.Logger;
 
 import java.util.List;
 
 import javax.inject.Inject;
+
+import org.slf4j.Logger;
 
 /**
  * Common interface for all grant types must extend this interface.
@@ -88,6 +87,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
    */
   @Parameter
   @Optional
+  @Expression(value = ExpressionSupport.NOT_SUPPORTED)
   protected TokenManagerConfig tokenManager;
 
   /**
