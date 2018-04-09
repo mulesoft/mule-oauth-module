@@ -8,14 +8,34 @@ package org.mule.test.oauth2.internal.authorizationcode.functional;
 
 import static org.mule.service.oauth.internal.OAuthConstants.CODE_PARAMETER;
 
+import org.mule.test.runner.RunnerDelegateTo;
+
 import org.apache.http.client.fluent.Request;
 import org.junit.Test;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
+@RunnerDelegateTo(Parameterized.class)
 public class AuthorizationCodeLocalCallbackConfigTestCase extends AbstractAuthorizationCodeBasicTestCase {
+
+  private String baseConfig;
+
+  public AuthorizationCodeLocalCallbackConfigTestCase(String baseConfig) {
+    this.baseConfig = baseConfig;
+  }
+
+  @Parameters
+  public static String[] params() {
+    return new String[] {
+        "authorization-code/authorization-code-localcallbackref-config.xml",
+        // TODO MULE-14827 Uncomment this scenario
+        // "authorization-code/authorization-code-localcallbackref-inverse-order-config.xml"
+    };
+  }
 
   @Override
   protected String[] getConfigFiles() {
-    return new String[] {"authorization-code/authorization-code-localcallbackref-config.xml", "operations/operations-config.xml"};
+    return new String[] {baseConfig, "operations/operations-config.xml"};
   }
 
   @Test
