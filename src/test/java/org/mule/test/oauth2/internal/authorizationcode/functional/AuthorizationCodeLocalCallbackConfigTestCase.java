@@ -28,7 +28,7 @@ public class AuthorizationCodeLocalCallbackConfigTestCase extends AbstractAuthor
   public static String[] params() {
     return new String[] {
         "authorization-code/authorization-code-localcallbackref-config.xml",
-        // TODO MULE-14827 Uncomment this scenario
+        // TODO MULE-14827 Uncomment this scenario once min mule version is above 4.1.2
         // "authorization-code/authorization-code-localcallbackref-inverse-order-config.xml"
     };
   }
