@@ -18,7 +18,7 @@
         <muleSocketsConnectorVersion>1.2.0-SNAPSHOT</muleSocketsConnectorVersion>
         <muleSpringModuleVersion>1.2.0-SNAPSHOT</muleSpringModuleVersion>
 
-        <commonsCodecVersion>1.9</commonsCodecVersion>
+        <commonsCodecVersion>1.11</commonsCodecVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
     </properties>
 
