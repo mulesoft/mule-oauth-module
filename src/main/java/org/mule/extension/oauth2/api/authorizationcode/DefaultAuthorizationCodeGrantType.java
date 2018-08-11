@@ -10,6 +10,7 @@ import static java.lang.Thread.currentThread;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.api.annotation.NoExtend;
 import org.mule.api.annotation.NoInstantiate;
@@ -35,6 +36,9 @@ import org.mule.runtime.oauth.api.AuthorizationCodeOAuthDancer;
 import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthAuthorizationCodeDancerBuilder;
 
+import org.slf4j.Logger;
+
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -54,6 +58,8 @@ import javax.inject.Inject;
 @NoExtend
 @NoInstantiate
 public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
+
+  private static final Logger LOGGER = getLogger(DefaultAuthorizationCodeGrantType.class);
 
   /**
    * Listener configuration to be used instead of localCallbackUrl. Note that if using this you must also provide a
@@ -167,6 +173,24 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
     initTokenManager();
 
     OAuthAuthorizationCodeDancerBuilder dancerBuilder = configDancer(oAuthService);
+
+    if (isEncodeClientCredentialsInBody()) {
+      // This dirty reflection hack is in place so that the minMuleVersion of the plugin doesn't have to be increased.
+      // If at some point, the minMuleVersion of this OAuth module is increased to 4.2.0 or 4.1.4, this may be removed and the
+      // encodeClientCredentialsInBody called directly.
+
+      try {
+        OAuthAuthorizationCodeDancerBuilder.class.getDeclaredMethod("encodeClientCredentialsInBody", boolean.class)
+            .invoke(dancerBuilder, isEncodeClientCredentialsInBody());
+      } catch (NoSuchMethodException e) {
+        LOGGER.warn("`encodeClientCredentialsInBody` method not found in dancer builder but configured in authenticator."
+            + " The configured value will be ignored. Check the version of the Mule Runtime.");
+      } catch (SecurityException | IllegalAccessException | IllegalArgumentException
+          | InvocationTargetException e) {
+        throw new InitialisationException(e, this);
+      }
+    }
+
     dancerBuilder.clientCredentials(getClientId(), getClientSecret());
 
     configureBaseDancer(dancerBuilder);
