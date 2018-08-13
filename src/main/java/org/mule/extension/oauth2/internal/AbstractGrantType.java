@@ -17,6 +17,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import static org.mule.runtime.core.api.util.SystemUtils.getDefaultEncoding;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.SECURITY_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extension.http.api.request.authentication.HttpRequestAuthentication;
 import org.mule.extension.http.api.request.proxy.HttpProxyConfig;
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
@@ -36,11 +37,11 @@ import org.mule.runtime.extension.api.runtime.parameter.Literal;
 import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthDancerBuilder;
 
+import org.slf4j.Logger;
+
 import java.util.List;
 
 import javax.inject.Inject;
-
-import org.slf4j.Logger;
 
 /**
  * Common interface for all grant types must extend this interface.
@@ -73,6 +74,14 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
    */
   @Parameter
   private String clientSecret;
+
+  /**
+   * If true, the client id and client secret will be sent in the request body. Otherwise, they will be sent as basic
+   * authentication.
+   */
+  @Parameter
+  @Optional(defaultValue = "false")
+  private boolean encodeClientCredentialsInBody;
 
   /**
    * Scope required by this application to execute. Scopes define permissions over resources.
@@ -210,6 +219,10 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
 
   public String getClientId() {
     return clientId;
+  }
+
+  public boolean isEncodeClientCredentialsInBody() {
+    return encodeClientCredentialsInBody;
   }
 
   public String getScopes() {

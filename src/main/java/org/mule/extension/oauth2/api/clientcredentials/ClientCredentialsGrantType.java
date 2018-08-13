@@ -18,8 +18,6 @@ import org.mule.extension.oauth2.internal.store.SimpleObjectStoreToMapAdapter;
 import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
-import org.mule.runtime.extension.api.annotation.param.Optional;
-import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.http.api.domain.message.request.HttpRequestBuilder;
 import org.mule.runtime.oauth.api.ClientCredentialsOAuthDancer;
@@ -34,14 +32,6 @@ import java.util.concurrent.ExecutionException;
 @NoInstantiate
 public class ClientCredentialsGrantType extends AbstractGrantType {
 
-  /**
-   * If true, the client id and client secret will be sent in the request body. Otherwise, they will be sent as basic
-   * authentication.
-   */
-  @Parameter
-  @Optional(defaultValue = "false")
-  private boolean encodeClientCredentialsInBody;
-
   private ClientCredentialsOAuthDancer dancer;
 
   @Override
@@ -52,7 +42,7 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
         oAuthService.clientCredentialsGrantTypeDancerBuilder(lockId -> muleContext.getLockFactory().createLock(lockId),
                                                              new SimpleObjectStoreToMapAdapter(tokenManager.getObjectStore()),
                                                              muleContext.getExpressionManager());
-    dancerBuilder.encodeClientCredentialsInBody(encodeClientCredentialsInBody);
+    dancerBuilder.encodeClientCredentialsInBody(isEncodeClientCredentialsInBody());
     dancerBuilder.clientCredentials(getClientId(), getClientSecret());
 
     configureBaseDancer(dancerBuilder);
