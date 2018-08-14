@@ -76,14 +76,6 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
   private String clientSecret;
 
   /**
-   * If true, the client id and client secret will be sent in the request body. Otherwise, they will be sent as basic
-   * authentication.
-   */
-  @Parameter
-  @Optional(defaultValue = "false")
-  private boolean encodeClientCredentialsInBody;
-
-  /**
    * Scope required by this application to execute. Scopes define permissions over resources.
    */
   @Parameter
@@ -221,9 +213,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
     return clientId;
   }
 
-  public boolean isEncodeClientCredentialsInBody() {
-    return encodeClientCredentialsInBody;
-  }
+  public abstract boolean isEncodeClientCredentialsInBody();
 
   public String getScopes() {
     return scopes;
