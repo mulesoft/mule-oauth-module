@@ -143,6 +143,14 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
   @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID)
   private ParameterResolver<String> resourceOwnerId;
 
+  /**
+   * If true, the client id and client secret will be sent in the request body. Otherwise, they will be sent as basic
+   * authentication.
+   */
+  @Parameter
+  @Optional(defaultValue = "true")
+  private boolean encodeClientCredentialsInBody;
+
   @Inject
   private HttpService httpService;
 
@@ -174,14 +182,14 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
 
     OAuthAuthorizationCodeDancerBuilder dancerBuilder = configDancer(oAuthService);
 
-    if (isEncodeClientCredentialsInBody()) {
+    if (!isEncodeClientCredentialsInBody()) {
       // This dirty reflection hack is in place so that the minMuleVersion of the plugin doesn't have to be increased.
       // If at some point, the minMuleVersion of this OAuth module is increased to 4.2.0 or 4.1.4, this may be removed and the
       // encodeClientCredentialsInBody called directly.
 
       try {
         OAuthAuthorizationCodeDancerBuilder.class.getDeclaredMethod("encodeClientCredentialsInBody", boolean.class)
-            .invoke(dancerBuilder, isEncodeClientCredentialsInBody());
+            .invoke(dancerBuilder, !isEncodeClientCredentialsInBody());
       } catch (NoSuchMethodException e) {
         LOGGER.warn("`encodeClientCredentialsInBody` method not found in dancer builder but configured in authenticator."
             + " The configured value will be ignored. Check the version of the Mule Runtime.");
@@ -272,5 +280,10 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
   @Override
   public AuthorizationCodeOAuthDancer getDancer() {
     return dancer;
+  }
+
+  @Override
+  public boolean isEncodeClientCredentialsInBody() {
+    return encodeClientCredentialsInBody;
   }
 }
