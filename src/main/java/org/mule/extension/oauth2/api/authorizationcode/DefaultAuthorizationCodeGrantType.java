@@ -189,7 +189,7 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
 
       try {
         OAuthAuthorizationCodeDancerBuilder.class.getDeclaredMethod("encodeClientCredentialsInBody", boolean.class)
-            .invoke(dancerBuilder, !isEncodeClientCredentialsInBody());
+            .invoke(dancerBuilder, isEncodeClientCredentialsInBody());
       } catch (NoSuchMethodException e) {
         LOGGER.warn("`encodeClientCredentialsInBody` method not found in dancer builder but configured in authenticator."
             + " The configured value will be ignored. Check the version of the Mule Runtime.");
