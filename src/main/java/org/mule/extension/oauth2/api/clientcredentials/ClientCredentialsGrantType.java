@@ -88,6 +88,16 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
     return shouldRetryRequest;
   }
 
+  public void retryIfShould(Result<Object, HttpResponseAttributes> firstAttemptResult, Runnable retryCallback,
+                            Runnable notRetryCallback) {
+    Boolean shouldRetryRequest = resolver.resolveExpression(getRefreshTokenWhen(), firstAttemptResult);
+    if (shouldRetryRequest) {
+      dancer.refreshToken().thenRun(retryCallback);
+    } else {
+      notRetryCallback.run();
+    }
+  }
+
   @Override
   public ClientCredentialsOAuthDancer getDancer() {
     return dancer;
