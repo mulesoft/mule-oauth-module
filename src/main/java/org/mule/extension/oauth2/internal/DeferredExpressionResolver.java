@@ -6,6 +6,7 @@
  */
 package org.mule.extension.oauth2.internal;
 
+import static java.lang.Boolean.*;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
 import org.mule.runtime.api.el.BindingContext;
 import org.mule.runtime.api.el.MuleExpressionLanguage;
@@ -13,6 +14,7 @@ import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.parameter.Literal;
+import org.scalactic.Bool;
 
 public class DeferredExpressionResolver {
 
@@ -33,7 +35,13 @@ public class DeferredExpressionResolver {
     }
 
     if (!evaluator.isExpression(expr)) {
-      return (T) expr;
+      String lowerCaseExpression = expr.trim().toLowerCase();
+      if (TRUE.toString().equals(lowerCaseExpression)) {
+        return (T) TRUE;
+      } else if (FALSE.toString().equals(lowerCaseExpression)) {
+        return (T) FALSE;
+      }
+      throw new IllegalArgumentException("Invalid value [" + expr + "] can't be converted to Boolean");
     }
 
     BindingContext resultContext = BindingContext.builder()
