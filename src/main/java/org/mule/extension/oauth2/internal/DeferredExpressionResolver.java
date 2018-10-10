@@ -6,16 +6,16 @@
  */
 package org.mule.extension.oauth2.internal;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static org.mule.runtime.api.metadata.MediaType.ANY;
+
 import org.mule.runtime.api.el.BindingContext;
 import org.mule.runtime.api.el.MuleExpressionLanguage;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.parameter.Literal;
-
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static org.mule.runtime.api.metadata.MediaType.ANY;
 
 public class DeferredExpressionResolver {
 
@@ -52,7 +52,7 @@ public class DeferredExpressionResolver {
                     new TypedValue(result.getAttributes().get(), DataType.fromObject(result.getAttributes().get())))
         .addBinding("dataType",
                     new TypedValue(DataType.builder().fromObject(result.getOutput()).mediaType(result.getMediaType().get())
-                        .build(), DataType.fromType(DataType.class)))
+                                       .build(), DataType.fromType(DataType.class)))
         .build();
 
     return (T) evaluator.evaluate(expr, resultContext).getValue();
