@@ -6,7 +6,10 @@
  */
 package org.mule.extension.oauth2.internal;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
+
 import org.mule.runtime.api.el.BindingContext;
 import org.mule.runtime.api.el.MuleExpressionLanguage;
 import org.mule.runtime.api.metadata.DataType;
@@ -33,7 +36,12 @@ public class DeferredExpressionResolver {
     }
 
     if (!evaluator.isExpression(expr)) {
-      return (T) expr;
+      if (TRUE.toString().equalsIgnoreCase(expr)) {
+        return (T) TRUE;
+      } else if (FALSE.toString().equalsIgnoreCase(expr)) {
+        return (T) FALSE;
+      }
+      throw new IllegalArgumentException("Invalid value [" + expr + "] can't be converted to Boolean");
     }
 
     BindingContext resultContext = BindingContext.builder()
@@ -44,7 +52,7 @@ public class DeferredExpressionResolver {
                     new TypedValue(result.getAttributes().get(), DataType.fromObject(result.getAttributes().get())))
         .addBinding("dataType",
                     new TypedValue(DataType.builder().fromObject(result.getOutput()).mediaType(result.getMediaType().get())
-                        .build(), DataType.fromType(DataType.class)))
+                                       .build(), DataType.fromType(DataType.class)))
         .build();
 
     return (T) evaluator.evaluate(expr, resultContext).getValue();
