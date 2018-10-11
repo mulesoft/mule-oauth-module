@@ -52,7 +52,7 @@ public class DeferredExpressionResolver {
                     new TypedValue(result.getAttributes().get(), DataType.fromObject(result.getAttributes().get())))
         .addBinding("dataType",
                     new TypedValue(DataType.builder().fromObject(result.getOutput()).mediaType(result.getMediaType().get())
-                                       .build(), DataType.fromType(DataType.class)))
+                        .build(), DataType.fromType(DataType.class)))
         .build();
 
     return (T) evaluator.evaluate(expr, resultContext).getValue();
