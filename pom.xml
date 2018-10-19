@@ -86,13 +86,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-module-tls</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.mule.connectors</groupId>
             <artifactId>mule-objectstore-connector</artifactId>
             <version>${muleObjectStoreConnectorTestVersion}</version>
