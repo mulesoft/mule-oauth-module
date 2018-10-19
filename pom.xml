@@ -16,7 +16,6 @@
     <properties>
         <muleHttpConnectorVersion>1.2.0-SNAPSHOT</muleHttpConnectorVersion>
         <muleSocketsConnectorVersion>1.2.0-SNAPSHOT</muleSocketsConnectorVersion>
-        <muleSpringModuleVersion>1.2.0-SNAPSHOT</muleSpringModuleVersion>
         <muleObjectStoreConnectorTestVersion>1.2.0-SNAPSHOT</muleObjectStoreConnectorTestVersion>
         <commonsCodecVersion>1.11</commonsCodecVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
