@@ -178,6 +178,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
 
   @Override
   public void start() throws MuleException {
+    startIfNeeded(tokenManager);
     startIfNeeded(getDancer());
   }
 

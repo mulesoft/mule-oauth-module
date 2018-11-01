@@ -6,12 +6,18 @@
  */
 package org.mule.extension.oauth2.api.tokenmanager;
 
+import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
+import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.startIfNeeded;
+import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import org.mule.api.annotation.NoExtend;
 import org.mule.api.annotation.NoInstantiate;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
+import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.api.lifecycle.Lifecycle;
+import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.store.ObjectStore;
 import org.mule.runtime.api.store.ObjectStoreSettings;
 import org.mule.runtime.core.api.MuleContext;
@@ -37,7 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @TypeDsl(allowTopLevelDefinition = true)
 @NoExtend
 @NoInstantiate
-public class TokenManagerConfig implements Initialisable, Disposable, MuleContextAware {
+public class TokenManagerConfig implements Lifecycle, MuleContextAware {
 
   public static AtomicInteger defaultTokenManagerConfigIndex = new AtomicInteger(0);
 
@@ -64,6 +70,7 @@ public class TokenManagerConfig implements Initialisable, Disposable, MuleContex
   private ConfigOAuthContext configOAuthContext;
 
   private boolean initialised;
+  private boolean started;
 
   public ObjectStore<DefaultResourceOwnerOAuthContext> getObjectStore() {
     return objectStore;
@@ -89,6 +96,22 @@ public class TokenManagerConfig implements Initialisable, Disposable, MuleContex
     }
     configOAuthContext = new ConfigOAuthContext(muleContext.getLockFactory(), objectStore, name);
     initialised = true;
+  }
+
+  @Override
+  public void start() throws MuleException {
+    if (!started) {
+      startIfNeeded(objectStore);
+      started = true;
+    }
+  }
+
+  @Override
+  public void stop() throws MuleException {
+    if (started) {
+      stopIfNeeded(objectStore);
+      started = false;
+    }
   }
 
   @Override
