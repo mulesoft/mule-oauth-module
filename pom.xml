@@ -18,7 +18,7 @@
         <muleSocketsConnectorVersion>1.1.0</muleSocketsConnectorVersion>
 
         <commonsCodecVersion>1.9</commonsCodecVersion>
-        <muleObjectStoreConnectorTestVersion>1.2.0-SNAPSHOT</muleObjectStoreConnectorTestVersion>
+        <muleObjectStoreConnectorTestVersion>1.1.2</muleObjectStoreConnectorTestVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
     </properties>
 
