@@ -20,6 +20,7 @@ import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 import static org.mule.runtime.http.api.HttpHeaders.Names.WWW_AUTHENTICATE;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 
+import org.mule.runtime.api.store.ObjectStore;
 import org.mule.runtime.api.store.SimpleMemoryObjectStore;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;
@@ -83,7 +84,7 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
   public void authenticationIsDoneOnStartupUsingScope() throws Exception {
     verifyRequestDoneToTokenUrlForClientCredentials(scopes.getValue());
 
-    SimpleMemoryObjectStore objectStore = registry.<SimpleMemoryObjectStore>lookupByName("customObjectStore").get();
+    ObjectStore objectStore = registry.<ObjectStore>lookupByName("customObjectStore").get();
     assertThat(objectStore.allKeys().isEmpty(), is(false));
     ResourceOwnerOAuthContext resourceOwnerOAuthContext =
         (ResourceOwnerOAuthContext) objectStore.retrieve(DEFAULT_RESOURCE_OWNER_ID);

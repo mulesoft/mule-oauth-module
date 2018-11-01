@@ -16,9 +16,9 @@
     <properties>
         <muleHttpConnectorVersion>1.1.0</muleHttpConnectorVersion>
         <muleSocketsConnectorVersion>1.1.0</muleSocketsConnectorVersion>
-        <muleSpringModuleVersion>1.1.0</muleSpringModuleVersion>
 
         <commonsCodecVersion>1.9</commonsCodecVersion>
+        <muleObjectStoreConnectorTestVersion>1.2.0-SNAPSHOT</muleObjectStoreConnectorTestVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
     </properties>
 
@@ -86,11 +86,10 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- TODO MULE-12379 When OAuth uses the ObjectStoreConnector, it will no longer require spring -->
         <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-spring-test-plugin</artifactId>
-            <version>${muleSpringModuleVersion}</version>
+            <groupId>org.mule.connectors</groupId>
+            <artifactId>mule-objectstore-connector</artifactId>
+            <version>${muleObjectStoreConnectorTestVersion}</version>
             <classifier>mule-plugin</classifier>
             <scope>test</scope>
         </dependency>
