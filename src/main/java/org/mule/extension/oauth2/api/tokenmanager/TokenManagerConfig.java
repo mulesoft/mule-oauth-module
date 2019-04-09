@@ -6,18 +6,14 @@
  */
 package org.mule.extension.oauth2.api.tokenmanager;
 
-import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.startIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import org.mule.api.annotation.NoExtend;
 import org.mule.api.annotation.NoInstantiate;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.api.lifecycle.Disposable;
-import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
-import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.store.ObjectStore;
 import org.mule.runtime.api.store.ObjectStoreSettings;
 import org.mule.runtime.core.api.MuleContext;
@@ -144,4 +140,17 @@ public class TokenManagerConfig implements Lifecycle, MuleContextAware {
     this.muleContext = muleContext;
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof TokenManagerConfig) {
+      return name.equals(((TokenManagerConfig) obj).name);
+    }
+
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return name.hashCode();
+  }
 }
