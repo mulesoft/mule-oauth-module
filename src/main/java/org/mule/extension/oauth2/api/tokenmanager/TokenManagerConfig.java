@@ -6,6 +6,7 @@
  */
 package org.mule.extension.oauth2.api.tokenmanager;
 
+import static java.util.Objects.hash;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.startIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import org.mule.api.annotation.NoExtend;
@@ -143,7 +144,8 @@ public class TokenManagerConfig implements Lifecycle, MuleContextAware {
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof TokenManagerConfig) {
-      return name.equals(((TokenManagerConfig) obj).name);
+      TokenManagerConfig other = (TokenManagerConfig) obj;
+      return name.equals(other.name) && objectStore == other.objectStore;
     }
 
     return false;
@@ -151,6 +153,6 @@ public class TokenManagerConfig implements Lifecycle, MuleContextAware {
 
   @Override
   public int hashCode() {
-    return name.hashCode();
+    return hash(name, objectStore);
   }
 }
