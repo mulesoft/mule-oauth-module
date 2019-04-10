@@ -97,8 +97,8 @@
             <groupId>org.mule.services</groupId>
             <artifactId>mule-service-oauth</artifactId>
             <version>${muleOAuthServiceVersion}</version>
-            <scope>test</scope>
             <classifier>mule-service</classifier>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -107,6 +107,12 @@
             <version>${muleHttpServiceVersion}</version>
             <scope>test</scope>
             <type>test-jar</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mule.tests.plugin</groupId>

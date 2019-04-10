@@ -13,7 +13,6 @@ import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT
 
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
@@ -99,11 +98,11 @@ public class OAuthOperations {
    * @return an element if there was previously introduced by the OAuth dance and the custom parameter extractor. Null otherwise
    * @see AbstractGrantType#parameterExtractors
    */
-  @OutputResolver(output = TokenResponseParameterOutputResolver.class)
-  public Object retrieveCustomTokenResponseParam(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
+  @MediaType(value = TEXT_PLAIN, strict = false)
+  public String retrieveCustomTokenResponseParam(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
                                                  @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId,
                                                  String key) {
-    return getContextForResourceOwner(tokenManager, resourceOwnerId).getTokenResponseParameters().get(key);
+    return getContextForResourceOwner(tokenManager, resourceOwnerId).getTokenResponseParameters().get(key).toString();
   }
 
   private void validateResourceOwnerId(String resourceOwnerId) {
