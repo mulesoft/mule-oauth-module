@@ -160,7 +160,8 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
   public boolean equals(Object obj) {
     if (obj instanceof DefaultAuthorizationCodeGrantType) {
       DefaultAuthorizationCodeGrantType other = (DefaultAuthorizationCodeGrantType) obj;
-      return Objects.equals(localCallbackConfig, other.localCallbackConfig) &&
+      return super.equals(other) &&
+          Objects.equals(localCallbackConfig, other.localCallbackConfig) &&
           Objects.equals(localCallbackConfigPath, other.localCallbackConfigPath) &&
           Objects.equals(localCallbackUrl, other.localCallbackUrl) &&
           Objects.equals(externalCallbackUrl, other.externalCallbackUrl) &&

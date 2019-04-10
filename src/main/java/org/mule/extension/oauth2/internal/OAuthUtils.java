@@ -16,7 +16,7 @@ public final class OAuthUtils {
   private OAuthUtils() {}
 
   public static <T> boolean literalEquals(Literal<T> l1, Literal<T> l2) {
-    if ((l1 == null && l2 == null)) {
+    if (l1 == null && l2 == null) {
       return true;
     } else if (l1 == null ^ l2 == null) {
       return false;
@@ -30,20 +30,22 @@ public final class OAuthUtils {
   }
 
   public static int literalHashCodes(Literal... literals) {
-    if (literals == null)
+    if (literals == null) {
       return 0;
+    }
 
     int result = 1;
 
-    for (Literal literal : literals)
+    for (Literal literal : literals) {
       result = 31 * result + (literal == null ? 0 : literalHashCode(literal));
+    }
 
     return result;
 
   }
 
   public static <T> boolean resolverEquals(ParameterResolver<T> p1, ParameterResolver<T> p2) {
-    if ((p1 == null && p2 == null)) {
+    if (p1 == null && p2 == null) {
       return true;
     } else if (p1 == null ^ p2 == null) {
       return false;
