@@ -7,11 +7,15 @@
 package org.mule.extension.oauth2.api.authorizationcode;
 
 import static java.lang.Thread.currentThread;
+import static java.util.Objects.hash;
+import static org.mule.extension.oauth2.internal.OAuthUtils.literalEquals;
+import static org.mule.extension.oauth2.internal.OAuthUtils.literalHashCodes;
+import static org.mule.extension.oauth2.internal.OAuthUtils.resolverEquals;
+import static org.mule.extension.oauth2.internal.OAuthUtils.resolverHashCode;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 import static org.slf4j.LoggerFactory.getLogger;
-
 import org.mule.api.annotation.NoExtend;
 import org.mule.api.annotation.NoInstantiate;
 import org.mule.extension.http.api.HttpResponseAttributes;
@@ -36,16 +40,17 @@ import org.mule.runtime.oauth.api.AuthorizationCodeOAuthDancer;
 import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthAuthorizationCodeDancerBuilder;
 
-import org.slf4j.Logger;
-
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
+
+import org.slf4j.Logger;
 
 /**
  * Represents the config element for {@code oauth:authentication-code-config}.
@@ -151,6 +156,34 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
   @Optional(defaultValue = "true")
   private boolean encodeClientCredentialsInBody;
 
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof DefaultAuthorizationCodeGrantType) {
+      DefaultAuthorizationCodeGrantType other = (DefaultAuthorizationCodeGrantType) obj;
+      return super.equals(other) &&
+          Objects.equals(localCallbackConfig, other.localCallbackConfig) &&
+          Objects.equals(localCallbackConfigPath, other.localCallbackConfigPath) &&
+          Objects.equals(localCallbackUrl, other.localCallbackUrl) &&
+          Objects.equals(externalCallbackUrl, other.externalCallbackUrl) &&
+          literalEquals(state, other.state) &&
+          literalEquals(localAuthorizationUrlResourceOwnerId, other.localAuthorizationUrlResourceOwnerId) &&
+          Objects.equals(localAuthorizationUrl, other.localAuthorizationUrl) &&
+          Objects.equals(authorizationUrl, other.authorizationUrl) &&
+          Objects.equals(customParameters, other.customParameters) &&
+          resolverEquals(resourceOwnerId, other.resourceOwnerId) &&
+          encodeClientCredentialsInBody == other.encodeClientCredentialsInBody;
+    }
+
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return hash(localCallbackConfig, localCallbackConfigPath, localCallbackUrl, externalCallbackUrl, localAuthorizationUrl,
+                authorizationUrl, customParameters, encodeClientCredentialsInBody,
+                literalHashCodes(state, localAuthorizationUrlResourceOwnerId), resolverHashCode(resourceOwnerId));
+  }
+
   @Inject
   private HttpService httpService;
 
@@ -216,7 +249,8 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
         throw new IllegalArgumentException("Attributes localCallbackConfig and localCallbackUrl are mutually exclusive");
       }
       if ((localCallbackConfig == null) != (localCallbackConfigPath == null)) {
-        throw new IllegalArgumentException("Attributes localCallbackConfig and localCallbackConfigPath must be both present or absent");
+        throw new IllegalArgumentException(
+                                           "Attributes localCallbackConfig and localCallbackConfigPath must be both present or absent");
       }
     } catch (Exception e) {
       throw new InitialisationException(e, this);
