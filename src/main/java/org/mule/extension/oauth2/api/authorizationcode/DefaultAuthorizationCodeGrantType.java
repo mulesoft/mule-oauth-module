@@ -181,7 +181,8 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
   public int hashCode() {
     return hash(localCallbackConfig, localCallbackConfigPath, localCallbackUrl, externalCallbackUrl, localAuthorizationUrl,
                 authorizationUrl, customParameters, encodeClientCredentialsInBody,
-                literalHashCodes(state, localAuthorizationUrlResourceOwnerId), resolverHashCode(resourceOwnerId));
+                literalHashCodes(state, localAuthorizationUrlResourceOwnerId), resolverHashCode(resourceOwnerId),
+                super.hashCode());
   }
 
   @Inject
