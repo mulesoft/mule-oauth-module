@@ -7,8 +7,11 @@
 package org.mule.extension.oauth2.internal;
 
 import static java.util.Collections.emptyList;
+import static java.util.Objects.hash;
 import static java.util.stream.Collectors.toMap;
 import static org.mule.extension.http.internal.HttpConnectorConstants.TLS_CONFIGURATION;
+import static org.mule.extension.oauth2.internal.OAuthUtils.literalEquals;
+import static org.mule.extension.oauth2.internal.OAuthUtils.literalHashCodes;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
@@ -17,7 +20,6 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import static org.mule.runtime.core.api.util.SystemUtils.getDefaultEncoding;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.SECURITY_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
-
 import org.mule.extension.http.api.request.authentication.HttpRequestAuthentication;
 import org.mule.extension.http.api.request.proxy.HttpProxyConfig;
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
@@ -37,11 +39,12 @@ import org.mule.runtime.extension.api.runtime.parameter.Literal;
 import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthDancerBuilder;
 
-import org.slf4j.Logger;
-
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
+
+import org.slf4j.Logger;
 
 /**
  * Common interface for all grant types must extend this interface.
@@ -204,6 +207,36 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
   public void setMuleContext(MuleContext muleContext) {
     this.muleContext = muleContext;
     this.resolver = new DeferredExpressionResolver(muleContext.getExpressionManager());
+  }
+
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof AbstractGrantType) {
+      AbstractGrantType other = (AbstractGrantType) obj;
+      return Objects.equals(clientId, other.clientId) &&
+          Objects.equals(clientSecret, other.clientSecret) &&
+          Objects.equals(scopes, other.scopes) &&
+          Objects.equals(tokenManager, other.tokenManager) &&
+          Objects.equals(tokenUrl, other.tokenUrl) &&
+          literalEquals(responseAccessToken, other.responseAccessToken) &&
+          literalEquals(responseRefreshToken, other.responseRefreshToken) &&
+          literalEquals(responseExpiresIn, other.responseExpiresIn) &&
+          Objects.equals(parameterExtractors, other.parameterExtractors) &&
+          literalEquals(refreshTokenWhen, other.refreshTokenWhen) &&
+          Objects.equals(tlsContextFactory, other.tlsContextFactory) &&
+          Objects.equals(proxyConfig, other.proxyConfig);
+    }
+
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return 31 * hash(
+                     clientId, clientSecret, scopes, tokenManager, tokenUrl, parameterExtractors, tlsContextFactory, proxyConfig)
+        *
+        literalHashCodes(responseAccessToken, responseRefreshToken, responseExpiresIn, refreshTokenWhen);
   }
 
   public String getClientSecret() {

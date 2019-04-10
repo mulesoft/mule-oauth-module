@@ -7,9 +7,9 @@
 package org.mule.extension.oauth2.api.clientcredentials;
 
 import static java.lang.Thread.currentThread;
+import static java.util.Objects.hash;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
-
 import org.mule.api.annotation.NoExtend;
 import org.mule.api.annotation.NoInstantiate;
 import org.mule.extension.http.api.HttpResponseAttributes;
@@ -99,6 +99,21 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
   }
 
   @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof ClientCredentialsGrantType) {
+      ClientCredentialsGrantType other = (ClientCredentialsGrantType) obj;
+      return encodeClientCredentialsInBody == other.encodeClientCredentialsInBody && super.equals(obj);
+    }
+
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return hash(super.hashCode(), encodeClientCredentialsInBody);
+  }
+
+  @Override
   public ClientCredentialsOAuthDancer getDancer() {
     return dancer;
   }
@@ -107,5 +122,4 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
   public boolean isEncodeClientCredentialsInBody() {
     return encodeClientCredentialsInBody;
   }
-
 }

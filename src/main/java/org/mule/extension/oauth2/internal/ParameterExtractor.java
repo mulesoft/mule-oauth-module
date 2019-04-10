@@ -6,8 +6,12 @@
  */
 package org.mule.extension.oauth2.internal;
 
+import static org.mule.extension.oauth2.internal.OAuthUtils.literalEquals;
+import static org.mule.extension.oauth2.internal.OAuthUtils.literalHashCode;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.runtime.parameter.Literal;
+
+import java.util.Objects;
 
 /**
  * Configuration of a custom parameter to extract from the token response.
@@ -38,5 +42,20 @@ public class ParameterExtractor {
    */
   public Literal<String> getValue() {
     return value;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof ParameterExtractor) {
+      ParameterExtractor other = (ParameterExtractor) obj;
+      return Objects.equals(paramName, other.paramName) && literalEquals(value, other.value);
+    }
+
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return 11 + paramName.hashCode() * literalHashCode(value);
   }
 }
