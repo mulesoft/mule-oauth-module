@@ -64,7 +64,8 @@ public class InvalidateOauthContextTestCase extends AbstractOAuthAuthorizationTe
   }
 
   private void loadResourceOwnerWithAccessToken(ConfigOAuthContext configOAuthContext, String resourceOwnerId) {
-    final DefaultResourceOwnerOAuthContext resourceOwnerContext = configOAuthContext.getContextForResourceOwner(resourceOwnerId);
+    final DefaultResourceOwnerOAuthContext resourceOwnerContext =
+        (DefaultResourceOwnerOAuthContext) configOAuthContext.getContextForResourceOwner(resourceOwnerId);
     resourceOwnerContext.setAccessToken(ACCESS_TOKEN);
     configOAuthContext.updateResourceOwnerOAuthContext(resourceOwnerContext);
   }

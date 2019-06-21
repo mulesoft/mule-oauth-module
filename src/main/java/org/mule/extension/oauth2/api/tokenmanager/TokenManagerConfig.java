@@ -13,6 +13,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import org.mule.api.annotation.NoExtend;
 import org.mule.api.annotation.NoInstantiate;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
+import org.mule.extension.oauth2.internal.store.SimpleObjectStoreToMapAdapter;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
@@ -88,6 +89,10 @@ public class TokenManagerConfig implements Lifecycle {
     this.name = name;
   }
 
+  public String getName() {
+    return name;
+  }
+
   @Override
   public synchronized void initialise() throws InitialisationException {
     if (initialised) {
@@ -98,7 +103,7 @@ public class TokenManagerConfig implements Lifecycle {
                                                          ObjectStoreSettings.builder().persistent(true).build());
     }
     configOAuthContext =
-        new ConfigOAuthContext(lockFactory, objectStore, name);
+        new ConfigOAuthContext(lockFactory, new SimpleObjectStoreToMapAdapter(objectStore), name);
     initialised = true;
   }
 

@@ -176,7 +176,9 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
       initialiseIfNeeded(getTlsContextFactory());
     }
     dancerBuilder.tokenUrl(tokenUrl, contextFactory, proxyConfig);
-    dancerBuilder.scopes(getScopes())
+    dancerBuilder
+        .name(tokenManager.getName())
+        .scopes(getScopes())
         .encoding(Charset.forName(encoding))
         .responseAccessTokenExpr(resolver.getExpression(getResponseAccessToken()))
         .responseRefreshTokenExpr(resolver.getExpression(getResponseRefreshToken()))
