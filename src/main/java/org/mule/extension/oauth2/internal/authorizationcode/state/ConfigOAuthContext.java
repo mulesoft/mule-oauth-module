@@ -6,7 +6,8 @@
  */
 package org.mule.extension.oauth2.internal.authorizationcode.state;
 
-import static org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext.createRefreshUserOAuthContextLock;
+import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.createRefreshUserOAuthContextLock;
+import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.getRefreshUserOAuthContextLock;
 
 import org.mule.runtime.api.lock.LockFactory;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
@@ -45,7 +46,8 @@ public class ConfigOAuthContext {
       lock.lock();
       try {
         if (!oauthContextStore.containsKey(resourceOwnerId)) {
-          resourceOwnerOAuthContext = new DefaultResourceOwnerOAuthContext(resourceOwnerId);
+          resourceOwnerOAuthContext =
+              new DefaultResourceOwnerOAuthContext(createLockForResourceOwner(resourceOwnerId), resourceOwnerId);
           oauthContextStore.put(resourceOwnerId, resourceOwnerOAuthContext);
         }
       } finally {
@@ -54,8 +56,14 @@ public class ConfigOAuthContext {
     }
     if (resourceOwnerOAuthContext == null) {
       resourceOwnerOAuthContext = oauthContextStore.get(resourceOwnerId);
+      ((DefaultResourceOwnerOAuthContext) resourceOwnerOAuthContext)
+          .setRefreshUserOAuthContextLock(createLockForResourceOwner(resourceOwnerId));
     }
     return resourceOwnerOAuthContext;
+  }
+
+  private Lock createLockForResourceOwner(String resourceOwnerId) {
+    return lockFactory.createLock(configName + "-" + resourceOwnerId);
   }
 
   /**
@@ -64,7 +72,8 @@ public class ConfigOAuthContext {
    * @param resourceOwnerOAuthContext
    */
   public void updateResourceOwnerOAuthContext(ResourceOwnerOAuthContext resourceOwnerOAuthContext) {
-    final Lock resourceOwnerContextLock = resourceOwnerOAuthContext.getRefreshUserOAuthContextLock(configName, lockFactory);
+    final Lock resourceOwnerContextLock =
+        getRefreshUserOAuthContextLock(resourceOwnerOAuthContext, configName, lockFactory);
     resourceOwnerContextLock.lock();
     try {
       oauthContextStore.put(resourceOwnerOAuthContext.getResourceOwnerId(), resourceOwnerOAuthContext);
@@ -77,7 +86,8 @@ public class ConfigOAuthContext {
     final ResourceOwnerOAuthContext resourceOwnerOAuthContext = getContextForResourceOwner(resourceOwnerId);
 
     if (resourceOwnerOAuthContext != null) {
-      final Lock resourceOwnerContextLock = resourceOwnerOAuthContext.getRefreshUserOAuthContextLock(configName, lockFactory);
+      final Lock resourceOwnerContextLock =
+          getRefreshUserOAuthContextLock(resourceOwnerOAuthContext, configName, lockFactory);
       resourceOwnerContextLock.lock();
       try {
         oauthContextStore.remove(resourceOwnerId);
