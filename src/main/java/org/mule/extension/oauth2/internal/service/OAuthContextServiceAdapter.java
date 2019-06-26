@@ -49,7 +49,6 @@ public final class OAuthContextServiceAdapter {
   public static Lock getRefreshUserOAuthContextLock(ResourceOwnerOAuthContext resourceOwnerOAuthContext, String name,
                                                     LockFactory lockFactory) {
     if (getRefreshUserOAuthContextLock != null) {
-      // return resourceOwnerOAuthContext.getRefreshUserOAuthContextLock(name, lockFactory);
       try {
         return (Lock) getRefreshUserOAuthContextLock.invoke(resourceOwnerOAuthContext, name, lockFactory);
       } catch (IllegalAccessException | IllegalArgumentException e) {
@@ -64,7 +63,6 @@ public final class OAuthContextServiceAdapter {
 
   public static Lock createRefreshUserOAuthContextLock(String lockNamePrefix, LockFactory lockProvider, String resourceOwnerId) {
     if (createRefreshUserOAuthContextLock != null) {
-      // return createRefreshUserOAuthContextLock(lockNamePrefix, lockProvider, resourceOwnerId);
       try {
         return (Lock) createRefreshUserOAuthContextLock.invoke(null, lockNamePrefix, lockProvider, resourceOwnerId);
       } catch (IllegalAccessException | IllegalArgumentException e) {
@@ -79,7 +77,6 @@ public final class OAuthContextServiceAdapter {
 
   public static <T> OAuthDancerBuilder<T> dancerName(OAuthDancerBuilder<T> dancerBuilder, String name) {
     if (dancerName != null) {
-      // return dancerBuilder.name(name);
       try {
         return (OAuthDancerBuilder<T>) dancerName.invoke(dancerBuilder, name);
       } catch (IllegalAccessException | IllegalArgumentException e) {
