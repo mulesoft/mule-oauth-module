@@ -16,6 +16,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNee
 import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.api.annotation.NoExtend;
 import org.mule.api.annotation.NoInstantiate;
 import org.mule.extension.http.api.HttpResponseAttributes;
@@ -212,6 +213,7 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
 
   @Override
   public final void initialise() throws InitialisationException {
+    super.initialise();
     initTokenManager();
 
     OAuthAuthorizationCodeDancerBuilder dancerBuilder = configDancer(oAuthService);
@@ -242,9 +244,9 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
 
   private OAuthAuthorizationCodeDancerBuilder configDancer(OAuthService oauthService) throws InitialisationException {
     OAuthAuthorizationCodeDancerBuilder dancerBuilder =
-        oauthService.authorizationCodeGrantTypeDancerBuilder(lockId -> muleContext.getLockFactory().createLock(lockId),
+        oauthService.authorizationCodeGrantTypeDancerBuilder(lockFactory,
                                                              new SimpleObjectStoreToMapAdapter(tokenManager.getObjectStore()),
-                                                             muleContext.getExpressionManager());
+                                                             expressionEvaluator);
     try {
       if (localCallbackConfig != null && localCallbackUrl != null) {
         throw new IllegalArgumentException("Attributes localCallbackConfig and localCallbackUrl are mutually exclusive");
@@ -312,6 +314,7 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
     return shouldRetryRequest;
   }
 
+  @Override
   public void retryIfShould(Result<Object, HttpResponseAttributes> firstAttemptResult, Runnable retryCallback,
                             Runnable notRetryCallback) {
     Boolean shouldRetryRequest = resolver.resolveExpression(getRefreshTokenWhen(), firstAttemptResult);
