@@ -17,7 +17,6 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.startIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
-import static org.mule.runtime.core.api.util.SystemUtils.getDefaultEncoding;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.SECURITY_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -33,6 +32,7 @@ import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.param.DefaultEncoding;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
@@ -41,6 +41,7 @@ import org.mule.runtime.extension.api.runtime.parameter.Literal;
 import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthDancerBuilder;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
 
@@ -156,6 +157,9 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   @Expression(NOT_SUPPORTED)
   private HttpProxyConfig proxyConfig;
 
+  @DefaultEncoding
+  private String encoding;
+
   @Inject
   protected OAuthService oAuthService;
 
@@ -173,7 +177,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
     }
     dancerBuilder.tokenUrl(tokenUrl, contextFactory, proxyConfig);
     dancerBuilder.scopes(getScopes())
-        .encoding(getDefaultEncoding(muleContext))
+        .encoding(Charset.forName(encoding))
         .responseAccessTokenExpr(resolver.getExpression(getResponseAccessToken()))
         .responseRefreshTokenExpr(resolver.getExpression(getResponseRefreshToken()))
         .responseExpiresInExpr(resolver.getExpression(getResponseExpiresIn()))
