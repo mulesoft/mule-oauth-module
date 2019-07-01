@@ -9,16 +9,17 @@ package org.mule.extension.oauth2.api.tokenmanager;
 import static java.util.Objects.hash;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.startIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
+
 import org.mule.api.annotation.NoExtend;
 import org.mule.api.annotation.NoInstantiate;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
+import org.mule.runtime.api.lock.LockFactory;
 import org.mule.runtime.api.store.ObjectStore;
+import org.mule.runtime.api.store.ObjectStoreManager;
 import org.mule.runtime.api.store.ObjectStoreSettings;
-import org.mule.runtime.core.api.MuleContext;
-import org.mule.runtime.core.api.context.MuleContextAware;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.dsl.xml.TypeDsl;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -31,6 +32,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Inject;
+
 /**
  * Token manager stores all the OAuth State (access token, refresh token).
  *
@@ -40,7 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @TypeDsl(allowTopLevelDefinition = true)
 @NoExtend
 @NoInstantiate
-public class TokenManagerConfig implements Lifecycle, MuleContextAware {
+public class TokenManagerConfig implements Lifecycle {
 
   public static AtomicInteger defaultTokenManagerConfigIndex = new AtomicInteger(0);
 
@@ -62,7 +65,11 @@ public class TokenManagerConfig implements Lifecycle, MuleContextAware {
   @ObjectStoreReference
   private ObjectStore<DefaultResourceOwnerOAuthContext> objectStore;
 
-  private MuleContext muleContext;
+  @Inject
+  private LockFactory lockFactory;
+
+  @Inject
+  private ObjectStoreManager objectStoreManager;
 
   private ConfigOAuthContext configOAuthContext;
 
@@ -87,11 +94,11 @@ public class TokenManagerConfig implements Lifecycle, MuleContextAware {
       return;
     }
     if (objectStore == null) {
-      objectStore =
-          muleContext.getObjectStoreManager().createObjectStore("token-manager-store-" + name,
-                                                                ObjectStoreSettings.builder().persistent(true).build());
+      objectStore = objectStoreManager.createObjectStore("token-manager-store-" + name,
+                                                         ObjectStoreSettings.builder().persistent(true).build());
     }
-    configOAuthContext = new ConfigOAuthContext(muleContext.getLockFactory(), objectStore, name);
+    configOAuthContext =
+        new ConfigOAuthContext(lockFactory, objectStore, name);
     initialised = true;
   }
 
@@ -116,7 +123,7 @@ public class TokenManagerConfig implements Lifecycle, MuleContextAware {
     activeConfigs.remove(name);
   }
 
-  public static TokenManagerConfig createDefault(final MuleContext context) throws InitialisationException {
+  public static TokenManagerConfig createDefault() {
     final TokenManagerConfig tokenManagerConfig = new TokenManagerConfig();
     final String tokenManagerConfigName = "default-token-manager-config-" + defaultTokenManagerConfigIndex.getAndIncrement();
     tokenManagerConfig.setName(tokenManagerConfigName);
@@ -134,11 +141,6 @@ public class TokenManagerConfig implements Lifecycle, MuleContextAware {
 
   public ConfigOAuthContext getConfigOAuthContext() {
     return configOAuthContext;
-  }
-
-  @Override
-  public void setMuleContext(MuleContext muleContext) {
-    this.muleContext = muleContext;
   }
 
   @Override

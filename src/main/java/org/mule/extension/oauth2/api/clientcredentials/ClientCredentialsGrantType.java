@@ -10,6 +10,7 @@ import static java.lang.Thread.currentThread;
 import static java.util.Objects.hash;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
+
 import org.mule.api.annotation.NoExtend;
 import org.mule.api.annotation.NoInstantiate;
 import org.mule.extension.http.api.HttpResponseAttributes;
@@ -46,12 +47,13 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
 
   @Override
   public final void initialise() throws InitialisationException {
+    super.initialise();
     initTokenManager();
 
     OAuthClientCredentialsDancerBuilder dancerBuilder =
-        oAuthService.clientCredentialsGrantTypeDancerBuilder(lockId -> muleContext.getLockFactory().createLock(lockId),
+        oAuthService.clientCredentialsGrantTypeDancerBuilder(lockFactory,
                                                              new SimpleObjectStoreToMapAdapter(tokenManager.getObjectStore()),
-                                                             muleContext.getExpressionManager());
+                                                             expressionEvaluator);
     dancerBuilder.encodeClientCredentialsInBody(isEncodeClientCredentialsInBody());
     dancerBuilder.clientCredentials(getClientId(), getClientSecret());
 
@@ -88,6 +90,7 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
     return shouldRetryRequest;
   }
 
+  @Override
   public void retryIfShould(Result<Object, HttpResponseAttributes> firstAttemptResult, Runnable retryCallback,
                             Runnable notRetryCallback) {
     Boolean shouldRetryRequest = resolver.resolveExpression(getRefreshTokenWhen(), firstAttemptResult);
