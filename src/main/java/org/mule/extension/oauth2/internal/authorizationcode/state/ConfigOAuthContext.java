@@ -55,7 +55,7 @@ public class ConfigOAuthContext {
       }
     }
     if (resourceOwnerOAuthContext == null) {
-      resourceOwnerOAuthContext = migrateContextIfNeeded(oauthContextStore.get(resourceOwnerId));
+      resourceOwnerOAuthContext = migrateContextIfNeeded(oauthContextStore.get(resourceOwnerId), configName, lockFactory);
     }
     return resourceOwnerOAuthContext;
   }

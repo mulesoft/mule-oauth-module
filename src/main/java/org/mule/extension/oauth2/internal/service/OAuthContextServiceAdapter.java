@@ -74,7 +74,8 @@ public final class OAuthContextServiceAdapter {
     return lockFactory.createLock(configName + "-" + resourceOwnerId);
   }
 
-  public static ResourceOwnerOAuthContext migrateContextIfNeeded(ResourceOwnerOAuthContext resourceOwnerOAuthContext) {
+  public static ResourceOwnerOAuthContext migrateContextIfNeeded(ResourceOwnerOAuthContext resourceOwnerOAuthContext, String name,
+                                                                 LockFactory lockFactory) {
     if (ctxWithStateClass != null && resourceOwnerOAuthContext instanceof DefaultResourceOwnerOAuthContext) {
       try {
         return ctxWithStateCopyConstructor.newInstance(resourceOwnerOAuthContext);
@@ -82,6 +83,9 @@ public final class OAuthContextServiceAdapter {
         throw new MuleRuntimeException(e);
       }
     } else {
+      ((DefaultResourceOwnerOAuthContext) resourceOwnerOAuthContext)
+          .setRefreshUserOAuthContextLock(createLockForResourceOwner(resourceOwnerOAuthContext.getResourceOwnerId(), name,
+                                                                     lockFactory));
       return resourceOwnerOAuthContext;
     }
   }
