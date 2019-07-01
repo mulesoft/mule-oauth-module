@@ -11,6 +11,7 @@ import org.mule.runtime.api.lock.LockFactory;
 import org.mule.runtime.oauth.api.builder.OAuthDancerBuilder;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
+import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContextWithRefreshState;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,11 +29,11 @@ public final class OAuthContextServiceAdapter {
 
   static {
     try {
-      getRefreshUserOAuthContextLock = DefaultResourceOwnerOAuthContext.class
-          .getDeclaredMethod("getRefreshUserOAuthContextLock", String.class, LockFactory.class);
+      getRefreshUserOAuthContextLock = ResourceOwnerOAuthContextWithRefreshState.class
+          .getDeclaredMethod("getRefreshOAuthContextLock", String.class, LockFactory.class);
 
-      createRefreshUserOAuthContextLock = DefaultResourceOwnerOAuthContext.class
-          .getDeclaredMethod("createRefreshUserOAuthContextLock", String.class, LockFactory.class, String.class);
+      createRefreshUserOAuthContextLock = ResourceOwnerOAuthContextWithRefreshState.class
+          .getDeclaredMethod("createRefreshOAuthContextLock", String.class, LockFactory.class, String.class);
 
       dancerName = OAuthDancerBuilder.class.getDeclaredMethod("name", String.class);
     } catch (NoSuchMethodException e) {
