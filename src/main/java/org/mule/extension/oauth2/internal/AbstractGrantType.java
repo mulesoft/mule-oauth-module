@@ -17,20 +17,22 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.startIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
-import static org.mule.runtime.core.api.util.SystemUtils.getDefaultEncoding;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.SECURITY_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extension.http.api.request.authentication.HttpRequestAuthentication;
 import org.mule.extension.http.api.request.proxy.HttpProxyConfig;
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
+import org.mule.runtime.api.el.MuleExpressionLanguage;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
+import org.mule.runtime.api.lock.LockFactory;
 import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.core.api.MuleContext;
-import org.mule.runtime.core.api.context.MuleContextAware;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
+import org.mule.runtime.extension.api.annotation.param.DefaultEncoding;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
@@ -39,6 +41,7 @@ import org.mule.runtime.extension.api.runtime.parameter.Literal;
 import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthDancerBuilder;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,8 +54,7 @@ import org.slf4j.Logger;
  *
  * @since 1.0
  */
-// TODO MULE-11412 Remove MuleContextAware
-public abstract class AbstractGrantType implements HttpRequestAuthentication, MuleContextAware, Lifecycle {
+public abstract class AbstractGrantType implements HttpRequestAuthentication, Lifecycle {
 
   private static final Logger LOGGER = getLogger(AbstractGrantType.class);
 
@@ -61,8 +63,14 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
   private static final String REFRESH_TOKEN_EXPRESSION = "#[payload.refresh_token]";
   private static final String EXPIRATION_TIME_EXPRESSION = "#[payload.expires_in]";
 
-  // TODO MULE-11412 Add @Inject
+  @Inject
   protected MuleContext muleContext;
+
+  @Inject
+  protected LockFactory lockFactory;
+
+  @Inject
+  protected MuleExpressionLanguage expressionEvaluator;
 
   protected DeferredExpressionResolver resolver;
 
@@ -149,12 +157,15 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
   @Expression(NOT_SUPPORTED)
   private HttpProxyConfig proxyConfig;
 
+  @DefaultEncoding
+  private String encoding;
+
   @Inject
   protected OAuthService oAuthService;
 
   protected void initTokenManager() throws InitialisationException {
     if (tokenManager == null) {
-      this.tokenManager = TokenManagerConfig.createDefault(muleContext);
+      this.tokenManager = TokenManagerConfig.createDefault();
     }
     initialiseIfNeeded(tokenManager, muleContext);
   }
@@ -166,7 +177,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
     }
     dancerBuilder.tokenUrl(tokenUrl, contextFactory, proxyConfig);
     dancerBuilder.scopes(getScopes())
-        .encoding(getDefaultEncoding(muleContext))
+        .encoding(Charset.forName(encoding))
         .responseAccessTokenExpr(resolver.getExpression(getResponseAccessToken()))
         .responseRefreshTokenExpr(resolver.getExpression(getResponseRefreshToken()))
         .responseExpiresInExpr(resolver.getExpression(getResponseExpiresIn()))
@@ -178,6 +189,11 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
   }
 
   public abstract Object getDancer();
+
+  @Override
+  public void initialise() throws InitialisationException {
+    this.resolver = new DeferredExpressionResolver(expressionEvaluator);
+  }
 
   @Override
   public void start() throws MuleException {
@@ -202,13 +218,6 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Mu
   protected String buildAuthorizationHeaderContent(String accessToken) {
     return "Bearer " + accessToken;
   }
-
-  @Override
-  public void setMuleContext(MuleContext muleContext) {
-    this.muleContext = muleContext;
-    this.resolver = new DeferredExpressionResolver(muleContext.getExpressionManager());
-  }
-
 
   @Override
   public boolean equals(Object obj) {
