@@ -76,7 +76,7 @@ public final class OAuthContextServiceAdapter {
 
   public static ResourceOwnerOAuthContext migrateContextIfNeeded(ResourceOwnerOAuthContext resourceOwnerOAuthContext, String name,
                                                                  LockFactory lockFactory) {
-    if (ctxWithStateClass != null && resourceOwnerOAuthContext instanceof DefaultResourceOwnerOAuthContext) {
+    if (ctxWithStateClass != null) {
       try {
         return ctxWithStateCopyConstructor.newInstance(resourceOwnerOAuthContext);
       } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

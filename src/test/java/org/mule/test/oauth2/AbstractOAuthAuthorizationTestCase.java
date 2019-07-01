@@ -41,18 +41,20 @@ import static org.mule.service.oauth.internal.OAuthConstants.SCOPE_PARAMETER;
 
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.metadata.MediaType;
+import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
+
+import java.io.UnsupportedEncodingException;
 
 import org.junit.Rule;
 
 import com.github.tomakehurst.wiremock.client.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableMap;
-
-import java.io.UnsupportedEncodingException;
 
 @ArtifactClassLoaderRunnerConfig(exportPluginClasses = {ConfigOAuthContext.class})
 public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFunctionalTestCase {
@@ -68,8 +70,8 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
   private static final String PROXY_CONNECTION_HEADER = "Proxy-Connection";
   protected final DynamicPort oauthServerPort = new DynamicPort("port2");
   protected final DynamicPort oauthHttpsServerPort = new DynamicPort("port3");
-  private String keyStorePath = currentThread().getContextClassLoader().getResource("ssltest-keystore.jks").getPath();
-  private String keyStorePassword = "changeit";
+  private final String keyStorePath = currentThread().getContextClassLoader().getResource("ssltest-keystore.jks").getPath();
+  private final String keyStorePassword = "changeit";
 
   @Rule
   public DynamicPort proxyPort = new DynamicPort("proxyPort");
@@ -286,5 +288,16 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
   private Object runFlowWithResourceOwnerId(String flowName, String defaultResourceOwnerId) throws Exception {
     return flowRunner(flowName).withVariable("resourceOwnerId", defaultResourceOwnerId).run().getMessage().getPayload()
         .getValue();
+  }
+
+  protected void setTokens(ResourceOwnerOAuthContext resourceOwnerOauthContext, String accessToken, String refreshToken) {
+    try {
+      resourceOwnerOauthContext.getClass().getDeclaredMethod("setAccessToken", String.class)
+          .invoke(resourceOwnerOauthContext, accessToken);
+      resourceOwnerOauthContext.getClass().getDeclaredMethod("setRefreshToken", String.class)
+          .invoke(resourceOwnerOauthContext, refreshToken);
+    } catch (Exception e) {
+      throw new MuleRuntimeException(e);
+    }
   }
 }
