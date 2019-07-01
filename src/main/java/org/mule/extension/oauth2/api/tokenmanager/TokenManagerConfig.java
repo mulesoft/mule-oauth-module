@@ -13,7 +13,6 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import org.mule.api.annotation.NoExtend;
 import org.mule.api.annotation.NoInstantiate;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
-import org.mule.extension.oauth2.internal.store.SimpleObjectStoreToMapAdapter;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
@@ -124,7 +123,7 @@ public class TokenManagerConfig implements Lifecycle {
     activeConfigs.remove(name);
   }
 
-  public static TokenManagerConfig createDefault() throws InitialisationException {
+  public static TokenManagerConfig createDefault() {
     final TokenManagerConfig tokenManagerConfig = new TokenManagerConfig();
     final String tokenManagerConfigName = "default-token-manager-config-" + defaultTokenManagerConfigIndex.getAndIncrement();
     tokenManagerConfig.setName(tokenManagerConfigName);
