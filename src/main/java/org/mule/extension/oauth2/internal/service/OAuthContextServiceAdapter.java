@@ -11,8 +11,8 @@ import org.mule.runtime.api.lock.LockFactory;
 import org.mule.runtime.oauth.api.builder.OAuthDancerBuilder;
 import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
-import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContextWithRefreshState;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.locks.Lock;
@@ -23,20 +23,29 @@ import java.util.concurrent.locks.Lock;
  */
 public final class OAuthContextServiceAdapter {
 
+  private static Class<? extends ResourceOwnerOAuthContext> ctxWithStateClass;
+  private static Constructor<? extends ResourceOwnerOAuthContext> ctxWithStateConstructor;
+  private static Constructor<? extends ResourceOwnerOAuthContext> ctxWithStateCopyConstructor;
   private static Method createRefreshUserOAuthContextLock = null;
   private static Method getRefreshUserOAuthContextLock = null;
   private static Method dancerName = null;
 
   static {
     try {
-      getRefreshUserOAuthContextLock = ResourceOwnerOAuthContextWithRefreshState.class
-          .getDeclaredMethod("getRefreshOAuthContextLock", String.class, LockFactory.class);
+      ctxWithStateClass = (Class<? extends ResourceOwnerOAuthContext>) Class
+          .forName("org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContextWithRefreshState");
 
-      createRefreshUserOAuthContextLock = ResourceOwnerOAuthContextWithRefreshState.class
-          .getDeclaredMethod("createRefreshOAuthContextLock", String.class, LockFactory.class, String.class);
+      ctxWithStateConstructor = ctxWithStateClass.getConstructor(String.class);
+      ctxWithStateCopyConstructor = ctxWithStateClass.getConstructor(ResourceOwnerOAuthContext.class);
+
+      getRefreshUserOAuthContextLock =
+          ctxWithStateClass.getDeclaredMethod("getRefreshOAuthContextLock", String.class, LockFactory.class);
+
+      createRefreshUserOAuthContextLock =
+          ctxWithStateClass.getDeclaredMethod("createRefreshOAuthContextLock", String.class, LockFactory.class, String.class);
 
       dancerName = OAuthDancerBuilder.class.getDeclaredMethod("name", String.class);
-    } catch (NoSuchMethodException e) {
+    } catch (NoSuchMethodException | ClassNotFoundException e) {
       // Nothing to do, this is just using an older version of the api
     } catch (SecurityException e) {
       throw e;
@@ -45,6 +54,36 @@ public final class OAuthContextServiceAdapter {
 
   private OAuthContextServiceAdapter() {
     // Nothing to do
+  }
+
+  public static ResourceOwnerOAuthContext createResourceOwnerOAuthContext(String resourceOwnerId, String name,
+                                                                          LockFactory lockFactory) {
+    if (ctxWithStateClass != null) {
+      try {
+        return ctxWithStateConstructor.newInstance(resourceOwnerId);
+      } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        throw new MuleRuntimeException(e);
+      }
+    } else {
+      return new DefaultResourceOwnerOAuthContext(createLockForResourceOwner(resourceOwnerId, name, lockFactory),
+                                                  resourceOwnerId);
+    }
+  }
+
+  private static Lock createLockForResourceOwner(String resourceOwnerId, String configName, LockFactory lockFactory) {
+    return lockFactory.createLock(configName + "-" + resourceOwnerId);
+  }
+
+  public static ResourceOwnerOAuthContext migrateContextIfNeeded(ResourceOwnerOAuthContext resourceOwnerOAuthContext) {
+    if (ctxWithStateClass != null && resourceOwnerOAuthContext instanceof DefaultResourceOwnerOAuthContext) {
+      try {
+        return ctxWithStateCopyConstructor.newInstance(resourceOwnerOAuthContext);
+      } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        throw new MuleRuntimeException(e);
+      }
+    } else {
+      return resourceOwnerOAuthContext;
+    }
   }
 
   public static Lock getRefreshUserOAuthContextLock(ResourceOwnerOAuthContext resourceOwnerOAuthContext, String name,

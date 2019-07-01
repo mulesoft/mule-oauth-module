@@ -10,7 +10,7 @@ import static org.mule.runtime.http.api.HttpConstants.HttpStatus.INTERNAL_SERVER
 
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
-import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContextWithRefreshState;
+import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;
 
 import org.junit.Ignore;
@@ -43,13 +43,13 @@ public class AuthorizationCodeRefreshTokenMultitenantConfigTestCase extends Abst
   public void afterFailureDoRefreshTokenWithCustomValueWithResourceOwnerId() throws Exception {
     final ConfigOAuthContext configOAuthContext = getTokenManagerConfig().getConfigOAuthContext();
 
-    final ResourceOwnerOAuthContextWithRefreshState contextForResourceOwnerTony =
-        (ResourceOwnerOAuthContextWithRefreshState) configOAuthContext.getContextForResourceOwner(USER_ID_TONY);
+    final DefaultResourceOwnerOAuthContext contextForResourceOwnerTony =
+        (DefaultResourceOwnerOAuthContext) configOAuthContext.getContextForResourceOwner(USER_ID_TONY);
     contextForResourceOwnerTony.setAccessToken(TONY_ACCESS_TOKEN);
     configOAuthContext.updateResourceOwnerOAuthContext(contextForResourceOwnerTony);
 
-    final ResourceOwnerOAuthContextWithRefreshState contextForResourceOwnerJohn =
-        (ResourceOwnerOAuthContextWithRefreshState) configOAuthContext.getContextForResourceOwner(USER_ID_JOHN);
+    final DefaultResourceOwnerOAuthContext contextForResourceOwnerJohn =
+        (DefaultResourceOwnerOAuthContext) configOAuthContext.getContextForResourceOwner(USER_ID_JOHN);
     contextForResourceOwnerJohn.setAccessToken(JOHN_ACCESS_TOKEN);
     configOAuthContext.updateResourceOwnerOAuthContext(contextForResourceOwnerJohn);
 
