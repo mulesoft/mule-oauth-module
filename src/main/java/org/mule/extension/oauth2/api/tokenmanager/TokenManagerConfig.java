@@ -45,7 +45,7 @@ import javax.inject.Inject;
 @TypeDsl(allowTopLevelDefinition = true)
 @NoExtend
 @NoInstantiate
-public class TokenManagerConfig<Ctx extends ResourceOwnerOAuthContext & Serializable> implements Lifecycle {
+public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializable> implements Lifecycle {
 
   public static AtomicInteger defaultTokenManagerConfigIndex = new AtomicInteger(0);
 
@@ -65,7 +65,7 @@ public class TokenManagerConfig<Ctx extends ResourceOwnerOAuthContext & Serializ
   @Parameter
   @Optional
   @ObjectStoreReference
-  private ObjectStore<Ctx> objectStore;
+  private ObjectStore<CTX> objectStore;
 
   @Inject
   private LockFactory lockFactory;
@@ -78,11 +78,11 @@ public class TokenManagerConfig<Ctx extends ResourceOwnerOAuthContext & Serializ
   private boolean initialised;
   private boolean started;
 
-  public ObjectStore<Ctx> getObjectStore() {
+  public ObjectStore<CTX> getObjectStore() {
     return objectStore;
   }
 
-  public void setObjectStore(ObjectStore<Ctx> objectStore) {
+  public void setObjectStore(ObjectStore<CTX> objectStore) {
     this.objectStore = objectStore;
   }
 

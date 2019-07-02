@@ -20,7 +20,14 @@ import java.util.concurrent.locks.Lock;
 /**
  * This provides the adapter layer required for newer versions of the module to work on older versions of the runtime/OAuth
  * service.
+ * <p>
+ * This must be removed once the {@code minMuleVersion} of this extension is upgraded to 4.3
+ *
+ * @since 1.2.0, 1.1.9
+ *
+ * @deprecated to be removed when {@code minMuleVersion} is upgraded to 4.3.0
  */
+@Deprecated
 public final class OAuthContextServiceAdapter {
 
   private static Class<? extends ResourceOwnerOAuthContext> ctxWithStateClass;
@@ -31,6 +38,11 @@ public final class OAuthContextServiceAdapter {
   private static Method dancerName = null;
 
   static {
+    // This code uses reflection to detect what version of the OAuth service API is in the runtime.
+    // In case the new methods are detected, those are called via reflection. Can't use them directly because this code has to
+    // compile against the older version of the service API.
+    // In case the new methods are not found, the original logic is executed.
+
     try {
       ctxWithStateClass = (Class<? extends ResourceOwnerOAuthContext>) Class
           .forName("org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContextWithRefreshState");
@@ -61,7 +73,9 @@ public final class OAuthContextServiceAdapter {
     if (ctxWithStateClass != null) {
       try {
         return ctxWithStateConstructor.newInstance(resourceOwnerId);
-      } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+      } catch (InstantiationException | InvocationTargetException e) {
+        throw new MuleRuntimeException(e.getCause());
+      } catch (IllegalAccessException | IllegalArgumentException e) {
         throw new MuleRuntimeException(e);
       }
     } else {
@@ -79,7 +93,9 @@ public final class OAuthContextServiceAdapter {
     if (ctxWithStateClass != null) {
       try {
         return ctxWithStateCopyConstructor.newInstance(resourceOwnerOAuthContext);
-      } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+      } catch (InstantiationException | InvocationTargetException e) {
+        throw new MuleRuntimeException(e.getCause());
+      } catch (IllegalAccessException | IllegalArgumentException e) {
         throw new MuleRuntimeException(e);
       }
     } else {
