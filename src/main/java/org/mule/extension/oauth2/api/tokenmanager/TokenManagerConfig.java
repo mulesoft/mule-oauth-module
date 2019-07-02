@@ -13,6 +13,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 import org.mule.api.annotation.NoExtend;
 import org.mule.api.annotation.NoInstantiate;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
+import org.mule.extension.oauth2.internal.store.SimpleObjectStoreToMapAdapter;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
@@ -26,8 +27,9 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.reference.ObjectStoreReference;
-import org.mule.runtime.oauth.api.state.DefaultResourceOwnerOAuthContext;
+import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,7 +45,7 @@ import javax.inject.Inject;
 @TypeDsl(allowTopLevelDefinition = true)
 @NoExtend
 @NoInstantiate
-public class TokenManagerConfig implements Lifecycle {
+public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializable> implements Lifecycle {
 
   public static AtomicInteger defaultTokenManagerConfigIndex = new AtomicInteger(0);
 
@@ -63,7 +65,7 @@ public class TokenManagerConfig implements Lifecycle {
   @Parameter
   @Optional
   @ObjectStoreReference
-  private ObjectStore<DefaultResourceOwnerOAuthContext> objectStore;
+  private ObjectStore<CTX> objectStore;
 
   @Inject
   private LockFactory lockFactory;
@@ -76,16 +78,20 @@ public class TokenManagerConfig implements Lifecycle {
   private boolean initialised;
   private boolean started;
 
-  public ObjectStore<DefaultResourceOwnerOAuthContext> getObjectStore() {
+  public ObjectStore<CTX> getObjectStore() {
     return objectStore;
   }
 
-  public void setObjectStore(ObjectStore<DefaultResourceOwnerOAuthContext> objectStore) {
+  public void setObjectStore(ObjectStore<CTX> objectStore) {
     this.objectStore = objectStore;
   }
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getName() {
+    return name;
   }
 
   @Override
@@ -98,7 +104,7 @@ public class TokenManagerConfig implements Lifecycle {
                                                          ObjectStoreSettings.builder().persistent(true).build());
     }
     configOAuthContext =
-        new ConfigOAuthContext(lockFactory, objectStore, name);
+        new ConfigOAuthContext(lockFactory, new SimpleObjectStoreToMapAdapter(objectStore), name);
     initialised = true;
   }
 

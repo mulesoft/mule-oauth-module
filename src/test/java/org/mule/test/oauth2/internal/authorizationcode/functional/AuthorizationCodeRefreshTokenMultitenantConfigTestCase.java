@@ -44,12 +44,12 @@ public class AuthorizationCodeRefreshTokenMultitenantConfigTestCase extends Abst
     final ConfigOAuthContext configOAuthContext = getTokenManagerConfig().getConfigOAuthContext();
 
     final DefaultResourceOwnerOAuthContext contextForResourceOwnerTony =
-        configOAuthContext.getContextForResourceOwner(USER_ID_TONY);
+        (DefaultResourceOwnerOAuthContext) configOAuthContext.getContextForResourceOwner(USER_ID_TONY);
     contextForResourceOwnerTony.setAccessToken(TONY_ACCESS_TOKEN);
     configOAuthContext.updateResourceOwnerOAuthContext(contextForResourceOwnerTony);
 
     final DefaultResourceOwnerOAuthContext contextForResourceOwnerJohn =
-        configOAuthContext.getContextForResourceOwner(USER_ID_JOHN);
+        (DefaultResourceOwnerOAuthContext) configOAuthContext.getContextForResourceOwner(USER_ID_JOHN);
     contextForResourceOwnerJohn.setAccessToken(JOHN_ACCESS_TOKEN);
     configOAuthContext.updateResourceOwnerOAuthContext(contextForResourceOwnerJohn);
 
