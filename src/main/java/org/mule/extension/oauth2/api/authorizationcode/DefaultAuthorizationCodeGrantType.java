@@ -137,7 +137,7 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
   @Parameter
   @Optional
   @Alias("custom-parameters")
-  private Map<String, String> customParameters = new HashMap<>();
+  private final Map<String, String> customParameters = new HashMap<>();
 
   /**
    * Identifier under which the oauth authentication attributes are stored (accessToken, refreshToken, etc).
