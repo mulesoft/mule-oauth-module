@@ -23,6 +23,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extension.http.api.request.authentication.HttpRequestAuthentication;
 import org.mule.extension.http.api.request.proxy.HttpProxyConfig;
+import org.mule.extension.oauth2.api.stereotype.TokenManagerStereotype;
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.api.el.MuleExpressionLanguage;
 import org.mule.runtime.api.exception.MuleException;
@@ -38,6 +39,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.annotation.param.stereotype.AllowedStereotypes;
 import org.mule.runtime.extension.api.runtime.parameter.Literal;
 import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthDancerBuilder;
@@ -100,6 +102,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   @Parameter
   @Optional
   @Expression(value = NOT_SUPPORTED)
+  @AllowedStereotypes(TokenManagerStereotype.class)
   protected TokenManagerConfig tokenManager;
 
   /**

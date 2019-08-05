@@ -12,6 +12,7 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.stopIfNeeded;
 
 import org.mule.api.annotation.NoExtend;
 import org.mule.api.annotation.NoInstantiate;
+import org.mule.extension.oauth2.api.stereotype.TokenManagerStereotype;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.extension.oauth2.internal.store.SimpleObjectStoreToMapAdapter;
 import org.mule.runtime.api.exception.MuleException;
@@ -27,6 +28,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.reference.ObjectStoreReference;
+import org.mule.runtime.extension.api.annotation.param.stereotype.Stereotype;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 
 import java.io.Serializable;
@@ -43,6 +45,7 @@ import javax.inject.Inject;
  */
 @Alias("token-manager-config")
 @TypeDsl(allowTopLevelDefinition = true)
+@Stereotype(TokenManagerStereotype.class)
 @NoExtend
 @NoInstantiate
 public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializable> implements Lifecycle {
