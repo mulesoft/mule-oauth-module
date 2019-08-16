@@ -43,6 +43,13 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
   @Optional(defaultValue = "false")
   private boolean encodeClientCredentialsInBody;
 
+  /**
+   * Application audience as defined in the oauth authentication server.
+   */
+  @Parameter
+  @Optional
+  private String audience;
+
   private ClientCredentialsOAuthDancer dancer;
 
   @Override
@@ -56,6 +63,7 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
                                                              expressionEvaluator);
     dancerBuilder.encodeClientCredentialsInBody(isEncodeClientCredentialsInBody());
     dancerBuilder.clientCredentials(getClientId(), getClientSecret());
+    dancerBuilder.audience(audience);
 
     configureBaseDancer(dancerBuilder);
     dancer = dancerBuilder.build();
