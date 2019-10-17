@@ -31,7 +31,6 @@ import org.mule.runtime.api.lifecycle.Lifecycle;
 import org.mule.runtime.api.lock.LockFactory;
 import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.core.api.MuleContext;
-import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.DefaultEncoding;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -128,9 +127,8 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   protected Literal<String> responseExpiresIn;
 
   @Parameter
-  @Alias("custom-parameter-extractors")
   @Optional
-  protected List<ParameterExtractor> parameterExtractors;
+  protected List<ParameterExtractor> customParameterExtractors;
 
   /**
    * After executing an API call authenticated with OAuth it may be that the access token used was expired, so this attribute
@@ -151,7 +149,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   @Expression(NOT_SUPPORTED)
   @DisplayName(TLS_CONFIGURATION)
   @Placement(tab = SECURITY_TAB)
-  private TlsContextFactory tlsContextFactory;
+  private TlsContextFactory tlsContext;
 
   @Parameter
   @Optional
@@ -234,9 +232,9 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
           literalEquals(responseAccessToken, other.responseAccessToken) &&
           literalEquals(responseRefreshToken, other.responseRefreshToken) &&
           literalEquals(responseExpiresIn, other.responseExpiresIn) &&
-          Objects.equals(parameterExtractors, other.parameterExtractors) &&
+          Objects.equals(customParameterExtractors, other.customParameterExtractors) &&
           literalEquals(refreshTokenWhen, other.refreshTokenWhen) &&
-          Objects.equals(tlsContextFactory, other.tlsContextFactory) &&
+          Objects.equals(tlsContext, other.tlsContext) &&
           Objects.equals(proxyConfig, other.proxyConfig);
     }
 
@@ -246,7 +244,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   @Override
   public int hashCode() {
     return 31 * hash(
-                     clientId, clientSecret, scopes, tokenManager, tokenUrl, parameterExtractors, tlsContextFactory, proxyConfig)
+                     clientId, clientSecret, scopes, tokenManager, tokenUrl, customParameterExtractors, tlsContext, proxyConfig)
         *
         literalHashCodes(responseAccessToken, responseRefreshToken, responseExpiresIn, refreshTokenWhen);
   }
@@ -288,11 +286,11 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   }
 
   public List<ParameterExtractor> getCustomParameterExtractors() {
-    return parameterExtractors != null ? parameterExtractors : emptyList();
+    return customParameterExtractors != null ? customParameterExtractors : emptyList();
   }
 
   public TlsContextFactory getTlsContextFactory() {
-    return tlsContextFactory;
+    return tlsContext;
   }
 
 }
