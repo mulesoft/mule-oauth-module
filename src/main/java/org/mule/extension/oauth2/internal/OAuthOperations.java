@@ -96,7 +96,7 @@ public class OAuthOperations {
    * @param resourceOwnerId The resource owner id to invalidate. This attribute is only allowed for authorization code grant type.
    * @param key to look for in the elements that has been extracted after the previous OAuth dance.
    * @return an element if there was previously introduced by the OAuth dance and the custom parameter extractor. Null otherwise
-   * @see AbstractGrantType#parameterExtractors
+   * @see AbstractGrantType#customParameterExtractors
    */
   @MediaType(value = TEXT_PLAIN, strict = false)
   public String retrieveCustomTokenResponseParam(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
