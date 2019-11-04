@@ -15,6 +15,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.lang.String.format;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mule.extension.http.internal.HttpConnectorConstants.RETRY_ATTEMPTS_PROPERTY;
 import static org.mule.runtime.http.api.HttpConstants.Protocol.HTTPS;
 import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 import static org.mule.runtime.http.api.HttpHeaders.Names.WWW_AUTHENTICATE;
@@ -50,6 +51,8 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
   public SystemProperty customTokenResponseParameter1Name = new SystemProperty("custom.param.extractor1", "token-resp-param1");
   @Rule
   public SystemProperty customTokenResponseParameter2Name = new SystemProperty("custom.param.extractor2", "token-resp-param2");
+  @Rule
+  public SystemProperty maxRetriesProperty;
 
   private String[] configFiles;
 
@@ -58,8 +61,9 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
     return configFiles;
   }
 
-  public ClientCredentialsFullConfigTestCase(String[] configFiles) {
+  public ClientCredentialsFullConfigTestCase(String[] configFiles, String[] clientMaxRetries) {
     this.configFiles = configFiles;
+    this.maxRetriesProperty = new SystemProperty(RETRY_ATTEMPTS_PROPERTY, clientMaxRetries[0]);
   }
 
   @Parameterized.Parameters
@@ -67,9 +71,17 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
     final String operationsConfig = "operations/operations-config.xml";
     return Arrays
         .asList(new Object[][] {
-            new String[] {"client-credentials/client-credentials-full-config-tls-global.xml", operationsConfig}},
+            new String[] {"client-credentials/client-credentials-full-config-tls-global.xml", operationsConfig},
+            new String[] {"0"}},
                 new Object[][] {
-                    new String[] {"client-credentials/client-credentials-full-config-tls-nested.xml", operationsConfig}});
+                    new String[] {"client-credentials/client-credentials-full-config-tls-nested.xml", operationsConfig},
+                    new String[] {"0"}},
+                new Object[][] {
+                    new String[] {"client-credentials/client-credentials-full-config-tls-global.xml", operationsConfig},
+                    new String[] {"3"}},
+                new Object[][] {
+                    new String[] {"client-credentials/client-credentials-full-config-tls-nested.xml", operationsConfig},
+                    new String[] {"3"}});
   }
 
   @Override
