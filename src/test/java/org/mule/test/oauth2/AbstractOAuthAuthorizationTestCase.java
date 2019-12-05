@@ -52,7 +52,7 @@ import java.io.UnsupportedEncodingException;
 
 import org.junit.Rule;
 
-import com.github.tomakehurst.wiremock.client.RequestPatternBuilder;
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableMap;
 
