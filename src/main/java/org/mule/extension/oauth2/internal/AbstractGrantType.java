@@ -162,9 +162,15 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   @Inject
   protected OAuthService oAuthService;
 
+  // This is used to detect that two different grant types with
+  // the default token manager are recognized as equals even if
+  // not initialized.
+  private boolean defaultTokenManager;
+
   protected void initTokenManager() throws InitialisationException {
     if (tokenManager == null) {
       this.tokenManager = TokenManagerConfig.createDefault();
+      this.defaultTokenManager = true;
     }
     initialiseIfNeeded(tokenManager, muleContext);
   }
@@ -227,7 +233,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
       return Objects.equals(clientId, other.clientId) &&
           Objects.equals(clientSecret, other.clientSecret) &&
           Objects.equals(scopes, other.scopes) &&
-          Objects.equals(tokenManager, other.tokenManager) &&
+          (Objects.equals(tokenManager, other.tokenManager) || (this.isDefaultTokenManager() && other.isDefaultTokenManager())) &&
           Objects.equals(tokenUrl, other.tokenUrl) &&
           literalEquals(responseAccessToken, other.responseAccessToken) &&
           literalEquals(responseRefreshToken, other.responseRefreshToken) &&
@@ -291,6 +297,10 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
 
   public TlsContextFactory getTlsContextFactory() {
     return tlsContext;
+  }
+
+  public boolean isDefaultTokenManager() {
+    return defaultTokenManager || tokenManager == null;
   }
 
 }
