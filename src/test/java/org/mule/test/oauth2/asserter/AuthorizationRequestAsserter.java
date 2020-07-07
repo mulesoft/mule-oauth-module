@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
 import static org.mule.runtime.http.api.HttpConstants.Method.GET;
 import static org.mule.runtime.http.api.utils.HttpEncoderDecoderUtils.decodeQueryString;
 import static org.mule.runtime.http.api.utils.HttpEncoderDecoderUtils.extractQueryParams;
-import static org.mule.service.oauth.internal.OAuthConstants.CODE_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.CODE_PARAMETER;
 
 import org.mule.runtime.api.util.MultiMap;
 

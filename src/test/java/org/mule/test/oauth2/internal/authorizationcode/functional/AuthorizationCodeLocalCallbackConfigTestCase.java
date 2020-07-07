@@ -6,7 +6,7 @@
  */
 package org.mule.test.oauth2.internal.authorizationcode.functional;
 
-import static org.mule.service.oauth.internal.OAuthConstants.CODE_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.CODE_PARAMETER;
 
 import org.mule.test.runner.RunnerDelegateTo;
 

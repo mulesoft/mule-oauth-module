@@ -18,11 +18,11 @@ import static org.apache.http.client.fluent.Request.Get;
 import static org.mule.runtime.http.api.HttpConstants.HttpStatus.OK;
 import static org.mule.runtime.http.api.HttpHeaders.Names.CONTENT_TYPE;
 import static org.mule.runtime.http.api.utils.HttpEncoderDecoderUtils.encodeQueryString;
-import static org.mule.service.oauth.internal.OAuthConstants.ACCESS_TOKEN_PARAMETER;
-import static org.mule.service.oauth.internal.OAuthConstants.CODE_PARAMETER;
-import static org.mule.service.oauth.internal.OAuthConstants.EXPIRES_IN_PARAMETER;
-import static org.mule.service.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAMETER;
-import static org.mule.service.oauth.internal.OAuthConstants.STATE_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.ACCESS_TOKEN_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.CODE_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.EXPIRES_IN_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.STATE_PARAMETER;
 
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.tck.junit4.rule.SystemProperty;

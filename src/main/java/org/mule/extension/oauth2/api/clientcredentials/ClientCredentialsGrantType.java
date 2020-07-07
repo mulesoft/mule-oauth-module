@@ -25,6 +25,8 @@ import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.http.api.domain.message.request.HttpRequestBuilder;
 import org.mule.runtime.oauth.api.ClientCredentialsOAuthDancer;
 import org.mule.runtime.oauth.api.builder.OAuthClientCredentialsDancerBuilder;
+import org.mule.runtime.oauth.api.http.HttpClientFactory;
+import org.mule.runtime.oauth.internal.builder.DefaultOAuthClientCredentialsDancerBuilder;
 
 import java.util.concurrent.ExecutionException;
 
@@ -50,17 +52,25 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
     super.initialise();
     initTokenManager();
 
-    OAuthClientCredentialsDancerBuilder dancerBuilder =
-        oAuthService.clientCredentialsGrantTypeDancerBuilder(lockFactory,
-                                                             new SimpleObjectStoreToMapAdapter(tokenManager
-                                                                 .getResolvedObjectStore()),
-                                                             expressionEvaluator);
+    OAuthClientCredentialsDancerBuilder dancerBuilder = configDancer();
+
     dancerBuilder.encodeClientCredentialsInBody(isEncodeClientCredentialsInBody());
     dancerBuilder.clientCredentials(getClientId(), getClientSecret());
 
     configureBaseDancer(dancerBuilder);
     dancer = dancerBuilder.build();
     initialiseIfNeeded(getDancer());
+  }
+
+  private OAuthClientCredentialsDancerBuilder configDancer() throws InitialisationException {
+    OAuthClientCredentialsDancerBuilder builder = new DefaultOAuthClientCredentialsDancerBuilder(schedulerService, lockFactory,
+                                                                                                 new SimpleObjectStoreToMapAdapter(tokenManager
+                                                                                                     .getResolvedObjectStore()),
+                                                                                                 HttpClientFactory
+                                                                                                     .getDefault(httpService),
+                                                                                                 expressionEvaluator);
+
+    return builder;
   }
 
   @Override

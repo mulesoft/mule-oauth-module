@@ -38,7 +38,6 @@ import org.mule.runtime.http.api.domain.message.request.HttpRequestBuilder;
 import org.mule.runtime.http.api.server.HttpServer;
 import org.mule.runtime.http.api.server.ServerNotFoundException;
 import org.mule.runtime.oauth.api.AuthorizationCodeOAuthDancer;
-import org.mule.runtime.oauth.api.OAuthService;
 import org.mule.runtime.oauth.api.builder.OAuthAuthorizationCodeDancerBuilder;
 
 import java.lang.reflect.InvocationTargetException;
@@ -51,6 +50,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import org.mule.runtime.oauth.api.http.HttpClientFactory;
+import org.mule.runtime.oauth.internal.builder.DefaultOAuthAuthorizationCodeDancerBuilder;
 import org.slf4j.Logger;
 
 /**
@@ -216,7 +217,7 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
     super.initialise();
     initTokenManager();
 
-    OAuthAuthorizationCodeDancerBuilder dancerBuilder = configDancer(oAuthService);
+    OAuthAuthorizationCodeDancerBuilder dancerBuilder = configDancer();
 
     if (!isEncodeClientCredentialsInBody()) {
       // This dirty reflection hack is in place so that the minMuleVersion of the plugin doesn't have to be increased.
@@ -242,12 +243,12 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
     initialiseIfNeeded(getDancer());
   }
 
-  private OAuthAuthorizationCodeDancerBuilder configDancer(OAuthService oauthService) throws InitialisationException {
+  private OAuthAuthorizationCodeDancerBuilder configDancer() throws InitialisationException {
     OAuthAuthorizationCodeDancerBuilder dancerBuilder =
-        oauthService.authorizationCodeGrantTypeDancerBuilder(lockFactory,
-                                                             new SimpleObjectStoreToMapAdapter(tokenManager
-                                                                 .getResolvedObjectStore()),
-                                                             expressionEvaluator);
+        new DefaultOAuthAuthorizationCodeDancerBuilder(schedulerService, lockFactory,
+                                                       new SimpleObjectStoreToMapAdapter(tokenManager.getResolvedObjectStore()),
+                                                       httpService, HttpClientFactory.getDefault(httpService),
+                                                       expressionEvaluator);
     try {
       if (localCallbackConfig != null && localCallbackUrl != null) {
         throw new IllegalArgumentException("Attributes localCallbackConfig and localCallbackUrl are mutually exclusive");
