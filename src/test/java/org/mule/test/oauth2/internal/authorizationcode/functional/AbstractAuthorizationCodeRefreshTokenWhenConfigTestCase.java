@@ -71,9 +71,9 @@ public abstract class AbstractAuthorizationCodeRefreshTokenWhenConfigTestCase ex
     return "authorization-code/authorization-code-refresh-token-when-config.xml";
   }
 
-  protected void executeRefreshTokenWhen(String flowName, String oauthConfigName, String userId, int failureStatusCode)
+  protected void executeRefreshTokenWhen(String flowName, String userId, int failureStatusCode)
       throws Exception {
-    configureResourceResponsesForRefreshTokenWhen(oauthConfigName, userId, failureStatusCode);
+    configureResourceResponsesForRefreshTokenWhen(userId, failureStatusCode);
 
     final CoreEvent result = flowRunner(flowName).withPayload("message").withVariable("userId", userId)
         .withVariable("headerName", TEST_HEADER_NAME).withVariable("headerValue", TEST_HEADER_VALUE).run();
@@ -90,7 +90,7 @@ public abstract class AbstractAuthorizationCodeRefreshTokenWhenConfigTestCase ex
                         postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(TEST_HEADER_NAME, containing(TEST_HEADER_VALUE)));
   }
 
-  private void configureResourceResponsesForRefreshTokenWhen(String oauthConfigName, String userId, int failureStatusCode) {
+  private void configureResourceResponsesForRefreshTokenWhen(String userId, int failureStatusCode) {
     configureWireMockToExpectTokenPathRequestForAuthorizationCodeGrantType(REFRESHED_ACCESS_TOKEN);
 
     wireMockRule

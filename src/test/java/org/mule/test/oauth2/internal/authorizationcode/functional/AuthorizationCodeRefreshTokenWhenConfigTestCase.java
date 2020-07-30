@@ -6,22 +6,22 @@
  */
 package org.mule.test.oauth2.internal.authorizationcode.functional;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.mule.extension.http.api.request.validator.ResponseValidatorTypedException;
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.functional.api.exception.ExpectedError;
 
+import javax.inject.Inject;
+
 public class AuthorizationCodeRefreshTokenWhenConfigTestCase extends AbstractAuthorizationCodeRefreshTokenWhenConfigTestCase {
+
+  @Inject
+  TokenManagerConfig tokenManagerConfig;
 
   @Rule
   public ExpectedError expectedError = ExpectedError.none();
-
-  public static final String SINGLE_TENANT_OAUTH_CONFIG = "oauthConfig";
 
   @Override
   protected String getConfigFile() {
@@ -30,12 +30,12 @@ public class AuthorizationCodeRefreshTokenWhenConfigTestCase extends AbstractAut
 
   @Test
   public void afterFailureDoRefreshWhenTokenWithDefaultValueNoResourceOwnerId() throws Exception {
-    executeRefreshTokenWhen("testFlowRefreshTokenWhen", SINGLE_TENANT_OAUTH_CONFIG, DEFAULT_RESOURCE_OWNER_ID, 403);
+    executeRefreshTokenWhen("testFlowRefreshTokenWhen", DEFAULT_RESOURCE_OWNER_ID, 403);
   }
 
   @Override
   protected TokenManagerConfig getTokenManagerConfig() {
-    return registry.<TokenManagerConfig>lookupByName(SINGLE_TENANT_OAUTH_CONFIG).get();
+    return tokenManagerConfig;
   }
 
 }
