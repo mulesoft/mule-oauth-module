@@ -25,7 +25,6 @@ import static org.mule.service.oauth.internal.OAuthConstants.GRANT_TYPE_PARAMETE
 import static org.mule.service.oauth.internal.OAuthConstants.GRANT_TYPE_REFRESH_TOKEN;
 import static org.mule.service.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAMETER;
 
-import org.junit.Rule;
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.runtime.api.metadata.MediaType;
@@ -33,6 +32,8 @@ import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.oauth2.AbstractOAuthAuthorizationTestCase;
+
+import org.junit.Rule;
 
 public abstract class AbstractAuthorizationCodeRefreshTokenWhenConfigTestCase extends AbstractOAuthAuthorizationTestCase {
 
@@ -71,33 +72,33 @@ public abstract class AbstractAuthorizationCodeRefreshTokenWhenConfigTestCase ex
   }
 
   protected void executeRefreshTokenWhen(String flowName, String oauthConfigName, String userId, int failureStatusCode)
-          throws Exception {
+      throws Exception {
     configureResourceResponsesForRefreshTokenWhen(oauthConfigName, userId, failureStatusCode);
 
     final CoreEvent result = flowRunner(flowName).withPayload("message").withVariable("userId", userId)
-            .withVariable("headerName", TEST_HEADER_NAME).withVariable("headerValue", TEST_HEADER_VALUE).run();
+        .withVariable("headerName", TEST_HEADER_NAME).withVariable("headerValue", TEST_HEADER_VALUE).run();
     assertThat(result.getMessage().getPayload().getValue(), is(RESOURCE_RESULT));
 
     wireMockRule.verify(postRequestedFor(urlEqualTo(TOKEN_PATH))
-            .withRequestBody(containing(CLIENT_ID_PARAMETER + "=" + encode(clientId.getValue(), UTF_8.name())))
-            .withRequestBody(containing(REFRESH_TOKEN_PARAMETER + "=" + encode(REFRESH_TOKEN, UTF_8.name())))
-            .withRequestBody(containing(CLIENT_SECRET_PARAMETER + "=" + encode(clientSecret.getValue(), UTF_8.name())))
-            .withRequestBody(containing(GRANT_TYPE_PARAMETER + "=" + encode(GRANT_TYPE_REFRESH_TOKEN, UTF_8.name()))));
+        .withRequestBody(containing(CLIENT_ID_PARAMETER + "=" + encode(clientId.getValue(), UTF_8.name())))
+        .withRequestBody(containing(REFRESH_TOKEN_PARAMETER + "=" + encode(REFRESH_TOKEN, UTF_8.name())))
+        .withRequestBody(containing(CLIENT_SECRET_PARAMETER + "=" + encode(clientSecret.getValue(), UTF_8.name())))
+        .withRequestBody(containing(GRANT_TYPE_PARAMETER + "=" + encode(GRANT_TYPE_REFRESH_TOKEN, UTF_8.name()))));
 
     wireMockRule.verify(2, postRequestedFor(urlEqualTo(RESOURCE_PATH)).withRequestBody(equalTo(TEST_PAYLOAD)));
     wireMockRule.verify(2,
-            postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(TEST_HEADER_NAME, containing(TEST_HEADER_VALUE)));
+                        postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(TEST_HEADER_NAME, containing(TEST_HEADER_VALUE)));
   }
 
   private void configureResourceResponsesForRefreshTokenWhen(String oauthConfigName, String userId, int failureStatusCode) {
     configureWireMockToExpectTokenPathRequestForAuthorizationCodeGrantType(REFRESHED_ACCESS_TOKEN);
 
     wireMockRule
-            .stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(REFRESHED_ACCESS_TOKEN))
-                    .willReturn(aResponse().withStatus(200).withBody(RESOURCE_RESULT)));
+        .stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(REFRESHED_ACCESS_TOKEN))
+            .willReturn(aResponse().withStatus(200).withBody(RESOURCE_RESULT)));
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
-            .willReturn(aResponse().withStatus(failureStatusCode).withHeader("Content-Type", MediaType.APPLICATION_JSON.toString())
-                    .withBody("{\"success\":\"false\", \"errors\":[{\"code\":\"601\"}]}")));
+        .willReturn(aResponse().withStatus(failureStatusCode).withHeader("Content-Type", MediaType.APPLICATION_JSON.toString())
+            .withBody("{\"success\":\"false\", \"errors\":[{\"code\":\"601\"}]}")));
 
     final ConfigOAuthContext configOAuthContext = getTokenManagerConfig().getConfigOAuthContext();
     final ResourceOwnerOAuthContext resourceOwnerOauthContext = configOAuthContext.getContextForResourceOwner(userId);
