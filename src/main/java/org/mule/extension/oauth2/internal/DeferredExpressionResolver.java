@@ -55,7 +55,7 @@ public class DeferredExpressionResolver {
                         .build(), DataType.fromType(DataType.class)))
         .build();
 
-    return (T) evaluator.evaluate(expr, resultContext).getValue();
+    return (T) evaluator.evaluate(expr, DataType.BOOLEAN, resultContext).getValue();
   }
 
   public <T> String getExpression(Literal<T> literal) {
