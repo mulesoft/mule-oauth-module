@@ -8,6 +8,7 @@ package org.mule.extension.oauth2.internal;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static org.mule.runtime.api.metadata.DataType.BOOLEAN;
 import static org.mule.runtime.api.metadata.MediaType.ANY;
 
 import org.mule.runtime.api.el.BindingContext;
@@ -55,7 +56,7 @@ public class DeferredExpressionResolver {
                         .build(), DataType.fromType(DataType.class)))
         .build();
 
-    return (T) evaluator.evaluate(expr, resultContext).getValue();
+    return (T) evaluator.evaluate(expr, BOOLEAN, resultContext).getValue();
   }
 
   public <T> String getExpression(Literal<T> literal) {
