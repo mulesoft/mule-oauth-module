@@ -168,6 +168,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   // the default token manager are recognized as equals even if
   // not initialized.
   private boolean defaultTokenManager;
+  private Boolean readsResponseBody;
 
   protected void initTokenManager() throws InitialisationException {
     if (tokenManager == null) {
@@ -306,9 +307,13 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   }
 
   public boolean readsAuthenticatedResponseBody() {
-    java.util.Optional<String> refreshTokenWhenExpression = refreshTokenWhen.getLiteralValue();
+    if (readsResponseBody == null) {
+      readsResponseBody = refreshTokenWhen.getLiteralValue()
+          .map((expression) -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
+          .orElse(Boolean.FALSE);
+    }
 
-    return refreshTokenWhenExpression.isPresent() && refreshTokenWhenExpression.get().startsWith(DEFAULT_EXPRESSION_PREFIX) && refreshTokenWhenExpression.get().contains(PAYLOAD);
+    return readsResponseBody;
   }
 
 }
