@@ -305,7 +305,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
     return defaultTokenManager || tokenManager == null;
   }
 
-  public boolean isConsumesPayload() {
+  public boolean readsAuthenticatedResponseBody() {
     java.util.Optional<String> refreshTokenWhenExpression = refreshTokenWhen.getLiteralValue();
 
     if (refreshTokenWhenExpression.isPresent() && refreshTokenWhenExpression.get().startsWith(DEFAULT_EXPRESSION_PREFIX)
