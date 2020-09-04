@@ -308,12 +308,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   public boolean readsAuthenticatedResponseBody() {
     java.util.Optional<String> refreshTokenWhenExpression = refreshTokenWhen.getLiteralValue();
 
-    if (refreshTokenWhenExpression.isPresent() && refreshTokenWhenExpression.get().startsWith(DEFAULT_EXPRESSION_PREFIX)
-        && refreshTokenWhenExpression.get().contains(PAYLOAD)) {
-      return true;
-    }
-
-    return false;
+    return refreshTokenWhenExpression.isPresent() && refreshTokenWhenExpression.get().startsWith(DEFAULT_EXPRESSION_PREFIX) && refreshTokenWhenExpression.get().contains(PAYLOAD);
   }
 
 }
