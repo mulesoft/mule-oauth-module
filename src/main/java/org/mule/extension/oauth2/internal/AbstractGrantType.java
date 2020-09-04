@@ -14,6 +14,7 @@ import static org.mule.extension.oauth2.internal.OAuthUtils.literalEquals;
 import static org.mule.extension.oauth2.internal.OAuthUtils.literalHashCodes;
 import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.dancerName;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+import static org.mule.runtime.core.api.el.ExpressionManager.DEFAULT_EXPRESSION_PREFIX;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.startIfNeeded;
@@ -62,6 +63,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   private static final String ACCESS_TOKEN_EXPRESSION = "#[payload.access_token]";
   private static final String REFRESH_TOKEN_EXPRESSION = "#[payload.refresh_token]";
   private static final String EXPIRATION_TIME_EXPRESSION = "#[payload.expires_in]";
+  private static final String PAYLOAD = "payload";
 
   @Inject
   protected MuleContext muleContext;
@@ -301,6 +303,17 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
 
   public boolean isDefaultTokenManager() {
     return defaultTokenManager || tokenManager == null;
+  }
+
+  public boolean isConsumesPayload() {
+    java.util.Optional<String> refreshTokenWhenExpression = refreshTokenWhen.getLiteralValue();
+
+    if (refreshTokenWhenExpression.isPresent() && refreshTokenWhenExpression.get().startsWith(DEFAULT_EXPRESSION_PREFIX)
+        && refreshTokenWhenExpression.get().contains(PAYLOAD)) {
+      return true;
+    }
+
+    return false;
   }
 
 }
