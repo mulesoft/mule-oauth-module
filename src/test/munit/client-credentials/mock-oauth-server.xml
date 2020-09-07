@@ -50,6 +50,4 @@ output application/json
 payload]"/>
     </flow>
 
-    <oauth:token-manager-config name="tokenManagerConfig"/>
-
 </mule>
