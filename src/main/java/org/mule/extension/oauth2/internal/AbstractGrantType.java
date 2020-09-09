@@ -306,10 +306,11 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
     return defaultTokenManager || tokenManager == null;
   }
 
+  @Override
   public boolean readsAuthenticatedResponseBody() {
     if (readsResponseBody == null) {
       readsResponseBody = refreshTokenWhen.getLiteralValue()
-          .map((expression) -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
+          .map(expression -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
           .orElse(Boolean.FALSE);
     }
 
