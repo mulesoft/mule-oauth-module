@@ -203,6 +203,9 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   @Override
   public void initialise() throws InitialisationException {
     this.resolver = new DeferredExpressionResolver(expressionEvaluator);
+    readsResponseBody = refreshTokenWhen.getLiteralValue()
+        .map(expression -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
+        .orElse(Boolean.FALSE);
   }
 
   @Override
@@ -308,12 +311,6 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
 
   @Override
   public boolean readsAuthenticatedResponseBody() {
-    if (readsResponseBody == null) {
-      readsResponseBody = refreshTokenWhen.getLiteralValue()
-          .map(expression -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
-          .orElse(Boolean.FALSE);
-    }
-
     return readsResponseBody;
   }
 
