@@ -168,7 +168,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   // the default token manager are recognized as equals even if
   // not initialized.
   private boolean defaultTokenManager;
-  private Boolean readsResponseBody;
+  private boolean readsResponseBody;
 
   protected void initTokenManager() throws InitialisationException {
     if (tokenManager == null) {
