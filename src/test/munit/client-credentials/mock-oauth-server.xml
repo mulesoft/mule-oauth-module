@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth"
+      xmlns:java="http://www.mulesoft.org/schema/mule/java"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+       http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+       http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd
+       http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+    <munit:dynamic-port propertyName="oauth.server.port" min="1024" max="64000"/>
+
+    <!-- Oauth token endpoint stub -->
+    <http:listener-config name="oauthListenerConfig">
+        <http:listener-connection host="localhost" port="${oauth.server.port}"/>
+    </http:listener-config>
+
+    <flow name="oauth-token">
+        <http:listener path="/token" config-ref="oauthListenerConfig" allowedMethods="POST">
+            <http:response>
+                <http:headers>
+                    #[{'Content-Type' : 'application/x-www-form-urlencoded'}]
+                </http:headers>
+            </http:response>
+        </http:listener>
+        <set-payload value="access_token=rbBQLgJXBEYo83K4Fqs4gu6vpCobc2ya&amp;expires_in=3897"
+                     mimeType="application/x-www-form-urlencoded"/>
+    </flow>
+
+    <!-- A simple endpoint that echoes a text payload with our mock oauth security -->
+    <flow name="oauth-resource-text">
+        <http:listener path="/echo-text-plain" config-ref="oauthListenerConfig" allowedMethods="POST"/>
+        <logger message="#[payload]"/>
+        <set-payload value="#[payload]"/>
+    </flow>
+
+    <!-- A simple endpoint that echoes a json payload with our mock oauth security -->
+    <flow name="oauth-resource-json">
+        <http:listener path="/echo-json" config-ref="oauthListenerConfig" allowedMethods="POST"/>
+        <logger message="#[payload]"/>
+        <set-payload value="#[%dw 2.0
+output application/json
+---
+payload]"/>
+    </flow>
+
+</mule>
