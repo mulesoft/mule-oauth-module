@@ -17,7 +17,7 @@
         <muleHttpConnectorVersion>1.5.23</muleHttpConnectorVersion>
         <muleSocketsConnectorVersion>1.1.5</muleSocketsConnectorVersion>
         <muleObjectStoreConnectorTestVersion>1.1.6</muleObjectStoreConnectorTestVersion>
-        <commonsCodecVersion>1.15</commonsCodecVersion>
+        <commonsCodecVersion>20041127.091804</commonsCodecVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 
         <!-- Remove when a new parent version with MTF is available -->
