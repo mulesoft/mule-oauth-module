@@ -19,6 +19,7 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
 import org.mule.runtime.api.lock.LockFactory;
 import org.mule.runtime.api.store.ObjectStore;
+import org.mule.runtime.api.store.ObjectStoreException;
 import org.mule.runtime.api.store.ObjectStoreManager;
 import org.mule.runtime.api.store.ObjectStoreSettings;
 import org.mule.runtime.extension.api.annotation.Alias;
@@ -36,6 +37,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Token manager stores all the OAuth State (access token, refresh token).
  *
@@ -46,6 +50,8 @@ import javax.inject.Inject;
 @NoExtend
 @NoInstantiate
 public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializable> implements Lifecycle {
+
+  private static final Logger LOGGGER = LoggerFactory.getLogger(TokenManagerConfig.class);
 
   public static AtomicInteger defaultTokenManagerConfigIndex = new AtomicInteger(0);
 
@@ -67,6 +73,8 @@ public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializ
   @ObjectStoreReference
   private ObjectStore<CTX> objectStore;
 
+  private ObjectStore<CTX> resolvedObjectStore;
+
   @Inject
   private LockFactory lockFactory;
 
@@ -86,6 +94,10 @@ public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializ
     this.objectStore = objectStore;
   }
 
+  public ObjectStore<CTX> getResolvedObjectStore() {
+    return resolvedObjectStore;
+  }
+
   public void setName(String name) {
     this.name = name;
   }
@@ -100,18 +112,20 @@ public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializ
       return;
     }
     if (objectStore == null) {
-      objectStore = objectStoreManager.createObjectStore("token-manager-store-" + name,
-                                                         ObjectStoreSettings.builder().persistent(true).build());
+      resolvedObjectStore = objectStoreManager.createObjectStore("token-manager-store-" + name,
+                                                                 ObjectStoreSettings.builder().persistent(true).build());
+    } else {
+      resolvedObjectStore = objectStore;
     }
     configOAuthContext =
-        new ConfigOAuthContext(lockFactory, new SimpleObjectStoreToMapAdapter(objectStore), name);
+        new ConfigOAuthContext(lockFactory, new SimpleObjectStoreToMapAdapter(resolvedObjectStore), name);
     initialised = true;
   }
 
   @Override
   public void start() throws MuleException {
     if (!started) {
-      startIfNeeded(objectStore);
+      startIfNeeded(resolvedObjectStore);
       started = true;
     }
   }
@@ -119,14 +133,30 @@ public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializ
   @Override
   public void stop() throws MuleException {
     if (started) {
-      stopIfNeeded(objectStore);
+      stopIfNeeded(resolvedObjectStore);
       started = false;
     }
   }
 
   @Override
   public void dispose() {
+    if (!initialised) {
+      return;
+    }
+
+    configOAuthContext = null;
+
     activeConfigs.remove(name);
+
+    if (objectStore == null) {
+      try {
+        objectStoreManager.disposeStore("token-manager-store-" + name);
+      } catch (ObjectStoreException e) {
+        LOGGGER.warn("Error disposing object store '" + "token-manager-store-" + name + "'", e);
+      }
+    }
+
+    initialised = false;
   }
 
   public static TokenManagerConfig createDefault() {
@@ -153,7 +183,7 @@ public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializ
   public boolean equals(Object obj) {
     if (obj instanceof TokenManagerConfig) {
       TokenManagerConfig other = (TokenManagerConfig) obj;
-      return name.equals(other.name) && objectStore == other.objectStore;
+      return name.equals(other.name) && resolvedObjectStore == other.resolvedObjectStore;
     }
 
     return false;
@@ -161,6 +191,6 @@ public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializ
 
   @Override
   public int hashCode() {
-    return hash(name, objectStore);
+    return hash(name, resolvedObjectStore);
   }
 }

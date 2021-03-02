@@ -245,7 +245,8 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
   private OAuthAuthorizationCodeDancerBuilder configDancer(OAuthService oauthService) throws InitialisationException {
     OAuthAuthorizationCodeDancerBuilder dancerBuilder =
         oauthService.authorizationCodeGrantTypeDancerBuilder(lockFactory,
-                                                             new SimpleObjectStoreToMapAdapter(tokenManager.getObjectStore()),
+                                                             new SimpleObjectStoreToMapAdapter(tokenManager
+                                                                 .getResolvedObjectStore()),
                                                              expressionEvaluator);
     try {
       if (localCallbackConfig != null && localCallbackUrl != null) {
