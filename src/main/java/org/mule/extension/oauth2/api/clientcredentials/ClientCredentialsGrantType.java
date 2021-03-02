@@ -52,7 +52,8 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
 
     OAuthClientCredentialsDancerBuilder dancerBuilder =
         oAuthService.clientCredentialsGrantTypeDancerBuilder(lockFactory,
-                                                             new SimpleObjectStoreToMapAdapter(tokenManager.getObjectStore()),
+                                                             new SimpleObjectStoreToMapAdapter(tokenManager
+                                                                 .getResolvedObjectStore()),
                                                              expressionEvaluator);
     dancerBuilder.encodeClientCredentialsInBody(isEncodeClientCredentialsInBody());
     dancerBuilder.clientCredentials(getClientId(), getClientSecret());
