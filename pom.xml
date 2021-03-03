@@ -11,7 +11,7 @@
     <artifactId>mule-oauth-module</artifactId>
     <name>OAuth Module</name>
     <packaging>mule-extension</packaging>
-    <version>1.1.15</version>
+    <version>1.1.16-SNAPSHOT</version>
 
     <properties>
         <muleHttpConnectorVersion>1.5.20</muleHttpConnectorVersion>
