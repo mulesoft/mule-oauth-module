@@ -7,9 +7,9 @@
 package org.mule.test.oauth2.internal.clientcredentials.functional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static java.lang.String.format;
 import static java.lang.Thread.sleep;
@@ -36,7 +36,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import io.qameta.allure.Issue;
 
@@ -75,7 +74,7 @@ public class ClientCredentialsDynamicHttpConfigTestCase extends AbstractOAuthAut
   @Test
   @Issue("OAMOD-4")
   public void testRefreshAfterAuthenticationLifecycle() throws Exception {
-    final StubMapping okStub = wireMockRuleApp.stubFor(get(anyUrl()).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
+    wireMockRuleApp.stubFor(get(urlPathMatching(".*")).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
         .willReturn(aResponse().withStatus(OK.getStatusCode())));
 
     // generate another http config, that will expire during the for loop below
@@ -89,15 +88,14 @@ public class ClientCredentialsDynamicHttpConfigTestCase extends AbstractOAuthAut
     // force token refresh after a dynamic config has been disposed
     configureWireMockToExpectTokenPathRequestForClientCredentialsGrantType(NEW_ACCESS_TOKEN, EXPIRES_IN, 500);
 
-    wireMockRuleApp.removeStub(okStub);
-    wireMockRuleApp.stubFor(get(anyUrl())
+    wireMockRuleApp.stubFor(get(urlPathMatching(".*"))
         .willReturn(aResponse()
             .withStatus(INTERNAL_SERVER_ERROR.getStatusCode())));
-    wireMockRuleApp.stubFor(get(anyUrl()).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
+    wireMockRuleApp.stubFor(get(urlPathMatching(".*")).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
         .willReturn(aResponse()
             .withStatus(UNAUTHORIZED.getStatusCode())
             .withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
-    wireMockRuleApp.stubFor(get(anyUrl()).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
+    wireMockRuleApp.stubFor(get(urlPathMatching(".*")).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
         .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(OK.getStatusCode())));
 
     // ensure that the expired config did not affect other configs
