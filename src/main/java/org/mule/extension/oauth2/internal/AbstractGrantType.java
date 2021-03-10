@@ -45,6 +45,7 @@ import org.mule.runtime.oauth.api.builder.OAuthDancerBuilder;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
@@ -56,6 +57,9 @@ import org.slf4j.Logger;
  * @since 1.0
  */
 public abstract class AbstractGrantType implements HttpRequestAuthentication, Lifecycle {
+
+  private final AtomicInteger initializations = new AtomicInteger();
+  private final AtomicInteger starts = new AtomicInteger();
 
   private static final Logger LOGGER = getLogger(AbstractGrantType.class);
 
@@ -201,26 +205,47 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   public abstract Object getDancer();
 
   @Override
-  public void initialise() throws InitialisationException {
+  public final void initialise() throws InitialisationException {
+    if (initializations.getAndIncrement() > 0) {
+      return;
+    }
+
     this.resolver = new DeferredExpressionResolver(expressionEvaluator);
     readsResponseBody = refreshTokenWhen.getLiteralValue()
         .map(expression -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
         .orElse(Boolean.FALSE);
+    doInitialize();
+  }
+
+  protected void doInitialize() throws InitialisationException {
+
   }
 
   @Override
-  public void start() throws MuleException {
+  public final void start() throws MuleException {
+    if (starts.getAndIncrement() > 0) {
+      return;
+    }
+
     startIfNeeded(tokenManager);
     startIfNeeded(getDancer());
   }
 
   @Override
-  public void stop() throws MuleException {
+  public final void stop() throws MuleException {
+    if (starts.decrementAndGet() > 0) {
+      return;
+    }
+
     stopIfNeeded(getDancer());
   }
 
   @Override
-  public void dispose() {
+  public final void dispose() {
+    if (initializations.decrementAndGet() > 0) {
+      return;
+    }
+
     disposeIfNeeded(getDancer(), LOGGER);
   }
 
