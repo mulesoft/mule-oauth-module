@@ -19,7 +19,6 @@ import static org.mule.runtime.http.api.HttpConstants.HttpStatus.OK;
 import static org.mule.runtime.http.api.HttpConstants.HttpStatus.UNAUTHORIZED;
 import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 import static org.mule.runtime.http.api.HttpHeaders.Names.WWW_AUTHENTICATE;
-import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -33,7 +32,6 @@ import java.util.concurrent.Future;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.slf4j.Logger;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
@@ -41,8 +39,6 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import io.qameta.allure.Issue;
 
 public class ClientCredentialsDynamicHttpConfigTestCase extends AbstractOAuthAuthorizationTestCase {
-
-  private static final Logger LOGGER = getLogger(ClientCredentialsDynamicHttpConfigTestCase.class.getName());
 
   private static final String NEW_ACCESS_TOKEN = "abcdefghjkl";
 
