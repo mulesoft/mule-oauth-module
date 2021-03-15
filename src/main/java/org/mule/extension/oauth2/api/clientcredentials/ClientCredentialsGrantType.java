@@ -46,8 +46,7 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
   private ClientCredentialsOAuthDancer dancer;
 
   @Override
-  public final void initialise() throws InitialisationException {
-    super.initialise();
+  public final void doInitialize() throws InitialisationException {
     initTokenManager();
 
     OAuthClientCredentialsDancerBuilder dancerBuilder =
