@@ -212,8 +212,7 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
   }
 
   @Override
-  public final void initialise() throws InitialisationException {
-    super.initialise();
+  public final void doInitialize() throws InitialisationException {
     initTokenManager();
 
     OAuthAuthorizationCodeDancerBuilder dancerBuilder = configDancer(oAuthService);

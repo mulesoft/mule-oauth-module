@@ -53,7 +53,7 @@ public abstract class AbstractClientCredentialsBasicTestCase extends AbstractOAu
 
   @Test
   public void authenticationFailedTriggersRefreshAccessToken() throws Exception {
-    configureWireMockToExpectTokenPathRequestForClientCredentialsGrantType(NEW_ACCESS_TOKEN);
+    configureWireMockToExpectTokenPathRequestForClientCredentialsGrantType(NEW_ACCESS_TOKEN, EXPIRES_IN, 50);
 
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
         .willReturn(aResponse().withStatus(UNAUTHORIZED.getStatusCode()).withHeader(WWW_AUTHENTICATE,
