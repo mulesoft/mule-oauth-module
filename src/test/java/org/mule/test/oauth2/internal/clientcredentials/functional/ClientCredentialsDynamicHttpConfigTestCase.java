@@ -27,8 +27,9 @@ import org.mule.test.oauth2.AbstractOAuthAuthorizationTestCase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -99,12 +100,25 @@ public class ClientCredentialsDynamicHttpConfigTestCase extends AbstractOAuthAut
     // ensure that the expired config did not affect other configs
     // These are run in parallel to force the scenario where an scheduler is needed to wait for a refresh in progress
     final ExecutorService executor = newFixedThreadPool(8);
-    final List<Future<CoreEvent>> futures = new ArrayList<>(8);
+    final List<CompletableFuture<CoreEvent>> futures = new ArrayList<>(8);
     for (int i = 0; i < 8; ++i) {
-      futures.add(executor.submit(() -> flowRunner("do-request").run()));
+      futures.add(CompletableFuture.supplyAsync(() -> {
+        try {
+          return flowRunner("do-request").run();
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      }, executor));
     }
-    for (Future<CoreEvent> future : futures) {
-      future.get();
+
+    AtomicBoolean allAuthorized = new AtomicBoolean(true);
+    futures.forEach(parallelCall -> parallelCall.thenAcceptAsync(result -> {
+      if (!result.getAuthentication().isPresent()) {
+        allAuthorized.set(false);
+      }
+    }));
+    if (!allAuthorized.get()) {
+      throw new RuntimeException("Some authorizations failed");
     }
   }
 
