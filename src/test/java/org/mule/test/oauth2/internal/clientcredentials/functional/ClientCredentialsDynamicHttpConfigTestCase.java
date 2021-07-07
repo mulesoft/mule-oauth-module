@@ -102,6 +102,7 @@ public class ClientCredentialsDynamicHttpConfigTestCase extends AbstractOAuthAut
     final List<Future<CoreEvent>> futures = new ArrayList<>(8);
     for (int i = 0; i < 8; ++i) {
       futures.add(executor.submit(() -> flowRunner("do-request").run()));
+      sleep(10);
     }
     for (Future<CoreEvent> future : futures) {
       future.get();
