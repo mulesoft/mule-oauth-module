@@ -77,7 +77,6 @@
                             <includeSnapshots>true</includeSnapshots>
                         </discoverRuntimes>
                     </runtimeConfiguration>
-                    <runtimeVersion>${runtime.version}</runtimeVersion>
                     <munitTest>${munit.test}</munitTest>
                 </configuration>
                 <dependencies>
@@ -102,7 +101,7 @@
                     <dependency>
                         <groupId>org.mule.module</groupId>
                         <artifactId>mule-java-module</artifactId>
-                        <version>1.2.7</version>
+                        <version>1.2.8</version>
                         <classifier>mule-plugin</classifier>
                     </dependency>
                 </dependencies>

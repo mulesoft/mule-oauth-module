@@ -19,7 +19,6 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
 import org.mule.runtime.api.lock.LockFactory;
 import org.mule.runtime.api.store.ObjectStore;
-import org.mule.runtime.api.store.ObjectStoreException;
 import org.mule.runtime.api.store.ObjectStoreManager;
 import org.mule.runtime.api.store.ObjectStoreSettings;
 import org.mule.runtime.extension.api.annotation.Alias;
@@ -37,9 +36,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Token manager stores all the OAuth State (access token, refresh token).
  *
@@ -50,8 +46,6 @@ import org.slf4j.LoggerFactory;
 @NoExtend
 @NoInstantiate
 public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializable> implements Lifecycle {
-
-  private static final Logger LOGGGER = LoggerFactory.getLogger(TokenManagerConfig.class);
 
   public static AtomicInteger defaultTokenManagerConfigIndex = new AtomicInteger(0);
 
@@ -112,8 +106,8 @@ public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializ
       return;
     }
     if (objectStore == null) {
-      resolvedObjectStore = objectStoreManager.createObjectStore("token-manager-store-" + name,
-                                                                 ObjectStoreSettings.builder().persistent(true).build());
+      resolvedObjectStore = objectStoreManager.getOrCreateObjectStore("token-manager-store-" + name,
+                                                                      ObjectStoreSettings.builder().persistent(true).build());
     } else {
       resolvedObjectStore = objectStore;
     }
@@ -147,14 +141,6 @@ public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializ
     configOAuthContext = null;
 
     activeConfigs.remove(name);
-
-    if (objectStore == null) {
-      try {
-        objectStoreManager.disposeStore("token-manager-store-" + name);
-      } catch (ObjectStoreException e) {
-        LOGGGER.warn("Error disposing object store '" + "token-manager-store-" + name + "'", e);
-      }
-    }
 
     initialised = false;
   }
