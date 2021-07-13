@@ -319,7 +319,7 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
                             Runnable notRetryCallback) {
     Boolean shouldRetryRequest = resolver.resolveExpression(getRefreshTokenWhen(), firstAttemptResult);
     if (shouldRetryRequest) {
-      dancer.refreshToken(resourceOwnerId.resolve()).thenRun(retryCallback);
+      dancer.refreshToken(resourceOwnerId.resolve()).whenComplete((v, t) -> retryCallback.run());
     } else {
       notRetryCallback.run();
     }

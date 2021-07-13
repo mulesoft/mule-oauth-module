@@ -95,7 +95,7 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
                             Runnable notRetryCallback) {
     Boolean shouldRetryRequest = resolver.resolveExpression(getRefreshTokenWhen(), firstAttemptResult);
     if (shouldRetryRequest) {
-      dancer.refreshToken().thenRun(retryCallback);
+      dancer.refreshToken().whenComplete((v, t) -> retryCallback.run());
     } else {
       notRetryCallback.run();
     }
