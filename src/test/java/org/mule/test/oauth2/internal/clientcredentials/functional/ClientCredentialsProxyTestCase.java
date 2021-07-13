@@ -33,9 +33,10 @@ public class ClientCredentialsProxyTestCase extends AbstractOAuthAuthorizationTe
 
   @Parameterized.Parameters
   public static Collection<Object> data() {
-    String inlineProxyConfig = "client-credentials/client-credentials-through-proxy-inline-config.xml";
+    // TODO MULE-18574 - Ignoring current test until has been done
+    // String inlineProxyConfig = "client-credentials/client-credentials-through-proxy-inline-config.xml";
     String globalProxyConfig = "client-credentials/client-credentials-through-proxy-config.xml";
-    return Arrays.asList(new Object[] {inlineProxyConfig, globalProxyConfig});
+    return Arrays.asList(new Object[] {globalProxyConfig});
   }
 
   @Override

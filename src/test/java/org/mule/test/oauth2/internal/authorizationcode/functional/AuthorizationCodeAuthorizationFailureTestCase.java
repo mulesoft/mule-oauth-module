@@ -22,8 +22,8 @@ import static org.mule.runtime.oauth.api.OAuthAuthorizationStatusCode.NO_AUTHORI
 import static org.mule.runtime.oauth.api.OAuthAuthorizationStatusCode.TOKEN_NOT_FOUND_STATUS;
 import static org.mule.runtime.oauth.api.OAuthAuthorizationStatusCode.TOKEN_URL_CALL_FAILED_STATUS;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
-import static org.mule.service.oauth.internal.OAuthConstants.CODE_PARAMETER;
-import static org.mule.service.oauth.internal.OAuthConstants.STATE_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.CODE_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.STATE_PARAMETER;
 import static org.mule.tck.MuleTestUtils.testWithSystemProperty;
 
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;

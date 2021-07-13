@@ -22,7 +22,7 @@
                         tokenManager="oauthConfig"
                         localAuthorizationUrl="${local.authorization.url}"
                         authorizationUrl="${authorization.url}"
-                        refreshTokenWhen="#[payload['success'] == 'false' and (payload['errors'][0].code == '601' or payload['errors'][0].code == '602')]"
+                        refreshTokenWhen="#[payload['errors'][0].code == '601' or payload['errors'][0].code == '602']"
                         tokenUrl="${token.url}">
                 </oauth:authorization-code-grant-type>
             </http:authentication>
