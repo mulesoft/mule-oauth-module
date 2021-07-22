@@ -104,6 +104,9 @@ public class ClientCredentialsDynamicHttpConfigTestCase extends AbstractOAuthAut
     final List<Future<CoreEvent>> futures = new ArrayList<>(8);
     for (int i = 0; i < 8; ++i) {
       futures.add(executor.submit(() -> flowRunner("do-request").run()));
+      // TODO OAMOD-8 This sleep can be removed when a new major version is released. It is necessary to prevent the test from being
+      //  flaky, but the bug that caused a deadlock in the oauth service was fixed in version 2.0.0 of the oauth service (MULE-18169).
+      sleep(10);
     }
     for (Future<CoreEvent> future : futures) {
       future.get();
