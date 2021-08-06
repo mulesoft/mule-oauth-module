@@ -159,7 +159,6 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
 
   @Parameter
   @Optional
-  @Expression(NOT_SUPPORTED)
   private HttpProxyConfig proxyConfig;
 
   @DefaultEncoding
