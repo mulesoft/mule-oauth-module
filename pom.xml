@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-core-modules-parent</artifactId>
-        <version>1.1.8</version>
+        <version>1.1.9</version>
     </parent>
 
     <groupId>org.mule.modules</groupId>
@@ -16,16 +16,16 @@
     <properties>
         <muleHttpConnectorVersion>1.5.23</muleHttpConnectorVersion>
         <muleSocketsConnectorVersion>1.1.5</muleSocketsConnectorVersion>
-        <muleObjectStoreConnectorTestVersion>1.1.6</muleObjectStoreConnectorTestVersion>
+        <muleObjectStoreConnectorTestVersion>1.2.1</muleObjectStoreConnectorTestVersion>
         <commonsCodecVersion>1.15</commonsCodecVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
         <munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
-        <munit.extensions.maven.plugin.version>1.1.1</munit.extensions.maven.plugin.version>
-        <munit.version>2.3.2</munit.version>
-        <mtf-tools.version>1.0.0</mtf-tools.version>
+        <munit.extensions.maven.plugin.version>1.1.2</munit.extensions.maven.plugin.version>
+        <munit.version>2.3.8</munit.version>
+        <mtf-tools.version>1.1.1</mtf-tools.version>
         <mavenResources.version>3.2.0</mavenResources.version>
     </properties>
     <build>
@@ -101,7 +101,7 @@
                     <dependency>
                         <groupId>org.mule.module</groupId>
                         <artifactId>mule-java-module</artifactId>
-                        <version>1.2.7</version>
+                        <version>1.2.9</version>
                         <classifier>mule-plugin</classifier>
                     </dependency>
                 </dependencies>
@@ -225,7 +225,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.4.14</version>
+            <version>4.4.15</version>
             <scope>test</scope>
         </dependency>
 
