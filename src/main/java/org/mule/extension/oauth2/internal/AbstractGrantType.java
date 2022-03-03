@@ -250,7 +250,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
     try {
       stopIfNeeded(getDancer());
     } catch (Throwable t) {
-      starts.getAndIncrement();
+      starts.incrementAndGet();
       throw t;
     }
   }
