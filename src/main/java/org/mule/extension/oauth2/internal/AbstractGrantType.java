@@ -210,11 +210,16 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
       return;
     }
 
-    this.resolver = new DeferredExpressionResolver(expressionEvaluator);
-    readsResponseBody = refreshTokenWhen.getLiteralValue()
-        .map(expression -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
-        .orElse(Boolean.FALSE);
-    doInitialize();
+    try {
+      this.resolver = new DeferredExpressionResolver(expressionEvaluator);
+      readsResponseBody = refreshTokenWhen.getLiteralValue()
+          .map(expression -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
+          .orElse(Boolean.FALSE);
+      doInitialize();
+    } catch (Throwable t) {
+      initializations.getAndDecrement();
+      throw t;
+    }
   }
 
   protected void doInitialize() throws InitialisationException {
@@ -227,8 +232,13 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
       return;
     }
 
-    startIfNeeded(tokenManager);
-    startIfNeeded(getDancer());
+    try {
+      startIfNeeded(tokenManager);
+      startIfNeeded(getDancer());
+    } catch (Throwable t) {
+      starts.getAndDecrement();
+      throw t;
+    }
   }
 
   @Override
@@ -237,7 +247,12 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
       return;
     }
 
-    stopIfNeeded(getDancer());
+    try {
+      stopIfNeeded(getDancer());
+    } catch (Throwable t) {
+      starts.incrementAndGet();
+      throw t;
+    }
   }
 
   @Override
@@ -246,7 +261,12 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
       return;
     }
 
-    disposeIfNeeded(getDancer(), LOGGER);
+    try {
+      disposeIfNeeded(getDancer(), LOGGER);
+    } catch (Throwable t) {
+      initializations.incrementAndGet();
+      throw t;
+    }
   }
 
   /**
@@ -339,4 +359,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
     return readsResponseBody;
   }
 
+  public void setRefreshTokenWhen(Literal<Boolean> refreshTokenWhen) {
+    this.refreshTokenWhen = refreshTokenWhen;
+  }
 }
