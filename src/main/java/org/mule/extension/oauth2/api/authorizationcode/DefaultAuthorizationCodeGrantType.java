@@ -319,7 +319,7 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
   @Override
   public void retryIfShould(Result<Object, HttpResponseAttributes> firstAttemptResult, Runnable retryCallback,
                             Runnable notRetryCallback)
-          throws ModuleException {
+      throws ModuleException {
 
     Boolean isUnauthorized = firstAttemptResult.getAttributes().get().getStatusCode() == 401;
     Boolean shouldRetryRequest = resolver.resolveExpression(getRefreshTokenWhen(), firstAttemptResult);
