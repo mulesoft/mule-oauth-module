@@ -138,17 +138,23 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
         .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
 
-    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
-        .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
-
-    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
-        .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
+    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
 
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
         .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
 
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
         .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
+
+    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
+
+    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
+        .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
+
+    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
+        .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
+
+    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
 
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
         .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
