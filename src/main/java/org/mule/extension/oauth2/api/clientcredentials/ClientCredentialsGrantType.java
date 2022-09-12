@@ -8,6 +8,7 @@ package org.mule.extension.oauth2.api.clientcredentials;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Objects.hash;
+import static org.mule.extension.oauth2.api.exception.OAuthClientErrors.TOKEN_URL_FAIL;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 
@@ -21,6 +22,7 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.exception.ModuleException;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.http.api.domain.message.request.HttpRequestBuilder;
 import org.mule.runtime.oauth.api.ClientCredentialsOAuthDancer;
@@ -92,10 +94,25 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
 
   @Override
   public void retryIfShould(Result<Object, HttpResponseAttributes> firstAttemptResult, Runnable retryCallback,
-                            Runnable notRetryCallback) {
+                            Runnable notRetryCallback)
+      throws ModuleException {
+
+    Boolean isUnauthorized = firstAttemptResult.getAttributes().get().getStatusCode() == 401;
     Boolean shouldRetryRequest = resolver.resolveExpression(getRefreshTokenWhen(), firstAttemptResult);
+
     if (shouldRetryRequest) {
-      dancer.refreshToken().thenRun(retryCallback);
+      try {
+        dancer.refreshToken().get();
+        retryCallback.run();
+      } catch (Exception ex) {
+        throw new ModuleException(TOKEN_URL_FAIL, ex.getCause());
+      }
+    } else if (isUnauthorized) {
+      try {
+        dancer.refreshToken().get();
+      } catch (Exception ex) {
+        throw new ModuleException(TOKEN_URL_FAIL, ex.getCause());
+      }
     } else {
       notRetryCallback.run();
     }

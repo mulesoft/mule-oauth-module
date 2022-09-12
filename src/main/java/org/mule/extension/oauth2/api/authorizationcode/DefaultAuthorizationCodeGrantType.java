@@ -8,6 +8,7 @@ package org.mule.extension.oauth2.api.authorizationcode;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Objects.hash;
+import static org.mule.extension.oauth2.api.exception.OAuthClientErrors.TOKEN_URL_FAIL;
 import static org.mule.extension.oauth2.internal.OAuthUtils.literalEquals;
 import static org.mule.extension.oauth2.internal.OAuthUtils.literalHashCodes;
 import static org.mule.extension.oauth2.internal.OAuthUtils.resolverEquals;
@@ -30,6 +31,7 @@ import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.reference.ConfigReference;
+import org.mule.runtime.extension.api.exception.ModuleException;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.parameter.Literal;
 import org.mule.runtime.extension.api.runtime.parameter.ParameterResolver;
@@ -316,10 +318,25 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
 
   @Override
   public void retryIfShould(Result<Object, HttpResponseAttributes> firstAttemptResult, Runnable retryCallback,
-                            Runnable notRetryCallback) {
+                            Runnable notRetryCallback)
+          throws ModuleException {
+
+    Boolean isUnauthorized = firstAttemptResult.getAttributes().get().getStatusCode() == 401;
     Boolean shouldRetryRequest = resolver.resolveExpression(getRefreshTokenWhen(), firstAttemptResult);
+
     if (shouldRetryRequest) {
-      dancer.refreshToken(resourceOwnerId.resolve()).thenRun(retryCallback);
+      try {
+        dancer.refreshToken(resourceOwnerId.resolve()).get();
+        retryCallback.run();
+      } catch (Exception ex) {
+        throw new ModuleException(TOKEN_URL_FAIL, ex.getCause());
+      }
+    } else if (isUnauthorized) {
+      try {
+        dancer.refreshToken(resourceOwnerId.resolve()).get();
+      } catch (Exception ex) {
+        throw new ModuleException(TOKEN_URL_FAIL, ex.getCause());
+      }
     } else {
       notRetryCallback.run();
     }
