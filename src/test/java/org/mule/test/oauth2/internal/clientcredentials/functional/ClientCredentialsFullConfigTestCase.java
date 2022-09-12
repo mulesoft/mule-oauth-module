@@ -23,6 +23,7 @@ import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT
 
 import org.mule.runtime.api.store.ObjectStore;
 import org.mule.runtime.api.store.SimpleMemoryObjectStore;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.oauth2.AbstractOAuthAuthorizationTestCase;
@@ -127,6 +128,40 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
 
     wireMockRule
         .verify(postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, equalTo("Bearer " + NEW_ACCESS_TOKEN)));
+  }
+
+  @Test
+  @DisplayName("W-11680326: When refresh token responses with 500 three times, the app never responds")
+  public void authenticationFailedTriggersRefreshAccessTokenThreeTimes() throws Exception {
+    configureWireMockToExpectTokenPathRequestForClientCredentialsGrantTypeWithMapResponse(NEW_ACCESS_TOKEN);
+
+    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
+            .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
+
+    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
+            .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
+
+    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
+            .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
+
+    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
+            .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
+
+    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
+            .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
+
+    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
+            .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
+
+    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
+            .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
+
+    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
+
+    verifyRequestDoneToTokenUrlForClientCredentials();
+
+    wireMockRule
+            .verify(postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, equalTo("Bearer " + NEW_ACCESS_TOKEN)));
   }
 
   @Override
