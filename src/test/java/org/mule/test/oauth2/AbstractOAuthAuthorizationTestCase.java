@@ -170,6 +170,15 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
             .withFixedDelay(fixedDelay)));
   }
 
+  protected void configureWireMockToPathThatReturns500ResponseStatus() {
+    wireMockRule
+        .stubFor(post(urlEqualTo(TOKEN_PATH))
+            .willReturn(aResponse().withBody("{" + "\"" + "Error response when calling token URL: " + TOKEN_PATH + "}")
+                .withHeader(CONTENT_TYPE, MediaType.JSON.toRfcString())
+                .withStatus(500)
+                .withFixedDelay(50)));
+  }
+
   protected void configureWireMockToExpectTokenPathRequestForClientCredentialsGrantTypeWithMapResponse(String accessToken) {
     configureWireMockToExpectTokenPathRequestForClientCredentialsGrantTypeWithMapResponse(accessToken,
                                                                                           new ImmutableMap.Builder().build());
