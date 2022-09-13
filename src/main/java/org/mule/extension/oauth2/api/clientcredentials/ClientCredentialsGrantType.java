@@ -97,7 +97,6 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
                             Runnable notRetryCallback)
       throws ModuleException {
 
-    Boolean isUnauthorized = firstAttemptResult.getAttributes().get().getStatusCode() == 401;
     Boolean shouldRetryRequest = resolver.resolveExpression(getRefreshTokenWhen(), firstAttemptResult);
 
     if (shouldRetryRequest) {
@@ -107,13 +106,7 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
       } catch (Exception ex) {
         throw new ModuleException(TOKEN_URL_FAIL, ex.getCause());
       }
-    } else if (isUnauthorized) {
-      try {
-        dancer.refreshToken().get();
-      } catch (Exception ex) {
-        throw new ModuleException(TOKEN_URL_FAIL, ex.getCause());
-      }
-    } else {
+    }  else {
       notRetryCallback.run();
     }
   }
