@@ -13,6 +13,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.lang.String.format;
+import static java.lang.Thread.sleep;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.http.internal.HttpConnectorConstants.RETRY_ATTEMPTS_PROPERTY;
@@ -139,17 +140,25 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
         .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
 
     flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
+    sleep(100);
 
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
         .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
+
+    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
+    sleep(100);
 
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
         .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
 
     flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
+    sleep(100);
 
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
         .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
+
+    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
+    sleep(100);
 
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
         .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
