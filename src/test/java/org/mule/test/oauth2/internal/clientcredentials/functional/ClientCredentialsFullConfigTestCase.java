@@ -135,28 +135,24 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
   @Test
   @DisplayName("W-11680326: When refresh token responses with 500, the app never responds")
   public void authenticationFailedTriggersRefreshAccessTokenThreeTimes() throws Exception {
-    configureWireMockToExpectTokenPathRequestForClientCredentialsGrantTypeWithMapResponse(NEW_ACCESS_TOKEN);
 
-    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
-        .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
+    for(int i = 0; i < 3; i++){
+      configureWireMockToExpectTokenPathRequestForClientCredentialsGrantTypeWithMapResponse(NEW_ACCESS_TOKEN);
 
-    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
-    sleep(100);
+      wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
+              .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
 
-    verifyRequestDoneToTokenUrlForClientCredentials();
 
-    wireMockRule
-        .verify(postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, equalTo("Bearer " + NEW_ACCESS_TOKEN)));
+      wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
+              .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
 
-    configureWireMockToExpectAnError();
+      flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
 
-    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
-        .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
+      verifyRequestDoneToTokenUrlForClientCredentials();
 
-    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
-    sleep(100);
-
-    verifyRequestWithInternalServerError();
+      wireMockRule
+              .verify(postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, equalTo("Bearer " + NEW_ACCESS_TOKEN)));
+    }
   }
 
   @Override

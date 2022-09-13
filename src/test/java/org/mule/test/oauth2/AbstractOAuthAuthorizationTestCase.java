@@ -188,18 +188,6 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
         .withHeader(CONTENT_TYPE, APPLICATION_X_WWW_FORM_URLENCODED.toRfcString())));
   }
 
-  public void configureWireMockToExpectAnError() {
-
-    ImmutableMap customParameters = new ImmutableMap.Builder().put("error", "An error occurred").build();
-    final ImmutableMap.Builder bodyParametersMapBuilder = new ImmutableMap.Builder();
-    for (Object customParameterName : customParameters.keySet()) {
-      bodyParametersMapBuilder.put(customParameterName, customParameters.get(customParameterName));
-    }
-    final String body = encodeString(bodyParametersMapBuilder.build(), UTF_8);
-    wireMockRule.stubFor(post(urlEqualTo(TOKEN_PATH)).willReturn(aResponse().withBody(body)
-        .withHeader(CONTENT_TYPE, APPLICATION_X_WWW_FORM_URLENCODED.toRfcString())));
-  }
-
   protected void verifyRequestDoneToTokenUrlForAuthorizationCode() throws UnsupportedEncodingException {
     verifyRequestDoneToTokenUrlForAuthorizationCode(false);
   }
@@ -258,14 +246,6 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
     if (scope != null) {
       verification.withRequestBody(containing(SCOPE_PARAMETER + "=" + encode(scope, UTF_8.name())));
     }
-    wireMockRule.verify(verification);
-  }
-
-  protected void verifyRequestWithInternalServerError() {
-    final RequestPatternBuilder verification =
-        postRequestedFor(urlEqualTo(TOKEN_PATH));
-
-    verification.withRequestBody(containing("error : An error occurred"));
     wireMockRule.verify(verification);
   }
 
