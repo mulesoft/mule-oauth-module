@@ -18,8 +18,8 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.http.internal.HttpConnectorConstants.RETRY_ATTEMPTS_PROPERTY;
 import static org.mule.runtime.http.api.HttpConstants.Protocol.HTTPS;
-import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
-import static org.mule.runtime.http.api.HttpHeaders.Names.WWW_AUTHENTICATE;
+import static org.mule.runtime.http.api.HttpHeaders.Names.*;
+import static org.mule.runtime.http.api.HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 
 import org.mule.runtime.api.store.ObjectStore;
@@ -120,6 +120,7 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
         .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
 
+
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
         .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
 
@@ -132,7 +133,7 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
   }
 
   @Test
-  @DisplayName("W-11680326: When refresh token responses with 500 three times, the app never responds")
+  @DisplayName("W-11680326: When refresh token responses with 500, the app never responds")
   public void authenticationFailedTriggersRefreshAccessTokenThreeTimes() throws Exception {
     configureWireMockToExpectTokenPathRequestForClientCredentialsGrantTypeWithMapResponse(NEW_ACCESS_TOKEN);
 
@@ -142,41 +143,20 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
     flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
     sleep(100);
 
-    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
-        .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
-
-    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
-    sleep(100);
-
-    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
-        .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
-
-    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
-    sleep(100);
-
-    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
-        .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
-
-    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
-    sleep(100);
-
-    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
-        .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
-
-    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
-
-    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
-        .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
-
-    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
-        .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
-
-    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
-
     verifyRequestDoneToTokenUrlForClientCredentials();
 
     wireMockRule
         .verify(postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, equalTo("Bearer " + NEW_ACCESS_TOKEN)));
+
+    configureWireMockToExpectAnError();
+
+    wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
+        .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
+
+    flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
+    sleep(100);
+
+    verifyRequestWithInternalServerError();
   }
 
   @Override
