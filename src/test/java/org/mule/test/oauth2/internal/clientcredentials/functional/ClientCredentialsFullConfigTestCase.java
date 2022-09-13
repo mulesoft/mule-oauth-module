@@ -132,29 +132,6 @@ public class ClientCredentialsFullConfigTestCase extends AbstractOAuthAuthorizat
         .verify(postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, equalTo("Bearer " + NEW_ACCESS_TOKEN)));
   }
 
-  @Test
-  @DisplayName("W-11680326: When refresh token responses with 500, the app never responds")
-  public void authenticationFailedTriggersRefreshAccessTokenThreeTimes() throws Exception {
-
-    for(int i = 0; i < 3; i++){
-      configureWireMockToExpectTokenPathRequestForClientCredentialsGrantTypeWithMapResponse(NEW_ACCESS_TOKEN);
-
-      wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
-              .willReturn(aResponse().withStatus(500).withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
-
-
-      wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
-              .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(200)));
-
-      flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
-
-      verifyRequestDoneToTokenUrlForClientCredentials();
-
-      wireMockRule
-              .verify(postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, equalTo("Bearer " + NEW_ACCESS_TOKEN)));
-    }
-  }
-
   @Override
   protected String getProtocol() {
     return HTTPS.getScheme();
