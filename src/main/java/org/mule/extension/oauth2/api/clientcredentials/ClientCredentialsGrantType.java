@@ -106,7 +106,7 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
       } catch (Exception ex) {
         throw new ModuleException(TOKEN_URL_FAIL, ex.getCause());
       }
-    }  else {
+    } else {
       notRetryCallback.run();
     }
   }
