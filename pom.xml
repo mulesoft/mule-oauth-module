@@ -18,6 +18,7 @@
         <muleSocketsConnectorVersion>1.1.5</muleSocketsConnectorVersion>
         <muleObjectStoreConnectorTestVersion>1.2.1</muleObjectStoreConnectorTestVersion>
         <commonsCodecVersion>1.15</commonsCodecVersion>
+        <commonsIoVersion>2.11.0</commonsIoVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 
         <!-- Remove when a new parent version with MTF is available -->
@@ -134,7 +135,14 @@
             <version>${muleHttpServiceVersion}</version>
             <classifier>mule-service</classifier>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
 
         <dependency>
             <groupId>org.mule.services</groupId>
@@ -186,6 +194,13 @@
             <version>${muleOAuthServiceVersion}</version>
             <classifier>mule-service</classifier>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Added to override outdated version in mule-service-http -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commonsIoVersion}</version>
         </dependency>
 
         <dependency>
