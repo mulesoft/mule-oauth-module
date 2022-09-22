@@ -200,7 +200,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>{commonsIoVersion}</version>
+            <version>${commonsIoVersion}</version>
         </dependency>
 
         <dependency>
