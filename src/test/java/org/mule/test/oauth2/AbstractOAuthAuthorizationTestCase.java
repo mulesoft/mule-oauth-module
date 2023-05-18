@@ -52,8 +52,8 @@ import java.io.UnsupportedEncodingException;
 
 import org.junit.Rule;
 
-import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.google.common.collect.ImmutableMap;
 
 @ArtifactClassLoaderRunnerConfig(exportPluginClasses = {ConfigOAuthContext.class})
@@ -72,7 +72,7 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
   protected final DynamicPort oauthHttpsServerPort = new DynamicPort("port3");
   private final String keyStorePath = currentThread().getContextClassLoader().getResource("ssltest-keystore.jks").getPath();
   private final String keyStorePassword = "changeit";
-
+  private final String keyManagerPassword = "changeit";
   @Rule
   public DynamicPort proxyPort = new DynamicPort("proxyPort");
 
@@ -81,7 +81,7 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
 
   @Rule
   public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().port(oauthServerPort.getNumber())
-      .httpsPort(oauthHttpsServerPort.getNumber()).keystorePath(keyStorePath)
+      .httpsPort(oauthHttpsServerPort.getNumber()).keystorePath(keyStorePath).keyManagerPassword(keyManagerPassword)
       .keystorePassword(keyStorePassword));
 
   @Rule
@@ -154,18 +154,20 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
   }
 
   protected void configureWireMockToExpectTokenPathRequestForClientCredentialsGrantType() {
-    configureWireMockToExpectTokenPathRequestForClientCredentialsGrantType(ACCESS_TOKEN);
+    configureWireMockToExpectTokenPathRequestForClientCredentialsGrantType(ACCESS_TOKEN, EXPIRES_IN, 50);
   }
 
   protected void configureWireMockToExpectTokenPathRequestForClientCredentialsGrantTypeWithMapResponse(ImmutableMap customParameters) {
     configureWireMockToExpectTokenPathRequestForClientCredentialsGrantTypeWithMapResponse(ACCESS_TOKEN, customParameters);
   }
 
-  protected void configureWireMockToExpectTokenPathRequestForClientCredentialsGrantType(String accessToken) {
+  protected void configureWireMockToExpectTokenPathRequestForClientCredentialsGrantType(String accessToken, String expiresIn,
+                                                                                        Integer fixedDelay) {
     wireMockRule
         .stubFor(post(urlEqualTo(TOKEN_PATH)).willReturn(aResponse().withBody("{" + "\"" + ACCESS_TOKEN_PARAMETER
-            + "\":\"" + accessToken + "\"," + "\"" + EXPIRES_IN_PARAMETER + "\":\"" + EXPIRES_IN + "\"}")
-            .withHeader(CONTENT_TYPE, MediaType.JSON.toRfcString())));
+            + "\":\"" + accessToken + "\"," + "\"" + EXPIRES_IN_PARAMETER + "\":\"" + expiresIn + "\"}")
+            .withHeader(CONTENT_TYPE, MediaType.JSON.toRfcString())
+            .withFixedDelay(fixedDelay)));
   }
 
   protected void configureWireMockToExpectTokenPathRequestForClientCredentialsGrantTypeWithMapResponse(String accessToken) {

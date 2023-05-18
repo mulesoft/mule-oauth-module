@@ -6,17 +6,18 @@
  */
 package org.mule.test.oauth2.internal.clientcredentials.functional;
 
+import static org.mule.runtime.http.api.HttpConstants.HttpStatus.OK;
+import static org.mule.runtime.http.api.HttpConstants.HttpStatus.UNAUTHORIZED;
+import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
+import static org.mule.runtime.http.api.HttpHeaders.Names.WWW_AUTHENTICATE;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.mule.runtime.http.api.HttpConstants.HttpStatus.OK;
-import static org.mule.runtime.http.api.HttpConstants.HttpStatus.UNAUTHORIZED;
-import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
-import static org.mule.runtime.http.api.HttpHeaders.Names.WWW_AUTHENTICATE;
 
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.oauth2.AbstractOAuthAuthorizationTestCase;
 
@@ -53,7 +54,7 @@ public abstract class AbstractClientCredentialsBasicTestCase extends AbstractOAu
 
   @Test
   public void authenticationFailedTriggersRefreshAccessToken() throws Exception {
-    configureWireMockToExpectTokenPathRequestForClientCredentialsGrantType(NEW_ACCESS_TOKEN);
+    configureWireMockToExpectTokenPathRequestForClientCredentialsGrantType(NEW_ACCESS_TOKEN, EXPIRES_IN, 50);
 
     wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
         .willReturn(aResponse().withStatus(UNAUTHORIZED.getStatusCode()).withHeader(WWW_AUTHENTICATE,
@@ -68,5 +69,28 @@ public abstract class AbstractClientCredentialsBasicTestCase extends AbstractOAu
 
     wireMockRule
         .verify(postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, equalTo("Bearer " + NEW_ACCESS_TOKEN)));
+  }
+
+  @Test
+  @DisplayName("W-11680326: Fails authentication and refresh three times")
+  public void authenticationFailedTriggersRefreshAccessTokenThreeTimes() throws Exception {
+
+    for (int i = 0; i < 3; i++) {
+      configureWireMockToExpectTokenPathRequestForClientCredentialsGrantType(NEW_ACCESS_TOKEN, EXPIRES_IN, 50);
+
+      wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
+          .willReturn(aResponse().withStatus(UNAUTHORIZED.getStatusCode()).withHeader(WWW_AUTHENTICATE,
+                                                                                      "Basic realm=\"myRealm\"")));
+
+      wireMockRule.stubFor(post(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
+          .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(OK.getStatusCode())));
+
+      flowRunner("testFlow").withPayload(TEST_MESSAGE).run();
+
+      verifyRequestDoneToTokenUrlForClientCredentials();
+
+      wireMockRule
+          .verify(postRequestedFor(urlEqualTo(RESOURCE_PATH)).withHeader(AUTHORIZATION, equalTo("Bearer " + NEW_ACCESS_TOKEN)));
+    }
   }
 }
