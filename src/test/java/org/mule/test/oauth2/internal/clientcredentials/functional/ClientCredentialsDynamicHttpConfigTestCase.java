@@ -7,9 +7,9 @@
 package org.mule.test.oauth2.internal.clientcredentials.functional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static java.lang.String.format;
 import static java.lang.Thread.sleep;
@@ -19,7 +19,6 @@ import static org.mule.runtime.http.api.HttpConstants.HttpStatus.OK;
 import static org.mule.runtime.http.api.HttpConstants.HttpStatus.UNAUTHORIZED;
 import static org.mule.runtime.http.api.HttpHeaders.Names.AUTHORIZATION;
 import static org.mule.runtime.http.api.HttpHeaders.Names.WWW_AUTHENTICATE;
-import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -33,15 +32,13 @@ import java.util.concurrent.Future;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.slf4j.Logger;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import io.qameta.allure.Issue;
 
 public class ClientCredentialsDynamicHttpConfigTestCase extends AbstractOAuthAuthorizationTestCase {
-
-  private static final Logger LOGGER = getLogger(ClientCredentialsDynamicHttpConfigTestCase.class.getName());
 
   private static final String NEW_ACCESS_TOKEN = "abcdefghjkl";
 
@@ -74,7 +71,7 @@ public class ClientCredentialsDynamicHttpConfigTestCase extends AbstractOAuthAut
   @Test
   @Issue("OAMOD-4")
   public void testRefreshAfterAuthenticationLifecycle() throws Exception {
-    wireMockRuleApp.stubFor(get(urlPathMatching(".*")).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
+    final StubMapping okStub = wireMockRuleApp.stubFor(get(anyUrl()).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
         .willReturn(aResponse().withStatus(OK.getStatusCode())));
 
     // generate another http config, that will expire during the for loop below
@@ -88,14 +85,15 @@ public class ClientCredentialsDynamicHttpConfigTestCase extends AbstractOAuthAut
     // force token refresh after a dynamic config has been disposed
     configureWireMockToExpectTokenPathRequestForClientCredentialsGrantType(NEW_ACCESS_TOKEN, EXPIRES_IN, 500);
 
-    wireMockRuleApp.stubFor(get(urlPathMatching(".*"))
+    wireMockRuleApp.removeStub(okStub);
+    wireMockRuleApp.stubFor(get(anyUrl())
         .willReturn(aResponse()
             .withStatus(INTERNAL_SERVER_ERROR.getStatusCode())));
-    wireMockRuleApp.stubFor(get(urlPathMatching(".*")).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
+    wireMockRuleApp.stubFor(get(anyUrl()).withHeader(AUTHORIZATION, containing(ACCESS_TOKEN))
         .willReturn(aResponse()
             .withStatus(UNAUTHORIZED.getStatusCode())
             .withHeader(WWW_AUTHENTICATE, "Basic realm=\"myRealm\"")));
-    wireMockRuleApp.stubFor(get(urlPathMatching(".*")).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
+    wireMockRuleApp.stubFor(get(anyUrl()).withHeader(AUTHORIZATION, containing(NEW_ACCESS_TOKEN))
         .willReturn(aResponse().withBody(TEST_MESSAGE).withStatus(OK.getStatusCode())));
 
     // ensure that the expired config did not affect other configs

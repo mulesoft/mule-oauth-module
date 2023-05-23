@@ -31,6 +31,12 @@ public class DynamicClientCredentialsConfigTestCase extends AbstractOAuthAuthori
     return "client-credentials/client-credentials-dynamic-config.xml";
   }
 
+  @Override
+  public void doSetUpBeforeMuleContextCreation() {
+    configureWireMockToExpectTokenPathRequestForClientCredentialsGrantTypeWithMapResponse(ACCESS_TOKEN);
+    configureProxyWireMock();
+  }
+
   @Test
   public void sameInstanceForEquivalentValues() throws Exception {
     ConfigurationProvider configurationProvider = registry.<ConfigurationProvider>lookupByName("requestConfigWithOAuth").get();
