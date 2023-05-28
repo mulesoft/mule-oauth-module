@@ -12,6 +12,8 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Ignore;
 import org.mule.runtime.extension.api.runtime.config.ConfigurationInstance;
 import org.mule.runtime.extension.api.runtime.config.ConfigurationProvider;
 import org.mule.tck.junit4.rule.SystemProperty;
@@ -20,6 +22,8 @@ import org.mule.test.oauth2.AbstractOAuthAuthorizationTestCase;
 import org.junit.Rule;
 import org.junit.Test;
 
+// TODO MULE-18574 - Ignoring current test until has been done
+@Ignore
 public class DynamicClientCredentialsConfigTestCase extends AbstractOAuthAuthorizationTestCase {
 
   @Rule

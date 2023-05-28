@@ -12,7 +12,6 @@ import static java.util.stream.Collectors.toMap;
 import static org.mule.extension.http.internal.HttpConnectorConstants.TLS_CONFIGURATION;
 import static org.mule.extension.oauth2.internal.OAuthUtils.literalEquals;
 import static org.mule.extension.oauth2.internal.OAuthUtils.literalHashCodes;
-import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.dancerName;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.core.api.el.ExpressionManager.DEFAULT_EXPRESSION_PREFIX;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded;
@@ -30,6 +29,7 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Lifecycle;
 import org.mule.runtime.api.lock.LockFactory;
+import org.mule.runtime.api.scheduler.SchedulerService;
 import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -39,7 +39,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.runtime.parameter.Literal;
-import org.mule.runtime.oauth.api.OAuthService;
+import org.mule.runtime.http.api.HttpService;
 import org.mule.runtime.oauth.api.builder.OAuthDancerBuilder;
 
 import java.nio.charset.Charset;
@@ -166,7 +166,10 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
   private String encoding;
 
   @Inject
-  protected OAuthService oAuthService;
+  protected HttpService httpService;
+
+  @Inject
+  protected SchedulerService schedulerService;
 
   // This is used to detect that two different grant types with
   // the default token manager are recognized as equals even if
@@ -188,8 +191,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
       initialiseIfNeeded(getTlsContextFactory());
     }
     dancerBuilder.tokenUrl(tokenUrl, contextFactory, proxyConfig);
-    dancerBuilder = dancerName(dancerBuilder, tokenManager.getName());
-    dancerBuilder
+    dancerBuilder.name(tokenManager.getName())
         .scopes(getScopes())
         .encoding(Charset.forName(encoding))
         .responseAccessTokenExpr(resolver.getExpression(getResponseAccessToken()))

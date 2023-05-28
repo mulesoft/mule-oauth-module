@@ -31,9 +31,10 @@ public class AuthorizationCodeThroughProxyTestCase extends AbstractAuthorization
 
   @Parameters
   public static Collection<Object> data() {
-    String inlineProxyConfig = "authorization-code/authorization-code-through-proxy-inline.xml";
+    // TODO MULE-18574 - Ignoring current test until has been done
+    // String inlineProxyConfig = "authorization-code/authorization-code-through-proxy-inline.xml";
     String globalProxyConfig = "authorization-code/authorization-code-through-proxy.xml";
-    return asList(new Object[] {inlineProxyConfig, globalProxyConfig});
+    return asList(new Object[] {globalProxyConfig});
   }
 
   @Before

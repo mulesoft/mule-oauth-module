@@ -14,11 +14,11 @@ import static org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig.defa
 import static org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig.getTokenManagerConfigByName;
 import static org.mule.runtime.http.api.utils.HttpEncoderDecoderUtils.appendQueryParam;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
-import static org.mule.service.oauth.internal.OAuthConstants.ACCESS_TOKEN_PARAMETER;
-import static org.mule.service.oauth.internal.OAuthConstants.CODE_PARAMETER;
-import static org.mule.service.oauth.internal.OAuthConstants.EXPIRES_IN_PARAMETER;
-import static org.mule.service.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAMETER;
-import static org.mule.service.oauth.internal.OAuthConstants.STATE_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.ACCESS_TOKEN_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.CODE_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.EXPIRES_IN_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAMETER;
+import static org.mule.runtime.oauth.internal.OAuthConstants.STATE_PARAMETER;
 
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.api.metadata.MediaType;
