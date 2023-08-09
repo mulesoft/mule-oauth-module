@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd   http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd   http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd   http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+    <munit:config name="operations.xml"/>
+
+    <munit:test name="retrieveAccessToken_Test">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="oauth-token"/>
+            <munit:enable-flow-source value="oauth-resource-text"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <http:request config-ref="requestConfigWithOAuth" method="POST" path="/echo-text-plain"/>
+        </munit:behavior>
+        <munit:execution>
+            <oauth:retrieve-access-token doc:name="Retrieve access token" tokenManager="clientCredsTokenManagerConfig"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload]" doc:name="Assert equals" expected="rbBQLgJXBEYo83K4Fqs4gu6vpCobc2ya" message="Non matching Token"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="retrieveAccessToken_DefaultTokenManager_Test">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="oauth-token"/>
+            <munit:enable-flow-source value="oauth-resource-text"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <http:request config-ref="requestConfigDefaultTokenManager" method="POST" path="/echo-text-plain"/>
+        </munit:execution>
+    </munit:test>
+
+    <munit:test name="expiresIn_Test">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="oauth-token"/>
+            <munit:enable-flow-source value="oauth-resource-text"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <http:request config-ref="requestConfigWithOAuth" method="POST" path="/echo-text-plain"/>
+        </munit:behavior>
+        <munit:execution>
+            <oauth:retrieve-expires-in doc:name="Retrieve expires in" tokenManager="clientCredsTokenManagerConfig">
+            </oauth:retrieve-expires-in>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload]" doc:name="Assert equals" expected="3897" message="Non matching Token"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="invalidateContext_Test">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="oauth-token"/>
+            <munit:enable-flow-source value="oauth-resource-text"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <http:request config-ref="requestConfigWithOAuth" method="POST" path="/echo-text-plain"/>
+        </munit:behavior>
+        <munit:execution>
+            <oauth:retrieve-access-token doc:name="Retrieve access token" tokenManager="clientCredsTokenManagerConfig">
+            </oauth:retrieve-access-token>
+            <set-variable value="#[payload]" doc:name="Set Variable" variableName="old_context"/>
+            <oauth:invalidate-oauth-context doc:name="Invalidate oauth context" tokenManager="clientCredsTokenManagerConfig"/>
+            <oauth:retrieve-access-token doc:name="Retrieve access token" tokenManager="clientCredsTokenManagerConfig">
+            </oauth:retrieve-access-token>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals doc:name="Assert equals" actual="#[vars.old_context]" expected="rbBQLgJXBEYo83K4Fqs4gu6vpCobc2ya" message="Expected valid context before clearing"/>
+            <munit-tools:assert-equals actual="#[payload]" doc:name="Assert equals" expected="#[null]" message="Expected no access token since context was cleared"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="retrieveAccessToken_CustomResOwnerId_Test">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="oauth-code-grant-authorize"/>
+            <munit:enable-flow-source value="oauth-token"/>
+            <munit:enable-flow-source value="oauth-resource-text"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <try doc:name="Try">
+                <logger level="INFO" message="StateTest: Kick-start OAuth listener"/>
+                <http:request config-ref="requestConfigWithAuthCode" doc:name="First Request" method="POST" path="/echo-text-plain"/>
+                <error-handler>
+                    <on-error-continue doc:name="On Error Continue" enableNotifications="true" logException="true">
+                        <logger doc:name="Logger" level="INFO" message="StateTest: First call failed as expected"/>
+                    </on-error-continue>
+                </error-handler>
+            </try>
+        </munit:behavior>
+        <munit:execution>
+            <http:request config-ref="requestConfig" method="GET" path="/local/authorize?userId=custom"/>
+            <oauth:retrieve-access-token doc:name="Retrieve access token" tokenManager="authCodeTokenManagerConfig" resourceOwnerId="custom"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload]" doc:name="Assert equals" expected="rbBQLgJXBEYo83K4Fqs4gu6vpCobc2ya" message="Non matching Token"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="retrieveState_Test">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="oauth-code-grant-authorize"/>
+            <munit:enable-flow-source value="oauth-token"/>
+            <munit:enable-flow-source value="oauth-resource-text"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <try doc:name="Try">
+                <logger level="INFO" message="StateTest: Kick-start OAuth listener"/>
+                <http:request config-ref="requestConfigWithAuthCode" doc:name="First Request" method="POST" path="/echo-text-plain"/>
+                <error-handler>
+                    <on-error-continue doc:name="On Error Continue" enableNotifications="true" logException="true">
+                        <logger doc:name="Logger" level="INFO" message="StateTest: First call failed as expected"/>
+                    </on-error-continue>
+                </error-handler>
+            </try>
+        </munit:behavior>
+        <munit:execution>
+            <http:request config-ref="requestConfig" method="GET" path="/local/authorize"/>
+            <oauth:retrieve-state tokenManager="authCodeTokenManagerConfig"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload]" doc:name="Assert equals" expected="1234" message="Non matching Token"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="retrieveRefreshToken_Test">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="oauth-code-grant-authorize"/>
+            <munit:enable-flow-source value="oauth-token"/>
+            <munit:enable-flow-source value="oauth-resource-text"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <try doc:name="Try">
+                <logger level="INFO" message="StateTest: Kick-start OAuth listener"/>
+                <http:request config-ref="requestConfigWithAuthCode" doc:name="First Request" method="POST" path="/echo-text-plain"/>
+                <error-handler>
+                    <on-error-continue doc:name="On Error Continue" enableNotifications="true" logException="true">
+                        <logger doc:name="Logger" level="INFO" message="StateTest: First call failed as expected"/>
+                    </on-error-continue>
+                </error-handler>
+            </try>
+        </munit:behavior>
+        <munit:execution>
+            <http:request config-ref="requestConfig" method="GET" path="/local/authorize"/>
+            <oauth:retrieve-refresh-token doc:name="Retrieve refresh token" tokenManager="authCodeTokenManagerConfig">
+            </oauth:retrieve-refresh-token>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload]" doc:name="Assert equals" expected="9TLtNPV8rnwYmjPBNbBxcDHw" message="Non matching Token"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="customParameter_Test">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="oauth-code-grant-authorize"/>
+            <munit:enable-flow-source value="oauth-token"/>
+            <munit:enable-flow-source value="oauth-resource-text"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <try doc:name="Try">
+                <logger level="INFO" message="StateTest: Kick-start OAuth listener"/>
+                <http:request config-ref="requestConfigWithAuthCode" doc:name="First Request" method="POST" path="/echo-text-plain"/>
+                <error-handler>
+                    <on-error-continue doc:name="On Error Continue" enableNotifications="true" logException="true">
+                        <logger doc:name="Logger" level="INFO" message="StateTest: First call failed as expected"/>
+                    </on-error-continue>
+                </error-handler>
+            </try>
+        </munit:behavior>
+        <munit:execution>
+            <http:request config-ref="requestConfig" method="GET" path="/local/authorize"/>
+            <oauth:retrieve-custom-token-response-param doc:name="Retrieve custom token response param" key="customParam" tokenManager="authCodeTokenManagerConfig"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload]" doc:name="Assert equals" expected="custom_value" message="Non matching Token"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>
