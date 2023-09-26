@@ -28,6 +28,9 @@
         <munit.version>2.3.16</munit.version>
         <mtf-tools.version>1.1.2</mtf-tools.version>
         <mavenResources.version>3.3.1</mavenResources.version>
+        <connector.maven.plugin.version>3.0.2</connector.maven.plugin.version>
+        <configuration.files.s3.folder>${project.artifactId}</configuration.files.s3.folder>
+        <configuration.files.vault.secret.engine>connector-credentials</configuration.files.vault.secret.engine>
 
         <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
@@ -90,7 +93,24 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>com.mulesoft.connectors.maven</groupId>
+                <artifactId>connector-maven-plugin</artifactId>
+                <version>${connector.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>get-configuration-files</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>get-configuration-files</goal>
+                        </goals>
+                        <configuration>
+                            <folder>${configuration.files.s3.folder}</folder>
+                            <vaultBucket>${configuration.files.vault.secret.engine}</vaultBucket>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>com.mulesoft.munit</groupId>
                 <artifactId>munit-extensions-maven-plugin</artifactId>

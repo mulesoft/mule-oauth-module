@@ -19,12 +19,13 @@
         http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd">
 
     <munit:config minMuleVersion="4.2.0" name="expressions-always-refresh.xml"/>
+    <configuration-properties file="automation-credentials.properties" />
 
     <http:request-config name="requestConfigWithAuthCode_AlwaysRefresh">
         <http:request-connection host="localhost" port="${oauth.server.port}">
             <http:authentication>
                 <oauth:authorization-code-grant-type
-                        clientId="ndli93xdws2qoe6ms1d389vl6bxquv3e" clientSecret="yL692Az1cNhfk1VhTzyx4jOjjMKBrO9T"
+                        clientId="${oauth.clientId}" clientSecret="${oauth.clientSecret}"
                         tokenManager="authCodeTokenManagerConfig"
                         localAuthorizationUrl="http://localhost:${oauth.server.port}/local/authorize"
                         authorizationUrl="http://localhost:${oauth.server.port}/authorize"

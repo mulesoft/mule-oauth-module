@@ -11,6 +11,7 @@ http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/mu
 http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd">
 
     <munit:dynamic-port propertyName="oauth.server.port" min="1024" max="64000"/>
+    <configuration-properties doc:name="Configuration properties" file="automation-credentials.properties" />
 
     <!-- Oauth token endpoint stub -->
     <http:listener-config name="oauthListenerConfig">
@@ -32,8 +33,8 @@ http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oa
         <http:request-connection host="localhost" port="${oauth.server.port}">
             <http:authentication>
                 <oauth:client-credentials-grant-type
-                        clientId="ndli93xdws2qoe6ms1d389vl6bxquv3e"
-                        clientSecret="yL692Az1cNhfk1VhTzyx4jOjjMKBrO9T"
+                        clientId="${oauth.clientId}"
+                        clientSecret="${oauth.clientSecret}"
                         tokenManager="clientCredsTokenManagerConfig"
                         scopes="$expected scope"
                         tokenUrl="#['http://localhost:' ++ ${oauth.server.port} ++ '/token']"
@@ -49,8 +50,8 @@ http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oa
         <http:request-connection host="localhost" port="${oauth.server.port}">
             <http:authentication>
                 <oauth:client-credentials-grant-type
-                        clientId="ndli93xdws2qoe6ms1d389vl6bxquv3e"
-                        clientSecret="yL692Az1cNhfk1VhTzyx4jOjjMKBrO9T"
+                        clientId="${oauth.clientId}"
+                        clientSecret="${oauth.clientSecret}"
                         scopes="$expected scope"
                         tokenUrl="#['http://localhost:' ++ ${oauth.server.port} ++ '/token']"
                         refreshTokenWhen="#[[500, 401] contains attributes.statusCode]"
@@ -65,8 +66,8 @@ http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oa
         <http:request-connection host="localhost" port="${oauth.server.port}">
             <http:authentication>
                 <oauth:authorization-code-grant-type
-                        clientId="ndli93xdws2qoe6ms1d389vl6bxquv3e"
-                        clientSecret="yL692Az1cNhfk1VhTzyx4jOjjMKBrO9T"
+                        clientId="${oauth.clientId}"
+                        clientSecret="${oauth.clientSecret}"
                         localAuthorizationUrlResourceOwnerId="#[attributes.queryParams.userId]"
                         resourceOwnerId="#[vars['userId']]"
                         tokenManager="authCodeTokenManagerConfig"
@@ -90,8 +91,8 @@ http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oa
         <http:request-connection host="localhost" port="${oauth.server.port}">
             <http:authentication>
                 <oauth:authorization-code-grant-type
-                        clientId="ndli93xdws2qoe6ms1d389vl6bxquv3e"
-                        clientSecret="yL692Az1cNhfk1VhTzyx4jOjjMKBrO9T"
+                        clientId="${oauth.clientId}"
+                        clientSecret="${oauth.clientSecret}"
                         localAuthorizationUrlResourceOwnerId="#[attributes.queryParams.userId]"
                         resourceOwnerId="#[vars['userId']]"
                         tokenManager="authCodeTokenManagerConfig"
