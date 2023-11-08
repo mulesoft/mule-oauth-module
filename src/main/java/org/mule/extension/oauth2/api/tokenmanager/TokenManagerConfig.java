@@ -100,6 +100,25 @@ public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializ
     return name;
   }
 
+  public LockFactory getLockFactory() {
+    return lockFactory;
+  }
+
+  public void setLockFactory(LockFactory lockFactory) {
+    this.lockFactory = lockFactory;
+  }
+
+  public ObjectStoreManager getObjectStoreManager() {
+    return objectStoreManager;
+  }
+
+  public void setObjectStoreManager(ObjectStoreManager objectStoreManager) {
+    this.objectStoreManager = objectStoreManager;
+  }
+
+  public TokenManagerConfig() {
+  }
+
   @Override
   public synchronized void initialise() throws InitialisationException {
     if (initialised) {
