@@ -159,6 +159,14 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
   @Optional(defaultValue = "true")
   private boolean encodeClientCredentialsInBody;
 
+  @Inject
+  private HttpService httpService;
+
+  private AuthorizationCodeOAuthDancer dancer;
+
+  public DefaultAuthorizationCodeGrantType() {
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof DefaultAuthorizationCodeGrantType) {
@@ -188,10 +196,77 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
                 super.hashCode());
   }
 
-  @Inject
-  private HttpService httpService;
+  public void setLocalCallbackConfig(String localCallbackConfig) {
+    this.localCallbackConfig = localCallbackConfig;
+  }
 
-  private AuthorizationCodeOAuthDancer dancer;
+  public void setLocalCallbackConfigPath(String localCallbackConfigPath) {
+    this.localCallbackConfigPath = localCallbackConfigPath;
+  }
+
+  public void setLocalCallbackUrl(String localCallbackUrl) {
+    this.localCallbackUrl = localCallbackUrl;
+  }
+
+  public void setExternalCallbackUrl(String externalCallbackUrl) {
+    this.externalCallbackUrl = externalCallbackUrl;
+  }
+
+  public Literal<String> getState() {
+    return state;
+  }
+
+  public void setState(Literal<String> state) {
+    this.state = state;
+  }
+
+  public Literal<String> getLocalAuthorizationUrlResourceOwnerId() {
+    return localAuthorizationUrlResourceOwnerId;
+  }
+
+  public void setLocalAuthorizationUrlResourceOwnerId(Literal<String> localAuthorizationUrlResourceOwnerId) {
+    this.localAuthorizationUrlResourceOwnerId = localAuthorizationUrlResourceOwnerId;
+  }
+
+  public String getLocalAuthorizationUrl() {
+    return localAuthorizationUrl;
+  }
+
+  public void setLocalAuthorizationUrl(String localAuthorizationUrl) {
+    this.localAuthorizationUrl = localAuthorizationUrl;
+  }
+
+  public String getAuthorizationUrl() {
+    return authorizationUrl;
+  }
+
+  public void setAuthorizationUrl(String authorizationUrl) {
+    this.authorizationUrl = authorizationUrl;
+  }
+
+  public Map<String, String> getCustomParameters() {
+    return customParameters;
+  }
+
+  public ParameterResolver<String> getResourceOwnerId() {
+    return resourceOwnerId;
+  }
+
+  public void setResourceOwnerId(ParameterResolver<String> resourceOwnerId) {
+    this.resourceOwnerId = resourceOwnerId;
+  }
+
+  public void setEncodeClientCredentialsInBody(boolean encodeClientCredentialsInBody) {
+    this.encodeClientCredentialsInBody = encodeClientCredentialsInBody;
+  }
+
+  public HttpService getHttpService() {
+    return httpService;
+  }
+
+  public void setHttpService(HttpService httpService) {
+    this.httpService = httpService;
+  }
 
   public String getLocalCallbackConfig() {
     return localCallbackConfig;
