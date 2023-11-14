@@ -116,8 +116,7 @@ public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializ
     this.objectStoreManager = objectStoreManager;
   }
 
-  public TokenManagerConfig() {
-  }
+  public TokenManagerConfig() {}
 
   @Override
   public synchronized void initialise() throws InitialisationException {

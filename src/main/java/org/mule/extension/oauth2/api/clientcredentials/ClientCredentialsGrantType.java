@@ -148,6 +148,5 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
     this.encodeClientCredentialsInBody = encodeClientCredentialsInBody;
   }
 
-  public ClientCredentialsGrantType() {
-  }
+  public ClientCredentialsGrantType() {}
 }
