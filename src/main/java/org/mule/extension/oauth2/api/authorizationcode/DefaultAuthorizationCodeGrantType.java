@@ -164,8 +164,7 @@ public class DefaultAuthorizationCodeGrantType extends AbstractGrantType {
 
   private AuthorizationCodeOAuthDancer dancer;
 
-  public DefaultAuthorizationCodeGrantType() {
-  }
+  public DefaultAuthorizationCodeGrantType() {}
 
   @Override
   public boolean equals(Object obj) {
