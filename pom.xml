@@ -14,7 +14,7 @@
     <version>2.0.0-SNAPSHOT</version>
 
     <properties>
-        <muleHttpConnectorVersion>1.8.0</muleHttpConnectorVersion>
+        <muleHttpConnectorVersion>1.8.1</muleHttpConnectorVersion>
         <muleSocketsConnectorVersion>1.2.2</muleSocketsConnectorVersion>
         <muleObjectStoreConnectorTestVersion>1.2.1</muleObjectStoreConnectorTestVersion>
         <commonsCodecVersion>1.15</commonsCodecVersion>
