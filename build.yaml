@@ -2,7 +2,8 @@ projectType: extension
 additionalTestConfigs:
   jdk11:
     testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: -DdiscoverRuntimes.minMuleVersion=4.5.0
   jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: -DdiscoverRuntimes.minMuleVersion=4.6.0
+    mavenAdditionalArgs: -DdiscoverRuntimes.minMuleVersion=4.5.0
 
