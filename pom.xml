@@ -113,8 +113,9 @@
                     </argLines>
                     <runtimeConfiguration>
                         <discoverRuntimes>
-                            <product>ALL</product>
-                            <includeSnapshots>true</includeSnapshots>
+                            <minMuleVersion>${minVersion}</minMuleVersion>
+                            <includeSnapshots>false</includeSnapshots>
+                            <product>EE</product>
                         </discoverRuntimes>
                     </runtimeConfiguration>
                     <munitTest>${munit.test}</munitTest>
