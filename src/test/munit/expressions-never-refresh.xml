@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+
+      xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+		http://www.mulesoft.org/schema/mule/mtf  http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd">
+
+    <munit:config minMuleVersion="4.2.0" name="expressions-never-refresh.xml"/>
+
+    <http:request-config name="requestConfigWithAuthCode_NeverRefresh">
+        <http:request-connection host="localhost" port="${oauth.server.port}">
+            <http:authentication>
+                <oauth:authorization-code-grant-type
+                        clientId="ndli93xdws2qoe6ms1d389vl6bxquv3e" clientSecret="yL692Az1cNhfk1VhTzyx4jOjjMKBrO9T"
+                        tokenManager="authCodeTokenManagerConfig"
+                        localAuthorizationUrl="http://localhost:${oauth.server.port}/local/authorize"
+                        authorizationUrl="http://localhost:${oauth.server.port}/authorize"
+                        refreshTokenWhen="false"
+                        tokenUrl="http://localhost:${oauth.server.port}/token"
+                        localCallbackConfig="oauthListenerConfig"
+                        externalCallbackUrl="http://localhost:${oauth.server.port}/callback"
+                        localCallbackConfigPath="/callback">
+                </oauth:authorization-code-grant-type>
+            </http:authentication>
+        </http:request-connection>
+    </http:request-config>
+
+    <munit:test name="refreshExpression_False_Test">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="oauth-code-grant-authorize"/>
+            <munit:enable-flow-source value="oauth-token-short"/>
+            <munit:enable-flow-source value="oauth-resource-text"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <try doc:name="Try">
+                <logger level="INFO" message="StateTest: Kick-start OAuth listener"/>
+                <http:request config-ref="requestConfigWithAuthCode_NeverRefresh" doc:name="First Request" method="POST" path="/echo-text-plain"/>
+                <error-handler>
+                    <on-error-continue doc:name="On Error Continue" enableNotifications="true" logException="true">
+                        <logger doc:name="Logger" level="INFO" message="StateTest: First call failed as expected"/>
+                    </on-error-continue>
+                </error-handler>
+            </try>
+        </munit:behavior>
+        <munit:execution>
+            <http:request config-ref="requestConfig" method="GET" path="/local/authorize"/>
+            <http:request config-ref="requestConfigWithAuthCode_NeverRefresh" doc:name="First Request" method="POST" path="/echo-text-plain"/>
+            <oauth:retrieve-access-token doc:name="Retrieve access token" tokenManager="authCodeTokenManagerConfig"/>
+            <set-variable doc:name="Set Variable" value="#[payload]" variableName="first_token"/>
+            <http:request config-ref="requestConfigWithAuthCode_NeverRefresh" doc:name="First Request" method="POST" path="/echo-text-plain"/>
+            <oauth:retrieve-access-token doc:name="Retrieve access token" tokenManager="authCodeTokenManagerConfig"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that doc:name="Assert that" expression="#[payload]" is="#[MunitTools::equalTo(vars.first_token)]" message="New token is expected. It seems the token wasn't renewed"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>
