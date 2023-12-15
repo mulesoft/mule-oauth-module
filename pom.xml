@@ -14,19 +14,19 @@
     <version>2.0.0-SNAPSHOT</version>
 
     <properties>
-        <muleHttpConnectorVersion>1.8.1</muleHttpConnectorVersion>
+        <muleHttpConnectorVersion>1.9.0</muleHttpConnectorVersion>
         <muleSocketsConnectorVersion>1.2.4</muleSocketsConnectorVersion>
-        <muleObjectStoreConnectorTestVersion>1.2.1</muleObjectStoreConnectorTestVersion>
+        <muleObjectStoreConnectorTestVersion>1.2.2</muleObjectStoreConnectorTestVersion>
         <commonsCodecVersion>1.16.0</commonsCodecVersion>
         <commonsIoVersion>2.15.1</commonsIoVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
-        <muleSdkApiVersion>1.0.0-20230417</muleSdkApiVersion>
+        <muleSdkApiVersion>0.7.0</muleSdkApiVersion>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
         <munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
-        <munit.extensions.maven.plugin.version>1.2.0-rc1</munit.extensions.maven.plugin.version>
-        <munit.version>3.1.0-rc2</munit.version>
+        <munit.extensions.maven.plugin.version>1.2.0-rc2</munit.extensions.maven.plugin.version>
+        <munit.version>3.1.0-rc3</munit.version>
         <mtf-tools.version>1.2.0-rc1</mtf-tools.version>
         <jacoco.version>0.8.10</jacoco.version>
         <mavenResources.version>3.3.1</mavenResources.version>
@@ -133,8 +133,9 @@
                     </argLines>
                     <runtimeConfiguration>
                         <discoverRuntimes>
-                            <product>ALL</product>
-                            <includeSnapshots>true</includeSnapshots>
+                            <minMuleVersion>${minVersion}</minMuleVersion>
+                            <includeSnapshots>false</includeSnapshots>
+                            <product>EE</product>
                         </discoverRuntimes>
                     </runtimeConfiguration>
                     <munitTest>${munit.test}</munitTest>
@@ -279,13 +280,6 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.tests.plugin</groupId>
-            <artifactId>mule-tests-component-plugin</artifactId>
-            <version>${mule.version}</version>
-            <classifier>mule-plugin</classifier>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
