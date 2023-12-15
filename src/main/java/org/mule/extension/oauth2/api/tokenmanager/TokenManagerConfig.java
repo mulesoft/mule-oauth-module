@@ -1,5 +1,5 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
+ * Copyright 2023 Salesforce, Inc. All rights reserved.
  * The software in this package is published under the terms of the CPAL v1.0
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
@@ -99,6 +99,24 @@ public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializ
   public String getName() {
     return name;
   }
+
+  public LockFactory getLockFactory() {
+    return lockFactory;
+  }
+
+  public void setLockFactory(LockFactory lockFactory) {
+    this.lockFactory = lockFactory;
+  }
+
+  public ObjectStoreManager getObjectStoreManager() {
+    return objectStoreManager;
+  }
+
+  public void setObjectStoreManager(ObjectStoreManager objectStoreManager) {
+    this.objectStoreManager = objectStoreManager;
+  }
+
+  public TokenManagerConfig() {}
 
   @Override
   public synchronized void initialise() throws InitialisationException {
