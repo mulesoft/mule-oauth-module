@@ -123,11 +123,11 @@ public class TokenManagerConfig<CTX extends ResourceOwnerOAuthContext & Serializ
     if (initialised) {
       return;
     }
-    if (objectStore == null) {
+    if (getObjectStore() == null) {
       resolvedObjectStore = objectStoreManager.getOrCreateObjectStore("token-manager-store-" + name,
                                                                       ObjectStoreSettings.builder().persistent(true).build());
     } else {
-      resolvedObjectStore = objectStore;
+      resolvedObjectStore = getObjectStore();
     }
     configOAuthContext =
         new ConfigOAuthContext(lockFactory, new SimpleObjectStoreToMapAdapter(resolvedObjectStore), name);
