@@ -9,6 +9,8 @@ package org.mule.test.oauth2.internal.tokenmanager;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
+
+import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.getAccessToken;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 
@@ -51,7 +53,7 @@ public class InvalidateOauthContextTestCase extends AbstractOAuthAuthorizationTe
     flowRunner("invalidateOauthContextWithResourceOwnerId").withPayload(TEST_MESSAGE)
         .withVariable("resourceOwnerId", RESOURCE_OWNER_TONY).run();
     assertThatOAuthContextWasCleanForUser(configOAuthContext, RESOURCE_OWNER_TONY);
-    assertThat(configOAuthContext.getContextForResourceOwner(RESOURCE_OWNER_JOHN).getAccessToken(), is(ACCESS_TOKEN));
+    assertThat(getAccessToken(configOAuthContext.getContextForResourceOwner(RESOURCE_OWNER_JOHN)), is(ACCESS_TOKEN));
   }
 
   @Test
@@ -60,11 +62,12 @@ public class InvalidateOauthContextTestCase extends AbstractOAuthAuthorizationTe
   }
 
   private void assertThatOAuthContextWasCleanForUser(ConfigOAuthContext configOAuthContext, String resourceOwnerId) {
-    assertThat(configOAuthContext.getContextForResourceOwner(resourceOwnerId).getAccessToken(), nullValue());
+    assertThat(getAccessToken(configOAuthContext.getContextForResourceOwner(resourceOwnerId)), nullValue());
   }
 
   private void loadResourceOwnerWithAccessToken(ConfigOAuthContext configOAuthContext, String resourceOwnerId) {
-    final ResourceOwnerOAuthContext resourceOwnerContext = configOAuthContext.getContextForResourceOwner(resourceOwnerId);
+    final ResourceOwnerOAuthContext resourceOwnerContext =
+        (ResourceOwnerOAuthContext) configOAuthContext.getContextForResourceOwner(resourceOwnerId);
     setTokens(resourceOwnerContext, ACCESS_TOKEN, null);
     configOAuthContext.updateResourceOwnerOAuthContext(resourceOwnerContext);
   }
