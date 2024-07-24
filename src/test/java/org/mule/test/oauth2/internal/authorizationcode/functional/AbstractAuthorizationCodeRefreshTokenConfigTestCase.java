@@ -28,7 +28,6 @@ import static org.mule.service.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAM
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.runtime.core.api.event.CoreEvent;
-import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.test.oauth2.AbstractOAuthAuthorizationTestCase;
 
@@ -112,8 +111,7 @@ public abstract class AbstractAuthorizationCodeRefreshTokenConfigTestCase extend
         .willReturn(aResponse().withStatus(failureStatusCode).withBody("")));
 
     final ConfigOAuthContext configOAuthContext = getTokenManagerConfig().getConfigOAuthContext();
-    final ResourceOwnerOAuthContext resourceOwnerOauthContext =
-        (ResourceOwnerOAuthContext) configOAuthContext.getContextForResourceOwner(userId);
+    final Object resourceOwnerOauthContext = configOAuthContext.getContextForResourceOwner(userId);
     setTokens(resourceOwnerOauthContext, ACCESS_TOKEN, REFRESH_TOKEN);
     configOAuthContext.updateResourceOwnerOAuthContext(resourceOwnerOauthContext);
   }

@@ -292,7 +292,7 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
         .getValue();
   }
 
-  protected void setTokens(ResourceOwnerOAuthContext resourceOwnerOauthContext, String accessToken, String refreshToken) {
+  protected void setTokens(Object resourceOwnerOauthContext, String accessToken, String refreshToken) {
     try {
       resourceOwnerOauthContext.getClass().getDeclaredMethod("setAccessToken", String.class)
           .invoke(resourceOwnerOauthContext, accessToken);

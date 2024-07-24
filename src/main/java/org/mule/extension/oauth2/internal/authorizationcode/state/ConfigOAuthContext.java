@@ -9,14 +9,10 @@ package org.mule.extension.oauth2.internal.authorizationcode.state;
 import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.createRefreshUserOAuthContextLock;
 import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.createResourceOwnerOAuthContext;
 import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.getRefreshUserOAuthContextLock;
-import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.getTokenResponseParameters;
+import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.getResourceOwnerId;
 import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.migrateContextIfNeeded;
 
-import static java.util.Objects.requireNonNull;
-
-import org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter;
 import org.mule.runtime.api.lock.LockFactory;
-import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -25,6 +21,10 @@ import java.util.concurrent.locks.Lock;
  * Provides the OAuth context for a particular config
  */
 public class ConfigOAuthContext {
+
+  static {
+    System.out.println("initializing ConfigOAuthContext class");
+  }
 
   private final LockFactory lockFactory;
   private final String configName;
@@ -69,12 +69,12 @@ public class ConfigOAuthContext {
    *
    * @param resourceOwnerOAuthContext
    */
-  public void updateResourceOwnerOAuthContext(ResourceOwnerOAuthContext resourceOwnerOAuthContext) {
+  public void updateResourceOwnerOAuthContext(Object resourceOwnerOAuthContext) {
     final Lock resourceOwnerContextLock =
         getRefreshUserOAuthContextLock(resourceOwnerOAuthContext, configName, lockFactory);
     resourceOwnerContextLock.lock();
     try {
-      oauthContextStore.put(resourceOwnerOAuthContext.getResourceOwnerId(), resourceOwnerOAuthContext);
+      oauthContextStore.put(getResourceOwnerId(resourceOwnerOAuthContext), resourceOwnerOAuthContext);
     } finally {
       resourceOwnerContextLock.unlock();
     }
