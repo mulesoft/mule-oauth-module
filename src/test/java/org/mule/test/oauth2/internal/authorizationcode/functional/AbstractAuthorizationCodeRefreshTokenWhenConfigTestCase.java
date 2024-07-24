@@ -101,8 +101,7 @@ public abstract class AbstractAuthorizationCodeRefreshTokenWhenConfigTestCase ex
             .withBody("{\"success\":\"false\", \"errors\":[{\"code\":\"601\"}]}")));
 
     final ConfigOAuthContext configOAuthContext = getTokenManagerConfig().getConfigOAuthContext();
-    final ResourceOwnerOAuthContext resourceOwnerOauthContext =
-        (ResourceOwnerOAuthContext) configOAuthContext.getContextForResourceOwner(userId);
+    final Object resourceOwnerOauthContext = configOAuthContext.getContextForResourceOwner(userId);
     setTokens(resourceOwnerOauthContext, ACCESS_TOKEN, REFRESH_TOKEN);
     configOAuthContext.updateResourceOwnerOAuthContext(resourceOwnerOauthContext);
   }

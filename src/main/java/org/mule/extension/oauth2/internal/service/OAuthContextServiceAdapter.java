@@ -39,14 +39,22 @@ public final class OAuthContextServiceAdapter {
   private static Constructor<?> clientApi_ctxWithStateConstructor;
   private static Constructor<?> clientApi_ctxWithStateCopyConstructor;
   private static Constructor<?> runtimeApi_ctxWithStateCopyConstructor;
-  private static Method createRefreshUserOAuthContextLock = null;
-  private static Method getRefreshUserOAuthContextLock = null;
-  private static Method getResourceOwnerId = null;
-  private static Method getTokenResponseParameters = null;
-  private static Method getRefreshToken = null;
-  private static Method getAccessToken = null;
-  private static Method getExpiresIn = null;
-  private static Method getState = null;
+  private static Method clientApi_createRefreshUserOAuthContextLock = null;
+  private static Method clientApi_getRefreshUserOAuthContextLock = null;
+  private static Method clientApi_getResourceOwnerId = null;
+  private static Method clientApi_getTokenResponseParameters = null;
+  private static Method clientApi_getRefreshToken = null;
+  private static Method clientApi_getAccessToken = null;
+  private static Method clientApi_getExpiresIn = null;
+  private static Method clientApi_getState = null;
+  private static Method runtimeApi_createRefreshUserOAuthContextLock = null;
+  private static Method runtimeApi_getRefreshUserOAuthContextLock = null;
+  private static Method runtimeApi_getResourceOwnerId = null;
+  private static Method runtimeApi_getTokenResponseParameters = null;
+  private static Method runtimeApi_getRefreshToken = null;
+  private static Method runtimeApi_getAccessToken = null;
+  private static Method runtimeApi_getExpiresIn = null;
+  private static Method runtimeApi_getState = null;
   private static Method dancerName = null;
 
   static {
@@ -68,23 +76,34 @@ public final class OAuthContextServiceAdapter {
         clientApi_ctxWithStateConstructor = clientApi_ctxWithStateClass.getConstructor(String.class);
         clientApi_ctxWithStateCopyConstructor = clientApi_ctxWithStateClass.getConstructor(clientApi_ctxClass);
 
-        getResourceOwnerId = clientApi_ctxWithStateClass.getDeclaredMethod("getResourceOwnerId");
-        getTokenResponseParameters = clientApi_ctxWithStateClass.getDeclaredMethod("getTokenResponseParameters");
-        getRefreshToken = clientApi_ctxWithStateClass.getDeclaredMethod("getRefreshToken");
-        getAccessToken = clientApi_ctxWithStateClass.getDeclaredMethod("getAccessToken");
-        getExpiresIn = clientApi_ctxWithStateClass.getDeclaredMethod("getExpiresIn");
-        getState = clientApi_ctxWithStateClass.getDeclaredMethod("getState");
-
-        getRefreshUserOAuthContextLock =
+        clientApi_getResourceOwnerId = clientApi_ctxWithStateClass.getDeclaredMethod("getResourceOwnerId");
+        clientApi_getTokenResponseParameters = clientApi_ctxWithStateClass.getDeclaredMethod("getTokenResponseParameters");
+        clientApi_getRefreshToken = clientApi_ctxWithStateClass.getDeclaredMethod("getRefreshToken");
+        clientApi_getAccessToken = clientApi_ctxWithStateClass.getDeclaredMethod("getAccessToken");
+        clientApi_getExpiresIn = clientApi_ctxWithStateClass.getDeclaredMethod("getExpiresIn");
+        clientApi_getState = clientApi_ctxWithStateClass.getDeclaredMethod("getState");
+        clientApi_getRefreshUserOAuthContextLock =
             clientApi_ctxWithStateClass.getDeclaredMethod("getRefreshOAuthContextLock", String.class, LockFactory.class);
-
-        createRefreshUserOAuthContextLock =
-            clientApi_ctxWithStateClass.getDeclaredMethod("createRefreshOAuthContextLock", String.class, LockFactory.class,
-                                                          String.class);
+        clientApi_createRefreshUserOAuthContextLock = clientApi_ctxWithStateClass
+            .getDeclaredMethod("createRefreshOAuthContextLock", String.class, LockFactory.class, String.class);
       }
 
       if (runtimeApi_ctxWithStateClass != null) {
         runtimeApi_ctxWithStateCopyConstructor = runtimeApi_ctxWithStateClass.getConstructor(runtimeApi_ctxClass);
+        runtimeApi_getRefreshUserOAuthContextLock =
+            runtimeApi_ctxWithStateClass.getDeclaredMethod("getRefreshOAuthContextLock", String.class, LockFactory.class);
+        runtimeApi_createRefreshUserOAuthContextLock =
+            runtimeApi_ctxWithStateClass.getDeclaredMethod("createRefreshOAuthContextLock", String.class, LockFactory.class,
+                                                           String.class);
+      }
+
+      if (runtimeApi_ctxClass != null) {
+        runtimeApi_getResourceOwnerId = runtimeApi_ctxClass.getDeclaredMethod("getResourceOwnerId");
+        runtimeApi_getTokenResponseParameters = runtimeApi_ctxClass.getDeclaredMethod("getTokenResponseParameters");
+        runtimeApi_getRefreshToken = runtimeApi_ctxClass.getDeclaredMethod("getRefreshToken");
+        runtimeApi_getAccessToken = runtimeApi_ctxClass.getDeclaredMethod("getAccessToken");
+        runtimeApi_getExpiresIn = runtimeApi_ctxClass.getDeclaredMethod("getExpiresIn");
+        runtimeApi_getState = runtimeApi_ctxClass.getDeclaredMethod("getState");
       }
 
       dancerName = OAuthDancerBuilder.class.getDeclaredMethod("name", String.class);
@@ -154,9 +173,17 @@ public final class OAuthContextServiceAdapter {
 
   public static Lock getRefreshUserOAuthContextLock(Object resourceOwnerOAuthContext, String name,
                                                     LockFactory lockFactory) {
-    if (getRefreshUserOAuthContextLock != null) {
+    if (clientApi_getRefreshUserOAuthContextLock != null && clientApi_ctxClass.isInstance(resourceOwnerOAuthContext)) {
       try {
-        return (Lock) getRefreshUserOAuthContextLock.invoke(resourceOwnerOAuthContext, name, lockFactory);
+        return (Lock) clientApi_getRefreshUserOAuthContextLock.invoke(resourceOwnerOAuthContext, name, lockFactory);
+      } catch (IllegalAccessException | IllegalArgumentException e) {
+        throw new MuleRuntimeException(e);
+      } catch (InvocationTargetException e) {
+        throw new MuleRuntimeException(e.getCause());
+      }
+    } else if (runtimeApi_getRefreshUserOAuthContextLock != null && runtimeApi_ctxClass.isInstance(resourceOwnerOAuthContext)) {
+      try {
+        return (Lock) runtimeApi_getRefreshUserOAuthContextLock.invoke(resourceOwnerOAuthContext, name, lockFactory);
       } catch (IllegalAccessException | IllegalArgumentException e) {
         throw new MuleRuntimeException(e);
       } catch (InvocationTargetException e) {
@@ -168,9 +195,17 @@ public final class OAuthContextServiceAdapter {
   }
 
   public static Lock createRefreshUserOAuthContextLock(String lockNamePrefix, LockFactory lockProvider, String resourceOwnerId) {
-    if (createRefreshUserOAuthContextLock != null) {
+    if (clientApi_createRefreshUserOAuthContextLock != null) {
       try {
-        return (Lock) createRefreshUserOAuthContextLock.invoke(null, lockNamePrefix, lockProvider, resourceOwnerId);
+        return (Lock) clientApi_createRefreshUserOAuthContextLock.invoke(null, lockNamePrefix, lockProvider, resourceOwnerId);
+      } catch (IllegalAccessException | IllegalArgumentException e) {
+        throw new MuleRuntimeException(e);
+      } catch (InvocationTargetException e) {
+        throw new MuleRuntimeException(e.getCause());
+      }
+    } else if (runtimeApi_createRefreshUserOAuthContextLock != null) {
+      try {
+        return (Lock) runtimeApi_createRefreshUserOAuthContextLock.invoke(null, lockNamePrefix, lockProvider, resourceOwnerId);
       } catch (IllegalAccessException | IllegalArgumentException e) {
         throw new MuleRuntimeException(e);
       } catch (InvocationTargetException e) {
@@ -197,31 +232,23 @@ public final class OAuthContextServiceAdapter {
 
   public static String getResourceOwnerId(Object resourceOwnerOAuthContext) {
     try {
-      return (String) getResourceOwnerId.invoke(resourceOwnerOAuthContext);
+      if (clientApi_ctxClass != null && clientApi_ctxClass.isInstance(resourceOwnerOAuthContext)) {
+        return (String) clientApi_getResourceOwnerId.invoke(resourceOwnerOAuthContext);
+      } else {
+        return (String) runtimeApi_getResourceOwnerId.invoke(resourceOwnerOAuthContext);
+      }
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private static Class<?> getContextClass() throws ClassNotFoundException {
-    try {
-      return forName("org.mule.oauth.client.api.state.ResourceOwnerOAuthContext");
-    } catch (ClassNotFoundException ignored) {
-      return forName("org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext");
-    }
-  }
-
-  private static Class<?> getContextWithStateClass() throws ClassNotFoundException {
-    try {
-      return forName("org.mule.oauth.client.api.state.ResourceOwnerOAuthContextWithRefreshState");
-    } catch (ClassNotFoundException ignored) {
-      return forName("org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContextWithRefreshState");
-    }
-  }
-
   public static Map<String, Object> getTokenResponseParameters(Object contextForResourceOwner) {
     try {
-      return (Map<String, Object>) getTokenResponseParameters.invoke(contextForResourceOwner);
+      if (clientApi_ctxClass != null && clientApi_ctxClass.isInstance(contextForResourceOwner)) {
+        return (Map<String, Object>) clientApi_getTokenResponseParameters.invoke(contextForResourceOwner);
+      } else {
+        return (Map<String, Object>) runtimeApi_getTokenResponseParameters.invoke(contextForResourceOwner);
+      }
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
@@ -229,7 +256,11 @@ public final class OAuthContextServiceAdapter {
 
   public static String getAccessToken(Object contextForResourceOwner) {
     try {
-      return (String) getAccessToken.invoke(contextForResourceOwner);
+      if (clientApi_ctxClass != null && clientApi_ctxClass.isInstance(contextForResourceOwner)) {
+        return (String) clientApi_getAccessToken.invoke(contextForResourceOwner);
+      } else {
+        return (String) runtimeApi_getAccessToken.invoke(contextForResourceOwner);
+      }
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
@@ -237,7 +268,11 @@ public final class OAuthContextServiceAdapter {
 
   public static String getRefreshToken(Object contextForResourceOwner) {
     try {
-      return (String) getRefreshToken.invoke(contextForResourceOwner);
+      if (clientApi_ctxClass != null && clientApi_ctxClass.isInstance(contextForResourceOwner)) {
+        return (String) clientApi_getRefreshToken.invoke(contextForResourceOwner);
+      } else {
+        return (String) runtimeApi_getRefreshToken.invoke(contextForResourceOwner);
+      }
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
@@ -245,7 +280,11 @@ public final class OAuthContextServiceAdapter {
 
   public static String getExpiresIn(Object contextForResourceOwner) {
     try {
-      return (String) getExpiresIn.invoke(contextForResourceOwner);
+      if (clientApi_ctxClass != null && clientApi_ctxClass.isInstance(contextForResourceOwner)) {
+        return (String) clientApi_getExpiresIn.invoke(contextForResourceOwner);
+      } else {
+        return (String) runtimeApi_getExpiresIn.invoke(contextForResourceOwner);
+      }
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
@@ -253,7 +292,11 @@ public final class OAuthContextServiceAdapter {
 
   public static String getState(Object contextForResourceOwner) {
     try {
-      return (String) getState.invoke(contextForResourceOwner);
+      if (clientApi_ctxClass != null && clientApi_ctxClass.isInstance(contextForResourceOwner)) {
+        return (String) clientApi_getState.invoke(contextForResourceOwner);
+      } else {
+        return (String) runtimeApi_getState.invoke(contextForResourceOwner);
+      }
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
