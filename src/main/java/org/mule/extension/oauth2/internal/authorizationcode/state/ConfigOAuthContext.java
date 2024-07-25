@@ -22,10 +22,6 @@ import java.util.concurrent.locks.Lock;
  */
 public class ConfigOAuthContext {
 
-  static {
-    System.out.println("initializing ConfigOAuthContext class");
-  }
-
   private final LockFactory lockFactory;
   private final String configName;
   private final Map<String, Object> oauthContextStore;
