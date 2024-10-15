@@ -98,12 +98,12 @@ public final class OAuthContextServiceAdapter {
       }
 
       if (runtimeApi_ctxClass != null) {
-        runtimeApi_getResourceOwnerId = runtimeApi_ctxClass.getDeclaredMethod("getResourceOwnerId");
-        runtimeApi_getTokenResponseParameters = runtimeApi_ctxClass.getDeclaredMethod("getTokenResponseParameters");
-        runtimeApi_getRefreshToken = runtimeApi_ctxClass.getDeclaredMethod("getRefreshToken");
-        runtimeApi_getAccessToken = runtimeApi_ctxClass.getDeclaredMethod("getAccessToken");
-        runtimeApi_getExpiresIn = runtimeApi_ctxClass.getDeclaredMethod("getExpiresIn");
-        runtimeApi_getState = runtimeApi_ctxClass.getDeclaredMethod("getState");
+        runtimeApi_getResourceOwnerId = methodForNameOrNull(runtimeApi_ctxClass, "getResourceOwnerId");
+        runtimeApi_getTokenResponseParameters = methodForNameOrNull(runtimeApi_ctxClass, "getTokenResponseParameters");
+        runtimeApi_getRefreshToken = methodForNameOrNull(runtimeApi_ctxClass, "getRefreshToken");
+        runtimeApi_getAccessToken = methodForNameOrNull(runtimeApi_ctxClass, "getAccessToken");
+        runtimeApi_getExpiresIn = methodForNameOrNull(runtimeApi_ctxClass, "getExpiresIn");
+        runtimeApi_getState = methodForNameOrNull(runtimeApi_ctxClass, "getState");
       }
 
       dancerName = OAuthDancerBuilder.class.getDeclaredMethod("name", String.class);
@@ -119,6 +119,14 @@ public final class OAuthContextServiceAdapter {
     try {
       return forName(className);
     } catch (ClassNotFoundException e) {
+      return null;
+    }
+  }
+
+  private static Method methodForNameOrNull(Class<?> clazz, String methodName) {
+    try {
+      return clazz.getDeclaredMethod(methodName);
+    } catch (NoSuchMethodException e) {
       return null;
     }
   }
