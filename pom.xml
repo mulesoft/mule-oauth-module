@@ -35,8 +35,6 @@
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
         <licenseYear>2023</licenseYear>
-
-        <slf4jVersion>2.0.13</slf4jVersion>
     </properties>
     <build>
         <plugins>
