@@ -40,7 +40,8 @@ public class AuthorizationCodeNoTokenManagerConfigTestCase extends AbstractAutho
         getTokenManagerConfigByName("default-token-manager-config-" + (defaultTokenManagerConfigIndex.get() - 1));
 
     final ResourceOwnerOAuthContext oauthContext =
-        tokenManagerConfig.getConfigOAuthContext().getContextForResourceOwner(DEFAULT_RESOURCE_OWNER_ID);
+        (ResourceOwnerOAuthContext) tokenManagerConfig.getConfigOAuthContext()
+            .getContextForResourceOwner(DEFAULT_RESOURCE_OWNER_ID);
 
     assertThat(oauthContext.getAccessToken(), is(ACCESS_TOKEN));
     assertThat(oauthContext.getRefreshToken(), is(REFRESH_TOKEN));
