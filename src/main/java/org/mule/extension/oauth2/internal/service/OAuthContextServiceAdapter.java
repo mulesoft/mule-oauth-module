@@ -23,11 +23,11 @@ import java.util.concurrent.locks.Lock;
  * This provides the adapter layer required for newer versions of the module to work on older versions of the runtime/OAuth
  * service.
  * <p>
- * This must be removed once the {@code minMuleVersion} of this extension is upgraded to 4.3
+ * This must be removed once the {@code minMuleVersion} of this extension is upgraded to 4.5+
  *
  * @since 1.2.0, 1.1.9
  *
- * @deprecated to be removed when {@code minMuleVersion} is upgraded to 4.3.0
+ * @deprecated to be removed when {@code minMuleVersion} is upgraded to 4.5.0 or newer.
  */
 @Deprecated
 public final class OAuthContextServiceAdapter {
@@ -108,7 +108,6 @@ public final class OAuthContextServiceAdapter {
 
       dancerName = OAuthDancerBuilder.class.getDeclaredMethod("name", String.class);
     } catch (NoSuchMethodException e) {
-      e.printStackTrace();
       // Nothing to do, this is just using an older version of the api
     } catch (SecurityException e) {
       throw e;
