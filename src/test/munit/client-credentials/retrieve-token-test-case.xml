@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:os="http://www.mulesoft.org/schema/mule/os"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+       http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+       http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+       http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+
+    <munit:config name="retrieve-token-test-case" minMuleVersion="4.3.0"/>
+
+    <os:object-store name="tokensStore" />
+    <oauth:token-manager-config name="aTokenManagerConfig" objectStore="tokensStore" />
+
+    <http:listener-config name="dummyListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+
+    <http:request-config name="noisyNeighbour">
+        <http:request-connection host="localhost" port="${oauth.server.port}" protocol="HTTP">
+            <http:authentication >
+                <oauth:client-credentials-grant-type clientId="123" clientSecret="456"
+                                                     tokenUrl="#['http://localhost:' ++ ${oauth.server.port} ++ '/token']"
+                                                     tokenManager="aTokenManagerConfig">
+                </oauth:client-credentials-grant-type>
+            </http:authentication>
+        </http:request-connection>
+    </http:request-config>
+
+    <munit:test name="Just retrieve a token" description="Just retrieve a token">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="oauth-token"/>
+            <munit:enable-flow-source value="oauth-resource-text"/>
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-payload value="Hi!" />
+            <http:request config-ref="noisyNeighbour" path="/echo-text-plain" method="POST"
+                          target="echoedPayload" targetValue="#[%dw 2.0 output text/plain --- payload]" />
+            <oauth:retrieve-access-token target="oauthAccessToken" tokenManager="aTokenManagerConfig" />
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[vars.echoedPayload]" is="#[MunitTools::equalTo('Hi!')]"/>
+            <munit-tools:assert-that expression="#[vars.oauthAccessToken]" is="#[MunitTools::notNullValue()]"/>
+        </munit:validation>
+    </munit:test>
+
+    <flow name="dummyFlow">
+        <http:listener config-ref="dummyListenerConfig" path="/*" />
+        <logger />
+    </flow>
+</mule>
