@@ -18,6 +18,11 @@ import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.SubTypeMapping;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
+import org.mule.sdk.api.annotation.JavaVersionSupport;
+
+import static org.mule.sdk.api.meta.JavaVersion.JAVA_11;
+import static org.mule.sdk.api.meta.JavaVersion.JAVA_17;
+import static org.mule.sdk.api.meta.JavaVersion.JAVA_8;
 
 /**
  * An extension to hook oauth2 to http extension connectors.
@@ -32,6 +37,7 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
     subTypes = {DefaultAuthorizationCodeGrantType.class, ClientCredentialsGrantType.class})
 @ErrorTypes(OAuthClientErrors.class)
 @Xml(prefix = "oauth")
+@JavaVersionSupport({JAVA_8, JAVA_11, JAVA_17})
 public class OAuthExtension {
 
 }

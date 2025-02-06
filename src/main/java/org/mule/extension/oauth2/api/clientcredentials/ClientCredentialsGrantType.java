@@ -118,6 +118,7 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
     }
   }
 
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof ClientCredentialsGrantType) {
@@ -142,4 +143,10 @@ public class ClientCredentialsGrantType extends AbstractGrantType {
   public boolean isEncodeClientCredentialsInBody() {
     return encodeClientCredentialsInBody;
   }
+
+  public void setEncodeClientCredentialsInBody(boolean encodeClientCredentialsInBody) {
+    this.encodeClientCredentialsInBody = encodeClientCredentialsInBody;
+  }
+
+  public ClientCredentialsGrantType() {}
 }

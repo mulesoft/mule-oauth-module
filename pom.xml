@@ -4,29 +4,31 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-core-modules-parent</artifactId>
-        <version>1.1.9</version>
+        <version>1.1.10</version>
     </parent>
 
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-oauth-module</artifactId>
     <name>OAuth Module</name>
     <packaging>mule-extension</packaging>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
 
     <properties>
-        <muleHttpConnectorVersion>1.7.3</muleHttpConnectorVersion>
-        <muleSocketsConnectorVersion>1.2.2</muleSocketsConnectorVersion>
-        <muleObjectStoreConnectorTestVersion>1.2.1</muleObjectStoreConnectorTestVersion>
-        <commonsCodecVersion>1.15</commonsCodecVersion>
-        <commonsIoVersion>2.12.0</commonsIoVersion>
+        <muleHttpConnectorVersion>1.9.0</muleHttpConnectorVersion>
+        <muleSocketsConnectorVersion>1.2.4</muleSocketsConnectorVersion>
+        <muleObjectStoreConnectorTestVersion>1.2.2</muleObjectStoreConnectorTestVersion>
+        <commonsCodecVersion>1.18.0</commonsCodecVersion>
+        <commonsIoVersion>2.18.0</commonsIoVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
+        <muleSdkApiVersion>0.7.0</muleSdkApiVersion>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
         <munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
-        <munit.extensions.maven.plugin.version>1.1.3</munit.extensions.maven.plugin.version>
-        <munit.version>2.3.16</munit.version>
-        <mtf-tools.version>1.1.2</mtf-tools.version>
+        <munit.extensions.maven.plugin.version>1.4.0</munit.extensions.maven.plugin.version>
+        <munit.version>3.3.2</munit.version>
+        <mtf-tools.version>1.2.0</mtf-tools.version>
+        <jacoco.version>0.8.10</jacoco.version>
         <mavenResources.version>3.3.1</mavenResources.version>
 
         <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
@@ -111,8 +113,9 @@
                     </argLines>
                     <runtimeConfiguration>
                         <discoverRuntimes>
-                            <product>ALL</product>
-                            <includeSnapshots>true</includeSnapshots>
+                            <minMuleVersion>${minVersion}</minMuleVersion>
+                            <includeSnapshots>false</includeSnapshots>
+                            <product>EE</product>
                         </discoverRuntimes>
                     </runtimeConfiguration>
                     <munitTest>${munit.test}</munitTest>
@@ -139,7 +142,7 @@
                     <dependency>
                         <groupId>org.mule.module</groupId>
                         <artifactId>mule-java-module</artifactId>
-                        <version>1.2.10</version>
+                        <version>1.2.12</version>
                         <classifier>mule-plugin</classifier>
                     </dependency>
                 </dependencies>
@@ -147,6 +150,11 @@
         </plugins>
     </build>
     <dependencies>
+        <dependency>
+            <groupId>org.mule.sdk</groupId>
+            <artifactId>mule-sdk-api</artifactId>
+            <version>${muleSdkApiVersion}</version>
+        </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
@@ -252,13 +260,6 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.tests.plugin</groupId>
-            <artifactId>mule-tests-component-plugin</artifactId>
-            <version>${mule.version}</version>
-            <classifier>mule-plugin</classifier>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
