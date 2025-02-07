@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth" xmlns:os="http://www.mulesoft.org/schema/mule/os"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd">
+
+    <munit:dynamic-port propertyName="oauth.server.port" min="1024" max="64000"/>
+
+    <!-- Oauth token endpoint stub -->
+    <http:listener-config name="oauthListenerConfig">
+        <http:listener-connection host="localhost" port="${oauth.server.port}"/>
+    </http:listener-config>
+
+    <http:request-config name="requestConfig">
+        <http:request-connection host="localhost" port="${oauth.server.port}">
+        </http:request-connection>
+    </http:request-config>
+
+    <os:object-store name="authCodeObjectStore" doc:name="Object store" persistent="false" />
+    <os:object-store name="fastExpiryObjectStore" doc:name="Object store" persistent="false" entryTtl="5" expirationInterval="5" expirationIntervalUnit="SECONDS" />
+
+    <oauth:token-manager-config name="authCodeTokenManagerConfig" objectStore="authCodeObjectStore"/>
+    <oauth:token-manager-config name="clientCredsTokenManagerConfig"/>
+
+    <http:request-config name="requestConfigWithOAuth">
+        <http:request-connection host="localhost" port="${oauth.server.port}">
+            <http:authentication>
+                <oauth:client-credentials-grant-type
+                        clientId="ndli93xdws2qoe6ms1d389vl6bxquv3e"
+                        clientSecret="yL692Az1cNhfk1VhTzyx4jOjjMKBrO9T"
+                        tokenManager="clientCredsTokenManagerConfig"
+                        scopes="$expected scope"
+                        tokenUrl="#['http://localhost:' ++ ${oauth.server.port} ++ '/token']"
+                        refreshTokenWhen="#[[500, 401] contains attributes.statusCode]"
+                        responseAccessToken="#[payload['access_token']]"
+                        responseExpiresIn="#[payload['expires_in']]">
+                </oauth:client-credentials-grant-type>
+            </http:authentication>
+        </http:request-connection>
+    </http:request-config>
+
+    <http:request-config name="requestConfigDefaultTokenManager">
+        <http:request-connection host="localhost" port="${oauth.server.port}">
+            <http:authentication>
+                <oauth:client-credentials-grant-type
+                        clientId="ndli93xdws2qoe6ms1d389vl6bxquv3e"
+                        clientSecret="yL692Az1cNhfk1VhTzyx4jOjjMKBrO9T"
+                        scopes="$expected scope"
+                        tokenUrl="#['http://localhost:' ++ ${oauth.server.port} ++ '/token']"
+                        refreshTokenWhen="#[[500, 401] contains attributes.statusCode]"
+                        responseAccessToken="#[payload['access_token']]"
+                        responseExpiresIn="#[payload['expires_in']]">
+                </oauth:client-credentials-grant-type>
+            </http:authentication>
+        </http:request-connection>
+    </http:request-config>
+
+    <http:request-config name="requestConfigWithAuthCode">
+        <http:request-connection host="localhost" port="${oauth.server.port}">
+            <http:authentication>
+                <oauth:authorization-code-grant-type
+                        clientId="ndli93xdws2qoe6ms1d389vl6bxquv3e"
+                        clientSecret="yL692Az1cNhfk1VhTzyx4jOjjMKBrO9T"
+                        localAuthorizationUrlResourceOwnerId="#[attributes.queryParams.userId]"
+                        resourceOwnerId="#[vars['userId']]"
+                        tokenManager="authCodeTokenManagerConfig"
+                        localAuthorizationUrl="http://localhost:${oauth.server.port}/local/authorize"
+                        authorizationUrl="http://localhost:${oauth.server.port}/authorize"
+                        refreshTokenWhen="#[[500, 401] contains attributes.statusCode]"
+                        tokenUrl="http://localhost:${oauth.server.port}/token"
+                        localCallbackConfig="oauthListenerConfig"
+                        externalCallbackUrl="http://localhost:${oauth.server.port}/callback"
+                        state="1234"
+                        localCallbackConfigPath="/callback">
+                    <oauth:custom-parameter-extractors >
+                        <oauth:parameter-extractor paramName="customParam" value="#[payload.customParam]" />
+                    </oauth:custom-parameter-extractors>
+                </oauth:authorization-code-grant-type>
+            </http:authentication>
+        </http:request-connection>
+    </http:request-config>
+
+    <http:request-config name="requestConfigWithAuthCode_NotBodyEncoded">
+        <http:request-connection host="localhost" port="${oauth.server.port}">
+            <http:authentication>
+                <oauth:authorization-code-grant-type
+                        clientId="ndli93xdws2qoe6ms1d389vl6bxquv3e"
+                        clientSecret="yL692Az1cNhfk1VhTzyx4jOjjMKBrO9T"
+                        localAuthorizationUrlResourceOwnerId="#[attributes.queryParams.userId]"
+                        resourceOwnerId="#[vars['userId']]"
+                        tokenManager="authCodeTokenManagerConfig"
+                        localAuthorizationUrl="http://localhost:${oauth.server.port}/local/authorize"
+                        authorizationUrl="http://localhost:${oauth.server.port}/authorize"
+                        refreshTokenWhen="#[[500, 401] contains attributes.statusCode]"
+                        tokenUrl="http://localhost:${oauth.server.port}/token"
+                        localCallbackConfig="oauthListenerConfig"
+                        externalCallbackUrl="http://localhost:${oauth.server.port}/callback"
+                        localCallbackConfigPath="/callback"
+                        encodeClientCredentialsInBody="false">
+                </oauth:authorization-code-grant-type>
+            </http:authentication>
+        </http:request-connection>
+    </http:request-config>
+
+</mule>

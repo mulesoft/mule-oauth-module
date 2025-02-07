@@ -12,7 +12,6 @@ import static org.mockito.Mockito.mock;
 
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
 import org.mule.runtime.api.lock.LockFactory;
-import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -28,7 +27,7 @@ public class ConfigOAuthContextTestCase extends AbstractMuleTestCase {
   public static final String USER_ID = "user";
   public static final String TEST_CONFIG_NAME = "test-config-name";
   private final LockFactory mockLockFactory = mock(LockFactory.class, Answers.RETURNS_DEEP_STUBS.get());
-  private final Map<String, ResourceOwnerOAuthContext> objectStore = new HashMap<>();
+  private final Map<String, Object> objectStore = new HashMap<>();
 
   @Test
   public void nonExistentUserIdReturnNewConfig() throws Exception {
