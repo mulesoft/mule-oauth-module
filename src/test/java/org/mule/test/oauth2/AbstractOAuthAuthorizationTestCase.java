@@ -40,6 +40,7 @@ import static org.mule.service.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAM
 import static org.mule.service.oauth.internal.OAuthConstants.SCOPE_PARAMETER;
 
 import org.mule.extension.oauth2.internal.authorizationcode.state.ConfigOAuthContext;
+import org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.metadata.MediaType;
@@ -56,7 +57,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.google.common.collect.ImmutableMap;
 
-@ArtifactClassLoaderRunnerConfig(exportPluginClasses = {ConfigOAuthContext.class})
+@ArtifactClassLoaderRunnerConfig(exportPluginClasses = {ConfigOAuthContext.class, OAuthContextServiceAdapter.class})
 public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFunctionalTestCase {
 
   public static final int REQUEST_TIMEOUT = 5000;
@@ -292,7 +293,7 @@ public abstract class AbstractOAuthAuthorizationTestCase extends MuleArtifactFun
         .getValue();
   }
 
-  protected void setTokens(ResourceOwnerOAuthContext resourceOwnerOauthContext, String accessToken, String refreshToken) {
+  protected void setTokens(Object resourceOwnerOauthContext, String accessToken, String refreshToken) {
     try {
       resourceOwnerOauthContext.getClass().getDeclaredMethod("setAccessToken", String.class)
           .invoke(resourceOwnerOauthContext, accessToken);
