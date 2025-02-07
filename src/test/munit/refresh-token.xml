@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd   http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd   http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd   http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+    <munit:config name="refresh-token.xml"/>
+
+    <oauth:token-manager-config name="refreshTokenManagerConfig2"/>
+
+    <munit:test name="expiredToken_ClientCredentials_Test">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="oauth-token-short"/>
+            <munit:enable-flow-source value="oauth-resource-text"/>
+            <munit:enable-flow-source value="oauth-unauthorized"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <http:request config-ref="requestConfigWithOAuth" method="POST" path="/echo-text-plain"/>
+            <oauth:retrieve-access-token doc:name="Retrieve access token" tokenManager="clientCredsTokenManagerConfig">
+            </oauth:retrieve-access-token>
+            <set-variable value="#[payload]" doc:name="Set Variable" variableName="old_access_token" />
+        </munit:behavior>
+        <munit:execution>
+            <logger level="INFO" doc:name="Logger" message="Awaiting token expiry"/>
+            <munit-tools:sleep time="10000" doc:name="Sleep"/>
+            <logger level="INFO" doc:name="Logger" message="Try again after expiry"/>
+            <http:request config-ref="requestConfigWithOAuth" method="POST" path="/unauthorized" />
+            <logger level="INFO" doc:name="Logger" message="Retrieve access token"/>
+            <oauth:retrieve-access-token doc:name="Retrieve access token after expiry" tokenManager="clientCredsTokenManagerConfig">
+            </oauth:retrieve-access-token>
+            <set-variable value="#[payload]" doc:name="Set Variable" variableName="new_access_token"/>
+            <logger level="INFO" doc:name="Logger" message="Awaiting access token from Object Store"/>
+            <os:retrieve doc:name="Retrieve" key="access_token" objectStore="fastExpiryObjectStore">
+                <os:default-value ><![CDATA[NO_ACCESS_TOKEN]]></os:default-value>
+            </os:retrieve>
+            <logger level="INFO" doc:name="Logger" message="Finished..."/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[vars.new_access_token]" doc:name="Assert equals" expected="#[payload]" message="Non matching Token"/>
+            <munit-tools:assert-that doc:name="Assert that" expression="#[vars.new_access_token]" is="#[MunitTools::not(MunitTools::equalTo(vars.old_access_token))]" message="New token is expected after expiration. It seems the token wasn't renewed"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="expiredToken_AuthCode_Test">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="oauth-code-grant-authorize"/>
+            <munit:enable-flow-source value="oauth-token-short"/>
+            <munit:enable-flow-source value="oauth-resource-text"/>
+            <munit:enable-flow-source value="oauth-unauthorized"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <try doc:name="Try">
+                <logger level="INFO" message="RefreshTokenTest: Kick-start OAuth listener"/>
+                <http:request config-ref="requestConfigWithAuthCode_NotBodyEncoded" doc:name="First Request" method="POST" path="/echo-text-plain"/>
+                <error-handler>
+                    <on-error-continue doc:name="On Error Continue" enableNotifications="true" logException="true">
+                        <logger doc:name="Logger" level="INFO" message="StateTest: First call failed as expected"/>
+                    </on-error-continue>
+                </error-handler>
+            </try>
+            <http:request config-ref="requestConfig" method="GET" path="/local/authorize"/>
+            <oauth:retrieve-access-token doc:name="Retrieve access token" tokenManager="authCodeTokenManagerConfig">
+            </oauth:retrieve-access-token>
+            <set-variable value="#[payload]" doc:name="Set Variable" variableName="old_access_token" />
+        </munit:behavior>
+        <munit:execution>
+            <logger level="INFO" doc:name="Logger" message="Awaiting token expiry"/>
+            <munit-tools:sleep time="10000" doc:name="Sleep"/>
+            <logger level="INFO" doc:name="Logger" message="Try again after expiry"/>
+            <http:request config-ref="requestConfigWithAuthCode_NotBodyEncoded" method="POST" path="/unauthorized" />
+            <logger level="INFO" doc:name="Logger" message="Retrieve access token"/>
+            <oauth:retrieve-access-token doc:name="Retrieve access token after expiry" tokenManager="authCodeTokenManagerConfig">
+            </oauth:retrieve-access-token>
+            <set-variable value="#[payload]" doc:name="Set Variable" variableName="new_access_token"/>
+            <logger level="INFO" doc:name="Logger" message="Awaiting access token from Object Store"/>
+            <os:retrieve doc:name="Retrieve" key="access_token" objectStore="fastExpiryObjectStore">
+                <os:default-value ><![CDATA[NO_ACCESS_TOKEN]]></os:default-value>
+            </os:retrieve>
+            <logger level="INFO" doc:name="Logger" message="Finished..."/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[vars.new_access_token]" doc:name="Assert equals" expected="#[payload]" message="Non matching Token"/>
+            <munit-tools:assert-that doc:name="Assert that" expression="#[vars.new_access_token]" is="#[MunitTools::not(MunitTools::equalTo(vars.old_access_token))]" message="New token is expected after expiration. It seems the token wasn't renewed"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>
