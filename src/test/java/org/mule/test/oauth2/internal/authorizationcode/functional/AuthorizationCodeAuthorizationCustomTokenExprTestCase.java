@@ -6,12 +6,10 @@
  */
 package org.mule.test.oauth2.internal.authorizationcode.functional;
 
-import static java.lang.String.format;
-import static org.apache.http.client.fluent.Request.Get;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig.defaultTokenManagerConfigIndex;
 import static org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig.getTokenManagerConfigByName;
+import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.getAccessToken;
+import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.getRefreshToken;
 import static org.mule.runtime.http.api.utils.HttpEncoderDecoderUtils.appendQueryParam;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
 import static org.mule.service.oauth.internal.OAuthConstants.ACCESS_TOKEN_PARAMETER;
@@ -20,15 +18,19 @@ import static org.mule.service.oauth.internal.OAuthConstants.EXPIRES_IN_PARAMETE
 import static org.mule.service.oauth.internal.OAuthConstants.REFRESH_TOKEN_PARAMETER;
 import static org.mule.service.oauth.internal.OAuthConstants.STATE_PARAMETER;
 
+import static java.lang.String.format;
+
+import static org.apache.http.client.fluent.Request.Get;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.api.metadata.MediaType;
-import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 import org.mule.tck.junit4.rule.DynamicPort;
 
+import io.qameta.allure.Description;
 import org.junit.Rule;
 import org.junit.Test;
-
-import io.qameta.allure.Description;
 
 public class AuthorizationCodeAuthorizationCustomTokenExprTestCase extends AbstractAuthorizationCodeBasicTestCase {
 
@@ -48,11 +50,10 @@ public class AuthorizationCodeAuthorizationCustomTokenExprTestCase extends Abstr
         .execute();
     final TokenManagerConfig tokenManagerConfig =
         getTokenManagerConfigByName("default-token-manager-config-" + (defaultTokenManagerConfigIndex.get() - 1));
-    final ResourceOwnerOAuthContext oauthContext =
-        tokenManagerConfig.getConfigOAuthContext().getContextForResourceOwner(DEFAULT_RESOURCE_OWNER_ID);
+    Object oauthContext = tokenManagerConfig.getConfigOAuthContext().getContextForResourceOwner(DEFAULT_RESOURCE_OWNER_ID);
 
-    assertThat(oauthContext.getAccessToken(), is(ACCESS_TOKEN));
-    assertThat(oauthContext.getRefreshToken(), is(REFRESH_TOKEN));
+    assertThat(getAccessToken(oauthContext), is(ACCESS_TOKEN));
+    assertThat(getRefreshToken(oauthContext), is(REFRESH_TOKEN));
   }
 
   private String getRedirectUrlWithOnCompleteUrlQueryParam() {
