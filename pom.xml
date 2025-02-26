@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-core-modules-parent</artifactId>
-        <version>1.1.9</version>
+        <version>1.1.10</version>
     </parent>
 
     <groupId>org.mule.modules</groupId>
@@ -17,17 +17,17 @@
         <muleHttpConnectorVersion>1.9.0</muleHttpConnectorVersion>
         <muleSocketsConnectorVersion>1.2.4</muleSocketsConnectorVersion>
         <muleObjectStoreConnectorTestVersion>1.2.2</muleObjectStoreConnectorTestVersion>
-        <commonsCodecVersion>1.15</commonsCodecVersion>
-        <commonsIoVersion>2.12.0</commonsIoVersion>
+        <commonsCodecVersion>1.18.0</commonsCodecVersion>
+        <commonsIoVersion>2.18.0</commonsIoVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleSdkApiVersion>0.7.0</muleSdkApiVersion>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
         <munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
-        <munit.extensions.maven.plugin.version>1.2.0-rc2</munit.extensions.maven.plugin.version>
-        <munit.version>3.1.0-rc3</munit.version>
-        <mtf-tools.version>1.2.0-rc1</mtf-tools.version>
+        <munit.extensions.maven.plugin.version>1.4.0</munit.extensions.maven.plugin.version>
+        <munit.version>3.4.0</munit.version>
+        <mtf-tools.version>1.2.0</mtf-tools.version>
         <jacoco.version>0.8.10</jacoco.version>
         <mavenResources.version>3.3.1</mavenResources.version>
 

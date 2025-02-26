@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:http="http://www.mulesoft.org/schema/mule/http"
-      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
-      xsi:schemaLocation="
+      xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
-       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
-
-    <munit:dynamic-port propertyName="oauth.server.port" min="1024" max="64000"/>
-
-    <!-- Oauth token endpoint stub -->
-    <http:listener-config name="oauthListenerConfig">
-        <http:listener-connection host="localhost" port="${oauth.server.port}"/>
-    </http:listener-config>
-
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
     <flow name="oauth-token">
         <http:listener path="/token" config-ref="oauthListenerConfig" allowedMethods="POST">
             <http:response>
@@ -23,8 +16,43 @@
                 </http:headers>
             </http:response>
         </http:listener>
-        <set-payload value="access_token=rbBQLgJXBEYo83K4Fqs4gu6vpCobc2ya&amp;expires_in=3897"
+        <set-payload value="access_token=rbBQLgJXBEYo83K4Fqs4gu6vpCobc2ya&amp;expires_in=3897&amp;refresh_token=9TLtNPV8rnwYmjPBNbBxcDHw&amp;customParam=custom_value" mimeType="application/x-www-form-urlencoded" />
+    </flow>
+
+    <flow name="oauth-token-short">
+        <http:listener path="/token" config-ref="oauthListenerConfig" allowedMethods="POST">
+            <http:response>
+                <http:headers>
+                    #[{'Content-Type' : 'application/x-www-form-urlencoded'}]
+                </http:headers>
+            </http:response>
+        </http:listener>
+        <set-variable value="#[uuid()]" doc:name="Set Variable" variableName="access_token"/>
+        <os:store doc:name="Store" key="access_token" objectStore="fastExpiryObjectStore">
+            <os:value><![CDATA[#[vars.access_token]]]></os:value>
+        </os:store>
+        <set-payload value='#["access_token=" ++ vars.access_token ++ "&amp;expires_in=4&amp;refresh_token=9TLtNPV8rnwYmjPBNbBxcDHw&amp;customParam=custom_value"]'
                      mimeType="application/x-www-form-urlencoded"/>
+    </flow>
+
+    <!-- Oauth code grant auth endpoint stub -->
+    <flow name="oauth-code-grant-authorize">
+        <http:listener path="/authorize" config-ref="oauthListenerConfig" allowedMethods="GET">
+            <http:response statusCode="204">
+                <http:headers>
+                    #[{'Content-Type' : 'application/x-www-form-urlencoded'}]
+                </http:headers>
+            </http:response>
+        </http:listener>
+        <logger level="INFO" message="OAuth &gt; CodeGrant: Authorized, calling callback..."/>
+        <http:request method="GET" config-ref="requestConfig" url="#[attributes.queryParams.redirect_uri]">
+            <http:query-params ><![CDATA[#[output application/java
+---
+{
+	"state" : attributes.queryParams.state,
+	"code" : "AUTH_CODE"
+}]]]></http:query-params>
+        </http:request>
     </flow>
 
     <!-- A simple endpoint that echoes a text payload with our mock oauth security -->
@@ -32,6 +60,20 @@
         <http:listener path="/echo-text-plain" config-ref="oauthListenerConfig" allowedMethods="POST"/>
         <logger message="#[payload]"/>
         <set-payload value="#[payload]"/>
+    </flow>
+
+    <!-- A simple endpoint that echoes a text payload with our mock oauth security -->
+    <flow name="oauth-unauthorized">
+        <http:listener path="/unauthorized" config-ref="oauthListenerConfig" allowedMethods="POST">
+            <http:response statusCode="204" />
+            <http:error-response statusCode="401" />
+        </http:listener>
+        <os:contains doc:name="Contains Access Token" key="access_token" objectStore="fastExpiryObjectStore"/>
+        <choice doc:name="Choice" >
+            <when expression="#[not payload]">
+                <raise-error doc:name="Raise error" type="MULE:SERVER_SECURITY"/>
+            </when>
+        </choice>
     </flow>
 
     <!-- A simple endpoint that echoes a json payload with our mock oauth security -->

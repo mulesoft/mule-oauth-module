@@ -6,16 +6,21 @@
  */
 package org.mule.extension.oauth2.internal;
 
-import static java.util.Objects.requireNonNull;
+import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.getTokenResponseParameters;
+import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.getAccessToken;
+import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.getRefreshToken;
+import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.getExpiresIn;
+import static org.mule.extension.oauth2.internal.service.OAuthContextServiceAdapter.getState;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.extension.api.annotation.param.MediaType.TEXT_PLAIN;
 import static org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext.DEFAULT_RESOURCE_OWNER_ID;
+
+import static java.util.Objects.requireNonNull;
 
 import org.mule.extension.oauth2.api.tokenmanager.TokenManagerConfig;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.Optional;
-import org.mule.runtime.oauth.api.state.ResourceOwnerOAuthContext;
 
 /**
  * Provides management capabilities for the configured {@code tokenManager}.
@@ -47,7 +52,7 @@ public class OAuthOperations {
   public String retrieveAccessToken(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
                                     @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
     validateResourceOwnerId(resourceOwnerId);
-    return getContextForResourceOwner(tokenManager, resourceOwnerId).getAccessToken();
+    return getAccessToken(getContextForResourceOwner(tokenManager, resourceOwnerId));
   }
 
   /**
@@ -60,7 +65,7 @@ public class OAuthOperations {
   @MediaType(value = TEXT_PLAIN, strict = false)
   public String retrieveRefreshToken(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
                                      @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
-    return getContextForResourceOwner(tokenManager, resourceOwnerId).getRefreshToken();
+    return getRefreshToken(getContextForResourceOwner(tokenManager, resourceOwnerId));
   }
 
   /**
@@ -73,7 +78,7 @@ public class OAuthOperations {
   @MediaType(value = TEXT_PLAIN, strict = false)
   public String retrieveExpiresIn(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
                                   @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
-    return getContextForResourceOwner(tokenManager, resourceOwnerId).getExpiresIn();
+    return getExpiresIn(getContextForResourceOwner(tokenManager, resourceOwnerId));
   }
 
   /**
@@ -86,7 +91,7 @@ public class OAuthOperations {
   @MediaType(value = TEXT_PLAIN, strict = false)
   public String retrieveState(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
                               @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId) {
-    return getContextForResourceOwner(tokenManager, resourceOwnerId).getState();
+    return getState(getContextForResourceOwner(tokenManager, resourceOwnerId));
   }
 
   /**
@@ -102,14 +107,14 @@ public class OAuthOperations {
   public String retrieveCustomTokenResponseParam(@Expression(NOT_SUPPORTED) TokenManagerConfig tokenManager,
                                                  @Optional(defaultValue = DEFAULT_RESOURCE_OWNER_ID) String resourceOwnerId,
                                                  String key) {
-    return getContextForResourceOwner(tokenManager, resourceOwnerId).getTokenResponseParameters().get(key).toString();
+    return getTokenResponseParameters(getContextForResourceOwner(tokenManager, resourceOwnerId)).get(key).toString();
   }
 
   private void validateResourceOwnerId(String resourceOwnerId) {
     requireNonNull(resourceOwnerId, "Resource owner id cannot be null");
   }
 
-  private ResourceOwnerOAuthContext getContextForResourceOwner(TokenManagerConfig tokenManager, String resourceOwnerId) {
+  private Object getContextForResourceOwner(TokenManagerConfig tokenManager, String resourceOwnerId) {
     validateResourceOwnerId(resourceOwnerId);
     return tokenManager.getConfigOAuthContext().getContextForResourceOwner(resourceOwnerId);
   }
