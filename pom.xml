@@ -20,7 +20,7 @@
         <commonsCodecVersion>1.18.0</commonsCodecVersion>
         <commonsIoVersion>2.18.0</commonsIoVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
-        <muleSdkApiVersion>0.7.0</muleSdkApiVersion>
+        <muleSdkApiVersion>0.11.2</muleSdkApiVersion>
 
         <!-- Remove when a new parent version with MTF is available -->
         <munit.input.directory>src/test/munit</munit.input.directory>
