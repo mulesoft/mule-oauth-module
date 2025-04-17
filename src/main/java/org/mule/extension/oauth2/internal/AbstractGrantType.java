@@ -60,6 +60,7 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
 
   private final AtomicInteger initializations = new AtomicInteger();
   private final AtomicInteger starts = new AtomicInteger();
+  private final Object initializationLock = new Object();
 
   private static final Logger LOGGER = getLogger(AbstractGrantType.class);
 
@@ -206,19 +207,27 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
 
   @Override
   public final void initialise() throws InitialisationException {
-    if (initializations.getAndIncrement() > 0) {
-      return;
-    }
+    LOGGER
+        .info(Thread.currentThread().getName() + "Latha: Initialising parent grant type and value is: " + initializations.get());
+    synchronized (initializationLock) {
+      if (initializations.get() > 0) {
+        LOGGER.debug(Thread.currentThread().getName() + "Latha: Entered init check and value is: " + initializations.get());
+        return;
+      }
 
-    try {
-      this.resolver = new DeferredExpressionResolver(expressionEvaluator);
-      readsResponseBody = refreshTokenWhen.getLiteralValue()
-          .map(expression -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
-          .orElse(Boolean.FALSE);
-      doInitialize();
-    } catch (Throwable t) {
-      initializations.getAndDecrement();
-      throw t;
+      try {
+        LOGGER.info(Thread.currentThread().getName() + "Latha: Entered try catch block and value is: " + initializations.get());
+        this.resolver = new DeferredExpressionResolver(expressionEvaluator);
+        readsResponseBody = refreshTokenWhen.getLiteralValue()
+            .map(expression -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
+            .orElse(Boolean.FALSE);
+        doInitialize();
+        initializations.incrementAndGet();
+        LOGGER.info(Thread.currentThread().getName() + "Latha: End of try catch block and value is: " + initializations.get());
+      } catch (Throwable t) {
+        LOGGER.info(Thread.currentThread().getName() + "Latha: Entered error block and value is: " + initializations.get());
+        throw t;
+      }
     }
   }
 
