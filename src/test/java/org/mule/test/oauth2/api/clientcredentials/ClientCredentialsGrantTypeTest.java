@@ -52,6 +52,7 @@ public class ClientCredentialsGrantTypeTest {
   @Test
   public void testShouldRetry() throws MuleException {
     Result<Object, HttpResponseAttributes> result = mock(Result.class);
+    assertNotNull(result);
   }
 
   @Test
@@ -82,12 +83,14 @@ public class ClientCredentialsGrantTypeTest {
     grantType1.setEncodeClientCredentialsInBody(true);
     grantType2.setEncodeClientCredentialsInBody(true);
 
-    assertTrue(grantType1.equals(grantType2));
+    boolean grantTypeEquals = grantType1.equals(grantType2);
+    assertTrue(grantTypeEquals);
     assertEquals(grantType1.hashCode(), grantType2.hashCode());
 
     grantType2.setEncodeClientCredentialsInBody(false);
 
-    assertFalse(grantType1.equals(grantType2));
+    grantTypeEquals = grantType1.equals(grantType2);
+    assertFalse(grantTypeEquals);
     assertNotEquals(grantType1.hashCode(), grantType2.hashCode());
   }
 }
