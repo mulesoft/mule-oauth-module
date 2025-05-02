@@ -207,25 +207,20 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
 
   @Override
   public final void initialise() throws InitialisationException {
-    LOGGER
-        .info(Thread.currentThread().getName() + "Initialising parent grant type and value is: " + initializations.get());
+    // Synchronization to avoid the race condition for the dynamic initialisations
     synchronized (initializationLock) {
       if (initializations.get() > 0) {
-        LOGGER.debug(Thread.currentThread().getName() + "Entered init check and value is: " + initializations.get());
         return;
       }
 
       try {
-        LOGGER.info(Thread.currentThread().getName() + "Entered try catch block and value is: " + initializations.get());
         this.resolver = new DeferredExpressionResolver(expressionEvaluator);
         readsResponseBody = refreshTokenWhen.getLiteralValue()
             .map(expression -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
             .orElse(Boolean.FALSE);
         doInitialize();
         initializations.incrementAndGet();
-        LOGGER.info(Thread.currentThread().getName() + "End of try catch block and value is: " + initializations.get());
       } catch (Throwable t) {
-        LOGGER.info(Thread.currentThread().getName() + "Entered error block and value is: " + initializations.get());
         throw t;
       }
     }
