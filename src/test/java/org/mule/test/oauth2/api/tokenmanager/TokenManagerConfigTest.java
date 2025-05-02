@@ -119,10 +119,17 @@ public class TokenManagerConfigTest {
     config3.setName("test2");
 
     // Verify equals
-    assertTrue(config1.equals(config2));
-    assertFalse(config1.equals(config3));
-    assertFalse(config1.equals(null));
-    assertFalse(config1.equals(new Object()));
+    boolean configEquals = config1.equals(config2);
+    assertTrue(configEquals);
+
+    configEquals = config1.equals(config3);
+    assertFalse(configEquals);
+
+    configEquals = config1.equals(null);
+    assertFalse(configEquals);
+
+    configEquals = config1.equals(new Object());
+    assertFalse(configEquals);
 
     // Verify hashCode
     assertEquals(config1.hashCode(), config2.hashCode());

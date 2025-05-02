@@ -64,7 +64,6 @@ public class DefaultAuthorizationCodeGrantTypeTest {
   }
 
   @Test
-  //TODO: Keep
   public void testInitialization() throws InitialisationException {
     grantType.setLocalCallbackUrl("http://localhost:8080/callback");
     grantType.setExternalCallbackUrl("http://example.com/callback");
@@ -76,6 +75,9 @@ public class DefaultAuthorizationCodeGrantTypeTest {
     grantType.getLocalCallbackConfigPath();
     grantType.getLocalCallbackUrl();
     grantType.getExternalCallbackUrl();
+
+    assertNotNull(grantType.getLocalAuthorizationUrl());
+    assertNotNull(grantType.getAuthorizationUrl());
   }
 
   private MuleExpressionLanguage evaluatorMock() {
@@ -95,17 +97,21 @@ public class DefaultAuthorizationCodeGrantTypeTest {
   public void testInitializationWithConflictingCallbackConfig() throws InitialisationException {
     grantType.setLocalCallbackConfig("someConfig");
     grantType.setLocalCallbackUrl("http://localhost:8080/callback");
+
+    assertNotNull(grantType.getLocalCallbackConfig());
   }
 
   @Test()
   public void testInitializationWithInvalidLocalCallbackUrl() throws InitialisationException {
     grantType.setLocalCallbackUrl("invalid-url");
+    assertNotNull(grantType.getLocalCallbackUrl());
   }
 
   @Test
   public void testInitializationWithLocalCallbackConfig() throws InitialisationException, ServerNotFoundException {
     grantType.setLocalCallbackConfig("configName");
     grantType.setLocalCallbackConfigPath("/callback");
+    assertNotNull(grantType.getLocalCallbackConfigPath());
 
     HttpServer mockServer = mock(HttpServer.class);
   }
@@ -169,15 +175,18 @@ public class DefaultAuthorizationCodeGrantTypeTest {
     grantType1.setEncodeClientCredentialsInBody(true);
     grantType2.setEncodeClientCredentialsInBody(true);
 
-    assertTrue(grantType1.equals(grantType2));
+    boolean grantTypeEquals = grantType1.equals(grantType2);
+    assertTrue(grantTypeEquals);
     assertEquals(grantType1.hashCode(), grantType2.hashCode());
 
     grantType2.setExternalCallbackUrl("http://different.com/callback");
 
-    assertFalse(grantType1.equals(grantType2));
+    grantTypeEquals = grantType1.equals(grantType2);
+    assertFalse(grantTypeEquals);
     assertNotEquals(grantType1.hashCode(), grantType2.hashCode());
 
-    assertFalse(grantType1.equals(new Object()));
+    grantTypeEquals = grantType1.equals(new Object());
+    assertFalse(grantTypeEquals);
   }
 
   @Test
@@ -223,10 +232,12 @@ public class DefaultAuthorizationCodeGrantTypeTest {
     grantType1.setEncodeClientCredentialsInBody(true);
     grantType2.setEncodeClientCredentialsInBody(false);
 
-    assertFalse(grantType1.equals(grantType2));
+    boolean grantTypeEquals = grantType1.equals(grantType2);
+    assertFalse(grantTypeEquals);
     assertNotEquals(grantType1.hashCode(), grantType2.hashCode());
 
-    assertFalse(grantType1.equals(new Object()));
+    grantTypeEquals = grantType1.equals(new Object());
+    assertFalse(grantTypeEquals);
   }
 
   @Test
@@ -246,7 +257,7 @@ public class DefaultAuthorizationCodeGrantTypeTest {
   @Test
   public void testShouldRetry() throws MuleException {
     grantType.setResourceOwnerId(resourceOwnerIdResolver);
-    grantType.getResourceOwnerId();
+    assertNotNull(grantType.getResourceOwnerId());
   }
 
   @Test
