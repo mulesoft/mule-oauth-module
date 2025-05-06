@@ -60,7 +60,6 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
 
   private final AtomicInteger initializations = new AtomicInteger();
   private final AtomicInteger starts = new AtomicInteger();
-  private final Object initializationLock = new Object();
 
   private static final Logger LOGGER = getLogger(AbstractGrantType.class);
 
@@ -207,22 +206,19 @@ public abstract class AbstractGrantType implements HttpRequestAuthentication, Li
 
   @Override
   public final void initialise() throws InitialisationException {
-    // Synchronization to avoid the race condition for the dynamic initialisations
-    synchronized (initializationLock) {
-      if (initializations.get() > 0) {
-        return;
-      }
+    if (initializations.getAndIncrement() > 0) {
+      return;
+    }
 
-      try {
-        this.resolver = new DeferredExpressionResolver(expressionEvaluator);
-        readsResponseBody = refreshTokenWhen.getLiteralValue()
-            .map(expression -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
-            .orElse(Boolean.FALSE);
-        doInitialize();
-        initializations.incrementAndGet();
-      } catch (Throwable t) {
-        throw t;
-      }
+    try {
+      this.resolver = new DeferredExpressionResolver(expressionEvaluator);
+      readsResponseBody = refreshTokenWhen.getLiteralValue()
+          .map(expression -> expression.startsWith(DEFAULT_EXPRESSION_PREFIX) && expression.contains(PAYLOAD))
+          .orElse(Boolean.FALSE);
+      doInitialize();
+    } catch (Throwable t) {
+      initializations.getAndDecrement();
+      throw t;
     }
   }
 
